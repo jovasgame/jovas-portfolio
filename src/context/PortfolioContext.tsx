@@ -44,13 +44,13 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'projects');
       if (saved) {
         const parsed: Project[] = JSON.parse(saved);
-        // Clean up legacy w3schools demo links
+        // Merge & sanitize with initialProjects to guarantee videoUrls are always present
         return parsed.map((p) => {
-          if (p.videoUrl && p.videoUrl.includes('w3schools.com')) {
-            const initialMatch = initialProjects.find((ip) => ip.id === p.id);
+          const match = initialProjects.find((ip) => ip.id === p.id);
+          if (!p.videoUrl || p.videoUrl.includes('w3schools.com')) {
             return {
               ...p,
-              videoUrl: initialMatch?.videoUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
+              videoUrl: match?.videoUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
             };
           }
           return p;

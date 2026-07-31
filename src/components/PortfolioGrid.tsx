@@ -55,10 +55,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         />
 
         {/* Video Preview on Hover (Muted / Silent) */}
-        {isHovered && isVideoOrAnimation && (
+        {isHovered && (
           <div className="absolute inset-0 z-10 overflow-hidden bg-black pointer-events-none">
             <MediaViewer
-              src={project.videoUrl || hoverVideoSrc}
+              src={hoverVideoSrc}
               alt={project.title}
               poster={project.imageUrl}
               forceVideo={true}
