@@ -155,10 +155,11 @@ export const MediaViewer: React.FC<MediaViewerProps> = ({
         }}
         onEnded={onEnded}
         onError={() => {
+          // If video element failed (e.g., an image link was pasted in videoUrl or stream error),
+          // fallback to rendering image poster or direct image element instead of broken player
           const driveMatch = src.match(/\/d\/([a-zA-Z0-9_-]+)/) || src.match(/id=([a-zA-Z0-9_-]+)/);
-          if (driveMatch && driveMatch[1] && activeVideoUrl.includes('googleusercontent.com')) {
-            // Try Drive preview iframe if direct CDN fails
-            setVideoSrc(`https://drive.google.com/file/d/${driveMatch[1]}/preview`);
+          if (driveMatch && driveMatch[1]) {
+            setHasError(true);
           } else if (activeVideoUrl !== FALLBACK_SAMPLE_VIDEO) {
             setVideoSrc(FALLBACK_SAMPLE_VIDEO);
           } else {

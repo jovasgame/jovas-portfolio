@@ -280,6 +280,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
 
           <div className="flex items-center gap-3">
             <button
+              onClick={() => {
+                const exportedJson = JSON.stringify({ projects, profile, brandAssets }, null, 2);
+                navigator.clipboard.writeText(exportedJson);
+                showToast('¡Datos copiados al portapapeles! Puedes pegarlos o enviármelos para guardarlos en el código global.');
+              }}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-xs font-semibold border border-emerald-500/30 transition-all cursor-pointer shadow-sm"
+              title="Copiar configuración actual para actualizar el sitio globalmente en todos los dispositivos"
+            >
+              <Copy className="w-4 h-4 text-emerald-400" />
+              Copiar Datos Globales
+            </button>
+
+            <button
               onClick={onCloseDashboard}
               className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#1e293b] hover:bg-[#334155] text-slate-200 text-xs font-semibold border border-[#334155] transition-all cursor-pointer shadow-sm"
             >
