@@ -24,6 +24,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   setSelectedProjectForModal,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   // Check if project is a video or animation item
   const isVideoOrAnimation = Boolean(
@@ -33,6 +34,26 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   );
 
   const hoverVideoSrc = getDirectHoverVideoUrl(project.videoUrl, project.id);
+
+  // Handle play/pause reliably whenever isHovered changes
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+
+    el.muted = true;
+    el.defaultMuted = true;
+    el.volume = 0;
+
+    if (isHovered) {
+      el.currentTime = 0;
+      const playPromise = el.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {});
+      }
+    } else {
+      el.pause();
+    }
+  }, [isHovered]);
 
   return (
     <motion.div
@@ -61,30 +82,17 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           }`}
         >
           <video
-            ref={(el) => {
-              if (el) {
-                el.muted = true;
-                el.defaultMuted = true;
-                el.volume = 0;
-                if (isHovered) {
-                  const p = el.play();
-                  if (p !== undefined) p.catch(() => {});
-                } else {
-                  el.pause();
-                }
-              }
-            }}
+            ref={videoRef}
             src={hoverVideoSrc}
             poster={project.imageUrl}
-            autoPlay={isHovered}
             loop
             muted
             playsInline
             preload="auto"
             className="w-full h-full object-cover object-center scale-105 transition-transform duration-700 pointer-events-none"
           />
-          {/* Subtle Muted Preview Badge matching user design */}
-          <div className="absolute top-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-[#ff5540]/50 text-[10px] font-mono text-[#ff7563] font-semibold tracking-wider shadow-xl pointer-events-none">
+          {/* Subtle Muted Preview Badge positioned cleanly below top navbar badges */}
+          <div className="absolute top-16 left-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/85 backdrop-blur-md border border-[#ff5540]/60 text-[10px] font-mono text-[#ff7563] font-bold tracking-wider shadow-xl pointer-events-none">
             <span className="w-1.5 h-1.5 rounded-full bg-[#ff5540] animate-ping" />
             <span>VISTA PREVIA (SIN SONIDO)</span>
           </div>

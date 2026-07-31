@@ -19,8 +19,8 @@ export function getDirectHoverVideoUrl(videoUrl?: string, projectId: string = 'p
     // Check if Google Drive
     const driveParsed = parseGoogleDriveUrl(trimmed);
     if (driveParsed) {
-      // Direct stream URL for Google Drive videos (works in <video> tag)
-      return `https://drive.google.com/uc?export=download&id=${driveParsed.id}`;
+      // Direct Google CDN stream URL for Drive videos (works in <video> tag natively)
+      return `https://lh3.googleusercontent.com/d/${driveParsed.id}`;
     }
 
     if (
@@ -61,7 +61,7 @@ export function convertGoogleDriveToDirectUrl(url: string, isVideo: boolean = fa
   if (!parsed) return url.trim();
 
   if (isVideo) {
-    return `https://drive.google.com/uc?export=download&id=${parsed.id}`;
+    return `https://lh3.googleusercontent.com/d/${parsed.id}`;
   }
   
   return `https://drive.google.com/thumbnail?id=${parsed.id}&sz=w1920`;
@@ -76,13 +76,13 @@ export function parseMediaUrl(
   if (!url) return { type: 'image', embedUrl: '', originalUrl: '' };
   const cleaned = url.trim();
 
-  const { autoPlay = false, muted = true } = options;
+  const { autoPlay = false, muted = false } = options;
 
   // 1. Google Drive
   const driveParsed = parseGoogleDriveUrl(cleaned);
   if (driveParsed) {
-    // If it's a direct stream attempt for HTML5 <video>
-    if (cleaned.includes('export=download') || cleaned.includes('lh3.googleusercontent.com/d/')) {
+    // If explicitly forced video without iframe preference, try direct Google CDN
+    if (cleaned.includes('lh3.googleusercontent.com/d/')) {
       return {
         type: 'video',
         embedUrl: cleaned,
@@ -109,7 +109,7 @@ export function parseMediaUrl(
       enablejsapi: '1',
       playsinline: '1',
       ...(autoPlay ? { autoplay: '1' } : { autoplay: '0' }),
-      ...(muted ? { mute: '1', controls: '0' } : { mute: '0' }),
+      ...(muted ? { mute: '1' } : {}),
       playlist: ytId,
       loop: '1'
     });

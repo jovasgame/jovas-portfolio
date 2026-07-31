@@ -62,6 +62,7 @@ export const ProjectModal: React.FC = () => {
                 controls={true}
                 autoPlay={true}
                 loop={true}
+                muted={false}
               />
             </div>
 
