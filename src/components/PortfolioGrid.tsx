@@ -4,7 +4,7 @@ import { motion } from 'motion/react';
 import { Sparkles, Eye, Star, Plus, Film, Palette, Box, Image as ImageIcon, Flame } from 'lucide-react';
 import { ProjectCategory, Project } from '../types';
 import { MediaViewer } from './MediaViewer';
-import { getDirectHoverVideoUrl } from '../utils/mediaUtils';
+import { getDirectHoverVideoUrl, parseMediaUrl } from '../utils/mediaUtils';
 
 interface ProjectCardProps {
   project: Project;
@@ -81,16 +81,27 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             isHovered ? 'opacity-100' : 'opacity-0'
           }`}
         >
-          <video
-            ref={videoRef}
-            src={hoverVideoSrc}
-            poster={project.imageUrl}
-            loop
-            muted
-            playsInline
-            preload="auto"
-            className="w-full h-full object-cover object-center scale-105 transition-transform duration-700 pointer-events-none"
-          />
+          {isHovered && project.videoUrl && parseMediaUrl(project.videoUrl).type === 'iframe' ? (
+            <MediaViewer
+              src={project.videoUrl}
+              alt={project.title}
+              controls={false}
+              autoPlay={true}
+              muted={true}
+              className="w-full h-full object-cover pointer-events-none"
+            />
+          ) : (
+            <video
+              ref={videoRef}
+              src={hoverVideoSrc}
+              poster={project.imageUrl}
+              loop
+              muted
+              playsInline
+              preload="auto"
+              className="w-full h-full object-cover object-center scale-105 transition-transform duration-700 pointer-events-none"
+            />
+          )}
           {/* Subtle Muted Preview Badge positioned cleanly below top navbar badges */}
           <div className="absolute top-16 left-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/85 backdrop-blur-md border border-[#ff5540]/60 text-[10px] font-mono text-[#ff7563] font-bold tracking-wider shadow-xl pointer-events-none">
             <span className="w-1.5 h-1.5 rounded-full bg-[#ff5540] animate-ping" />
