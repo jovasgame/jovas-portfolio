@@ -1,9 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Project, UserProfile, BrandAssets, ContactMessage, Stats } from '../types';
 import { initialProjects, initialProfile, initialBrandAssets, initialMessages, initialStats } from '../data/initialData';
-import { fetchCloudPortfolioData, saveCloudPortfolioData } from '../utils/cloudStorage';
-import { fetchProjectsFromCMS, saveProjectToCMS, deleteProjectFromCMS } from '../utils/supabaseClient';
-import { fetchProjectsFromEdgeConfig } from '../utils/edgeConfig';
 
 interface PortfolioContextType {
   projects: Project[];
@@ -119,53 +116,24 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
 
-  // Fetch Vercel Edge Config, Supabase CMS & Cloud Data on Mount
+  // Sync all projects from initialData on mount (source of truth is the code)
   useEffect(() => {
-    // 1. Try Vercel Edge Config first
-    fetchProjectsFromEdgeConfig().then((edgeProjects) => {
-      if (edgeProjects && edgeProjects.length > 0) {
-        setProjects(edgeProjects);
-        try {
-          localStorage.setItem(LOCAL_STORAGE_PREFIX + 'projects', JSON.stringify(edgeProjects));
-        } catch (e) {}
-        return;
-      }
-
-      // 2. Try Supabase Cloud Database second
-      fetchProjectsFromCMS().then((cmsProjects) => {
-        if (cmsProjects && cmsProjects.length > 0) {
-          setProjects(cmsProjects);
-          try {
-            localStorage.setItem(LOCAL_STORAGE_PREFIX + 'projects', JSON.stringify(cmsProjects));
-          } catch (e) {}
-        } else {
-          initialProjects.forEach(p => saveProjectToCMS(p));
-        }
-      });
-    });
-
-    // 3. Sync profile and brand assets from cloud storage
-    fetchCloudPortfolioData().then((cloudData) => {
-      if (cloudData) {
-        if (cloudData.profile) setProfile(cloudData.profile);
-        if (cloudData.brandAssets) setBrandAssets(cloudData.brandAssets);
-        if (cloudData.stats) setStats(cloudData.stats);
-      }
-    });
+    // Always use initialData as the canonical source
+    setProjects(initialProjects);
   }, []);
 
-  // Function to explicitly push state to Supabase CMS and cloud storage
+  // Save state to localStorage for persistence within the same browser
   const syncToCloud = async (): Promise<boolean> => {
-    // Save all projects to Supabase CMS
-    for (const project of projects) {
-      await saveProjectToCMS(project);
+    try {
+      localStorage.setItem(LOCAL_STORAGE_PREFIX + 'projects', JSON.stringify(projects));
+      localStorage.setItem(LOCAL_STORAGE_PREFIX + 'profile', JSON.stringify(profile));
+      localStorage.setItem(LOCAL_STORAGE_PREFIX + 'brand_assets', JSON.stringify(brandAssets));
+      localStorage.setItem(LOCAL_STORAGE_PREFIX + 'stats', JSON.stringify(stats));
+      return true;
+    } catch (e) {
+      console.warn('Failed to sync to localStorage:', e);
+      return false;
     }
-    return await saveCloudPortfolioData({
-      projects,
-      profile,
-      brandAssets,
-      stats
-    });
   };
 
   // Sync state to local storage safely
@@ -233,7 +201,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   };
 
-  // CRUD Operations with Automatic Supabase Cloud Sync
+  // CRUD Operations (localStorage only)
   const addProject = (newProjData: Omit<Project, 'id' | 'createdAt'>) => {
     const newProject: Project = {
       ...newProjData,
@@ -241,18 +209,10 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       createdAt: new Date().toISOString().split('T')[0]
     };
     setProjects(prev => [newProject, ...prev]);
-    saveProjectToCMS(newProject);
   };
 
   const updateProject = (id: string, updatedFields: Partial<Project>) => {
-    setProjects(prev => {
-      const updated = prev.map(p => (p.id === id ? { ...p, ...updatedFields } : p));
-      const target = updated.find(p => p.id === id);
-      if (target) {
-        saveProjectToCMS(target);
-      }
-      return updated;
-    });
+    setProjects(prev => prev.map(p => (p.id === id ? { ...p, ...updatedFields } : p)));
     // If updating currently open modal project, sync it as well
     if (selectedProjectForModal && selectedProjectForModal.id === id) {
       setSelectedProjectForModal(prev => prev ? { ...prev, ...updatedFields } : null);
@@ -261,18 +221,10 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const deleteProject = (id: string) => {
     setProjects(prev => prev.filter(p => p.id !== id));
-    deleteProjectFromCMS(id);
   };
 
   const toggleFeatured = (id: string) => {
-    setProjects(prev => {
-      const updated = prev.map(p => (p.id === id ? { ...p, featured: !p.featured } : p));
-      const target = updated.find(p => p.id === id);
-      if (target) {
-        saveProjectToCMS(target);
-      }
-      return updated;
-    });
+    setProjects(prev => prev.map(p => (p.id === id ? { ...p, featured: !p.featured } : p)));
   };
 
   const updateProfile = (updatedProfile: Partial<UserProfile>) => {
