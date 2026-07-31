@@ -1,9 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 import { Project, UserProfile, BrandAssets, Stats } from '../types';
 
-// Default Supabase project endpoints for Jovas Portfolio CMS
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://jovas-portfolio-cms.supabase.co';
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpvdmFzLXBvcnRmb2xpby1jbXMiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTY4MDAwMDAwMCwiZXhwIjoyMDAwMDAwMDAwfQ.placeholderKey';
+// Supabase project endpoint & key for Jovas Portfolio
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://qilojiufolykawjmuwg.supabase.co';
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFpbG9qaXVmb2x5a2F3amptdXdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU0ODQ0NzksImV4cCI6MjEwMTA2MDQ3OX0.V-7N2T-WvufJXAu-DZ0VKRWpWLvoDpGVCaWCLWse3i8';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
