@@ -3,6 +3,7 @@ import { Project, UserProfile, BrandAssets, ContactMessage, Stats } from '../typ
 import { initialProjects, initialProfile, initialBrandAssets, initialMessages, initialStats } from '../data/initialData';
 import { fetchCloudPortfolioData, saveCloudPortfolioData } from '../utils/cloudStorage';
 import { fetchProjectsFromCMS, saveProjectToCMS, deleteProjectFromCMS } from '../utils/supabaseClient';
+import { fetchProjectsFromEdgeConfig } from '../utils/edgeConfig';
 
 interface PortfolioContextType {
   projects: Project[];
@@ -118,19 +119,29 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
 
-  // Fetch Supabase CMS & Cloud Data on Mount for instant global sync across all devices
+  // Fetch Vercel Edge Config, Supabase CMS & Cloud Data on Mount
   useEffect(() => {
-    // 1. Try Supabase Cloud Database first
-    fetchProjectsFromCMS().then((cmsProjects) => {
-      if (cmsProjects && cmsProjects.length > 0) {
-        setProjects(cmsProjects);
+    // 1. Try Vercel Edge Config first
+    fetchProjectsFromEdgeConfig().then((edgeProjects) => {
+      if (edgeProjects && edgeProjects.length > 0) {
+        setProjects(edgeProjects);
         try {
-          localStorage.setItem(LOCAL_STORAGE_PREFIX + 'projects', JSON.stringify(cmsProjects));
+          localStorage.setItem(LOCAL_STORAGE_PREFIX + 'projects', JSON.stringify(edgeProjects));
         } catch (e) {}
-      } else {
-        // 2. If Supabase table is empty, seed initial projects to Supabase
-        initialProjects.forEach(p => saveProjectToCMS(p));
+        return;
       }
+
+      // 2. Try Supabase Cloud Database second
+      fetchProjectsFromCMS().then((cmsProjects) => {
+        if (cmsProjects && cmsProjects.length > 0) {
+          setProjects(cmsProjects);
+          try {
+            localStorage.setItem(LOCAL_STORAGE_PREFIX + 'projects', JSON.stringify(cmsProjects));
+          } catch (e) {}
+        } else {
+          initialProjects.forEach(p => saveProjectToCMS(p));
+        }
+      });
     });
 
     // 3. Sync profile and brand assets from cloud storage
