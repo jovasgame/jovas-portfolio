@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Project, UserProfile, BrandAssets, ContactMessage, Stats } from '../types';
 import { initialProjects, initialProfile, initialBrandAssets, initialMessages, initialStats } from '../data/initialData';
+import { fetchCloudPortfolioData, saveCloudPortfolioData } from '../utils/cloudStorage';
 
 interface PortfolioContextType {
   projects: Project[];
@@ -32,6 +33,7 @@ interface PortfolioContextType {
   markMessageAsRead: (id: string) => void;
   deleteMessage: (id: string) => void;
   resetToDefaults: () => void;
+  syncToCloud: () => Promise<boolean>;
 }
 
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
@@ -44,7 +46,6 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'projects');
       if (saved) {
         const parsed: Project[] = JSON.parse(saved);
-        // Merge & sanitize with initialProjects to guarantee videoUrls are always present
         return parsed.map((p) => {
           const match = initialProjects.find((ip) => ip.id === p.id);
           if (!p.videoUrl || p.videoUrl.includes('w3schools.com')) {
@@ -115,6 +116,36 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   });
   
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
+
+  // Fetch Cloud Data on Mount for instant global sync across all devices
+  useEffect(() => {
+    fetchCloudPortfolioData().then((cloudData) => {
+      if (cloudData) {
+        if (cloudData.projects && cloudData.projects.length > 0) {
+          setProjects(cloudData.projects);
+        }
+        if (cloudData.profile) {
+          setProfile(cloudData.profile);
+        }
+        if (cloudData.brandAssets) {
+          setBrandAssets(cloudData.brandAssets);
+        }
+        if (cloudData.stats) {
+          setStats(cloudData.stats);
+        }
+      }
+    });
+  }, []);
+
+  // Function to explicitly push state to cloud storage
+  const syncToCloud = async (): Promise<boolean> => {
+    return await saveCloudPortfolioData({
+      projects,
+      profile,
+      brandAssets,
+      stats
+    });
+  };
 
   // Sync state to local storage safely
   useEffect(() => {
@@ -285,7 +316,8 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         addContactMessage,
         markMessageAsRead,
         deleteMessage,
-        resetToDefaults
+        resetToDefaults,
+        syncToCloud
       }}
     >
       {children}

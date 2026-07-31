@@ -50,7 +50,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
     updateBrandAssets,
     stats,
     logoutAdmin,
-    resetToDefaults
+    resetToDefaults,
+    syncToCloud
   } = usePortfolio();
 
   const [activeTab, setActiveTab] = useState<'projects' | 'messages' | 'profile' | 'brand' | 'images' | 'stats'>('projects');
@@ -174,6 +175,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
 
     setEditingProject(null);
     setIsCreatingNew(false);
+    setTimeout(() => {
+      syncToCloud();
+    }, 100);
   };
 
   const handleSaveProfile = (e: React.FormEvent) => {
@@ -194,7 +198,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
       brandText,
       brandSubtext
     });
-    showToast('¡Información de perfil e imágenes guardadas en tiempo real!');
+    showToast('¡Información guardada en la nube para todo el mundo!');
+    setTimeout(() => {
+      syncToCloud();
+    }, 100);
   };
 
   const handleSaveBrand = (e?: React.FormEvent) => {
@@ -206,7 +213,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
       heroText,
       heroBgUrl
     });
-    showToast('¡Logo y textos de marca guardados con éxito!');
+    showToast('¡Marca guardada en la nube!');
+    setTimeout(() => {
+      syncToCloud();
+    }, 100);
   };
 
   const handleAddSpec = () => {
@@ -280,16 +290,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
 
           <div className="flex items-center gap-3">
             <button
-              onClick={() => {
-                const exportedJson = JSON.stringify({ projects, profile, brandAssets }, null, 2);
-                navigator.clipboard.writeText(exportedJson);
-                showToast('¡Datos copiados al portapapeles! Puedes pegarlos o enviármelos para guardarlos en el código global.');
+              onClick={async () => {
+                showToast('Sincronizando con la nube...');
+                const success = await syncToCloud();
+                if (success) {
+                  showToast('⚡ ¡Sitio actualizado globalmente para todos los celulares y navegadores del mundo!');
+                } else {
+                  showToast('¡Datos guardados localmente!');
+                }
               }}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-xs font-semibold border border-emerald-500/30 transition-all cursor-pointer shadow-sm"
-              title="Copiar configuración actual para actualizar el sitio globalmente en todos los dispositivos"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold transition-all cursor-pointer shadow-lg shadow-emerald-900/30 border border-emerald-400/40"
+              title="Guardar y publicar tus cambios instantáneamente para todos los dispositivos del mundo"
             >
-              <Copy className="w-4 h-4 text-emerald-400" />
-              Copiar Datos Globales
+              <RefreshCw className="w-4 h-4 text-emerald-200 animate-spin-slow" />
+              Publicar a Todo el Mundo
             </button>
 
             <button
