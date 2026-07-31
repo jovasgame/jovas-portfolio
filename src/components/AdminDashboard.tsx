@@ -26,9 +26,12 @@ import {
   ArrowLeft,
   Image as ImageIcon,
   Upload,
-  Copy
+  Copy,
+  Download,
+  HardDrive
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { generateInitialDataTS, downloadInitialDataTS } from '../utils/exportInitialData';
 
 interface AdminDashboardProps {
   onCloseDashboard: () => void;
@@ -235,6 +238,33 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
     setSpecs(prev => prev.filter((_, i) => i !== index));
   };
 
+  const handleSaveToCode = async () => {
+    showToast('Guardando cambios en src/data/initialData.ts...');
+    const tsContent = generateInitialDataTS({
+      projects,
+      profile,
+      brandAssets,
+      stats
+    });
+
+    try {
+      const res = await fetch('/api/save-initial-data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fileContent: tsContent })
+      });
+      if (res.ok) {
+        showToast('💾 ¡Guardado con éxito en src/data/initialData.ts! Ya puedes pedir "Haz git push".');
+        return;
+      }
+    } catch (e) {
+      console.warn('Local save plugin unavailable, falling back to download:', e);
+    }
+
+    downloadInitialDataTS(tsContent);
+    showToast('📥 ¡Descargado initialData.ts! Reemplázalo en src/data/ y haz git push.');
+  };
+
   // Filtered projects list in dashboard
   const filteredProjects = projects.filter(p => {
     const matchesSearch = p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -288,7 +318,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap justify-end">
+            <button
+              onClick={handleSaveToCode}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white text-xs font-bold transition-all cursor-pointer shadow-lg shadow-sky-900/30 border border-sky-400/40"
+              title="Guarda tus cambios directamente en src/data/initialData.ts en tu computadora"
+            >
+              <HardDrive className="w-4 h-4 text-sky-200" />
+              💾 Guardar en Código (initialData.ts)
+            </button>
+
             <button
               onClick={async () => {
                 showToast('Sincronizando con la nube...');
