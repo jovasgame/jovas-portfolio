@@ -1,0 +1,243 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-poppins: 'Poppins', sans-serif;
+    --font-syne: 'Poppins', sans-serif;
+    --font-hanken: 'Hanken Grotesk', sans-serif;
+    --font-jetbrains: 'JetBrains Mono', monospace;
+  }
+
+  body {
+    font-family: var(--font-hanken);
+    background-color: #0d0c0e;
+    color: #e7e1e5;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6, .font-syne, .font-poppins {
+    font-family: var(--font-poppins);
+    font-weight: 800; /* ExtraBold */
+  }
+
+  .font-mono, .font-jetbrains {
+    font-family: var(--font-jetbrains);
+  }
+}
+
+/* Animated Lava Lamp Mesh Background */
+@keyframes lavaLampBg {
+  0% {
+    background-position: 0% 0%, 100% 0%, 50% 100%, 0% 100%, 100% 100%;
+  }
+  33% {
+    background-position: 50% 30%, 80% 60%, 20% 70%, 70% 30%, 30% 80%;
+  }
+  66% {
+    background-position: 80% 50%, 20% 90%, 70% 20%, 30% 80%, 90% 20%;
+  }
+  100% {
+    background-position: 0% 0%, 100% 0%, 50% 100%, 0% 100%, 100% 100%;
+  }
+}
+
+@keyframes lavaOrb1 {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+    opacity: 0.22;
+  }
+  33% {
+    transform: translate(60px, -80px) scale(1.15);
+    opacity: 0.35;
+  }
+  66% {
+    transform: translate(-40px, 60px) scale(0.9);
+    opacity: 0.25;
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+    opacity: 0.22;
+  }
+}
+
+@keyframes lavaOrb2 {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+    opacity: 0.25;
+  }
+  33% {
+    transform: translate(-70px, 90px) scale(0.85);
+    opacity: 0.18;
+  }
+  66% {
+    transform: translate(50px, -50px) scale(1.2);
+    opacity: 0.32;
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+    opacity: 0.25;
+  }
+}
+
+@keyframes lavaOrb3 {
+  0% {
+    transform: translate(0px, 0px) scale(0.95);
+    opacity: 0.18;
+  }
+  50% {
+    transform: translate(80px, 70px) scale(1.25);
+    opacity: 0.3;
+  }
+  100% {
+    transform: translate(0px, 0px) scale(0.95);
+    opacity: 0.18;
+  }
+}
+
+.mesh-bg {
+  background-color: #0b0a0c;
+  background-image: 
+    radial-gradient(circle at 15% 20%, rgba(255, 85, 64, 0.22) 0%, transparent 45%),
+    radial-gradient(circle at 85% 25%, rgba(254, 186, 57, 0.18) 0%, transparent 45%),
+    radial-gradient(circle at 50% 65%, rgba(220, 100, 75, 0.14) 0%, transparent 55%),
+    radial-gradient(circle at 20% 80%, rgba(254, 186, 57, 0.18) 0%, transparent 45%),
+    radial-gradient(circle at 80% 85%, rgba(255, 85, 64, 0.2) 0%, transparent 50%);
+  background-size: 160% 160%;
+  animation: lavaLampBg 25s ease-in-out infinite;
+  background-attachment: fixed;
+}
+
+.lava-blob-1 {
+  animation: lavaOrb1 18s ease-in-out infinite;
+}
+
+.lava-blob-2 {
+  animation: lavaOrb2 22s ease-in-out infinite;
+}
+
+.lava-blob-3 {
+  animation: lavaOrb3 26s ease-in-out infinite;
+}
+
+/* Glassmorphism Cards & Panels */
+.glass-card {
+  background: rgba(30, 27, 34, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover {
+  border-color: rgba(254, 186, 57, 0.35);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 0 0 25px rgba(254, 186, 57, 0.15);
+  transform: translateY(-2px);
+}
+
+.glass-panel {
+  background: rgba(23, 20, 26, 0.65);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.glass-panel-interactive {
+  background: rgba(28, 25, 32, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel-interactive:hover {
+  background: rgba(38, 34, 44, 0.65);
+  border-color: rgba(254, 186, 57, 0.3);
+  box-shadow: 0 12px 36px 0 rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.25);
+}
+
+/* Glass Inputs & Controls */
+.input-field, .glass-input {
+  background: rgba(18, 16, 21, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.input-field:focus, .glass-input:focus {
+  outline: none;
+  border-color: #feba39;
+  box-shadow: 0 0 0 2px rgba(254, 186, 57, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  background: rgba(24, 21, 28, 0.85);
+}
+
+/* Glow Effects */
+.glow-secondary {
+  box-shadow: 0 0 35px -5px rgba(254, 186, 57, 0.35);
+}
+
+.glow-primary {
+  box-shadow: 0 0 35px -5px rgba(255, 85, 64, 0.35);
+}
+
+.glow-red {
+  filter: drop-shadow(0 0 15px rgba(255, 85, 64, 0.4));
+}
+
+.glow-yellow {
+  filter: drop-shadow(0 0 15px rgba(254, 186, 57, 0.4));
+}
+
+/* X Motif Background Elements */
+.x-motif {
+  font-family: var(--font-syne);
+  font-weight: 800;
+  color: #feba39;
+  opacity: 0.12;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Diagonal Stripes & Lines */
+.diagonal-stripes {
+  background-image: repeating-linear-gradient(45deg, transparent, transparent 12px, rgba(255,255,255,0.03) 12px, rgba(255,255,255,0.03) 24px);
+}
+
+.diagonal-line {
+  width: 200%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #ff5540, #feba39, transparent);
+  transform: rotate(-15deg);
+  position: absolute;
+  z-index: 0;
+  opacity: 0.25;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0d0c0e;
+}
+::-webkit-scrollbar-thumb {
+  background: #2d2a32;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #feba39;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.75; transform: scale(1.04); }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 6s ease-in-out infinite;
+}

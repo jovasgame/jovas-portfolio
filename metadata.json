@@ -1,0 +1,8 @@
+{
+  "name": "Remix JOVAS - Portafolio de Motion Design",
+  "description": "Portafolio interactivo de animación, ilustración, modelado 3D y arte conceptual con slider llamativo y panel de control en tiempo real.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
