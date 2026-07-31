@@ -124,6 +124,9 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     fetchProjectsFromCMS().then((cmsProjects) => {
       if (cmsProjects && cmsProjects.length > 0) {
         setProjects(cmsProjects);
+        try {
+          localStorage.setItem(LOCAL_STORAGE_PREFIX + 'projects', JSON.stringify(cmsProjects));
+        } catch (e) {}
       } else {
         // 2. If Supabase table is empty, seed initial projects to Supabase
         initialProjects.forEach(p => saveProjectToCMS(p));

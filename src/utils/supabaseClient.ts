@@ -21,16 +21,28 @@ export async function fetchProjectsFromCMS(): Promise<Project[] | null> {
   try {
     const { data, error } = await supabase
       .from('projects')
-      .select('*')
-      .order('createdAt', { ascending: false });
+      .select('*');
 
     if (error) {
-      console.warn('Supabase fetch notice (using cache or fallback):', error.message);
+      console.warn('Supabase fetch notice:', error.message);
       return null;
     }
 
     if (data && data.length > 0) {
-      return data as Project[];
+      return data.map((item: any) => ({
+        id: item.id,
+        title: item.title,
+        category: item.category || 'Animación',
+        year: item.year || '2024',
+        description: item.description || '',
+        fullDescription: item.fullDescription || item.fulldescription || item.description || '',
+        imageUrl: item.imageUrl || item.imageurl || '',
+        videoUrl: item.videoUrl || item.videourl || '',
+        tags: item.tags || [],
+        featured: Boolean(item.featured),
+        client: item.client || '',
+        createdAt: item.createdAt || item.createdat || new Date().toISOString().split('T')[0]
+      })) as Project[];
     }
   } catch (e) {
     console.warn('Supabase offline or unconfigured:', e);
@@ -43,9 +55,24 @@ export async function fetchProjectsFromCMS(): Promise<Project[] | null> {
  */
 export async function saveProjectToCMS(project: Project): Promise<boolean> {
   try {
+    const payload = {
+      id: project.id,
+      title: project.title,
+      category: project.category,
+      year: project.year,
+      description: project.description,
+      fullDescription: project.fullDescription || project.description,
+      imageUrl: project.imageUrl,
+      videoUrl: project.videoUrl,
+      tags: project.tags,
+      featured: project.featured,
+      client: project.client,
+      createdAt: project.createdAt
+    };
+
     const { error } = await supabase
       .from('projects')
-      .upsert(project, { onConflict: 'id' });
+      .upsert(payload, { onConflict: 'id' });
 
     if (error) {
       console.warn('Supabase upsert error:', error.message);
