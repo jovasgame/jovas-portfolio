@@ -55,26 +55,40 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         />
 
         {/* Video Preview on Hover (Muted / Silent) */}
-        {isHovered && (
-          <div className="absolute inset-0 z-10 overflow-hidden bg-black pointer-events-none">
-            <MediaViewer
-              src={hoverVideoSrc}
-              alt={project.title}
-              poster={project.imageUrl}
-              forceVideo={true}
-              autoPlay={true}
-              muted={true}
-              controls={false}
-              loop={true}
-              className="w-full h-full object-cover object-center scale-105 transition-transform duration-700 pointer-events-none"
-            />
-            {/* Subtle Muted Preview Badge matching user design */}
-            <div className="absolute top-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-[#ff5540]/50 text-[10px] font-mono text-[#ff7563] font-semibold tracking-wider shadow-xl pointer-events-none">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#ff5540] animate-ping" />
-              <span>VISTA PREVIA (SIN SONIDO)</span>
-            </div>
+        <div
+          className={`absolute inset-0 z-10 overflow-hidden bg-black transition-opacity duration-300 pointer-events-none ${
+            isHovered ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          <video
+            ref={(el) => {
+              if (el) {
+                el.muted = true;
+                el.defaultMuted = true;
+                el.volume = 0;
+                if (isHovered) {
+                  const p = el.play();
+                  if (p !== undefined) p.catch(() => {});
+                } else {
+                  el.pause();
+                }
+              }
+            }}
+            src={hoverVideoSrc}
+            poster={project.imageUrl}
+            autoPlay={isHovered}
+            loop
+            muted
+            playsInline
+            preload="auto"
+            className="w-full h-full object-cover object-center scale-105 transition-transform duration-700 pointer-events-none"
+          />
+          {/* Subtle Muted Preview Badge matching user design */}
+          <div className="absolute top-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-[#ff5540]/50 text-[10px] font-mono text-[#ff7563] font-semibold tracking-wider shadow-xl pointer-events-none">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#ff5540] animate-ping" />
+            <span>VISTA PREVIA (SIN SONIDO)</span>
           </div>
-        )}
+        </div>
 
         {/* Play Badge Icon for Video or Animation Projects when NOT Hovered */}
         {!isHovered && isVideoOrAnimation && (

@@ -117,7 +117,18 @@ export const MediaViewer: React.FC<MediaViewerProps> = ({
   if (mediaInfo.type === 'video') {
     return (
       <video
-        ref={videoRef}
+        ref={(el) => {
+          videoRef.current = el;
+          if (el) {
+            el.muted = muted;
+            el.defaultMuted = muted;
+            if (muted) el.volume = 0;
+            if (autoPlay) {
+              const p = el.play();
+              if (p !== undefined) p.catch(() => {});
+            }
+          }
+        }}
         src={activeVideoUrl}
         poster={poster}
         className={className}
@@ -126,7 +137,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = ({
         loop={loop}
         muted={muted}
         playsInline
-        preload="auto"
+        preload="metadata"
         onPlay={(e) => {
           if (muted) {
             e.currentTarget.muted = true;
@@ -142,30 +153,8 @@ export const MediaViewer: React.FC<MediaViewerProps> = ({
             e.currentTarget.play().catch(() => {});
           }
         }}
-        onVolumeChange={(e) => {
-          if (muted) {
-            e.currentTarget.muted = true;
-            e.currentTarget.volume = 0;
-          }
-        }}
-        onTimeUpdate={(e) => {
-          if (muted && e.currentTarget.volume > 0) {
-            e.currentTarget.muted = true;
-            e.currentTarget.volume = 0;
-          }
-        }}
-        onLoadedMetadata={(e) => {
-          if (muted) {
-            e.currentTarget.muted = true;
-            e.currentTarget.volume = 0;
-          }
-          if (autoPlay) {
-            e.currentTarget.play().catch(() => {});
-          }
-        }}
         onEnded={onEnded}
         onError={() => {
-          // If custom video URL failed, try sample video as fallback before giving up to poster
           if (activeVideoUrl !== FALLBACK_SAMPLE_VIDEO) {
             setVideoSrc(FALLBACK_SAMPLE_VIDEO);
           } else {
