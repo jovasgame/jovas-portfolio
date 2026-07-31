@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { motion } from 'motion/react';
 import { Sparkles, Eye, Star, Plus, Film, Palette, Box, Image as ImageIcon, Flame } from 'lucide-react';
