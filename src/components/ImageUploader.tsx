@@ -175,19 +175,6 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
           <button
             type="button"
-            onClick={() => setActiveTab('drive')}
-            className={`px-3 py-1 rounded-lg transition-colors cursor-pointer flex items-center gap-1 ${
-              activeTab === 'drive'
-                ? 'bg-gradient-to-r from-[#4285F4] via-[#34A853] to-[#FBBC05] text-white font-bold shadow-sm'
-                : 'text-[#a89f9e] hover:text-white'
-            }`}
-          >
-            <HardDrive className="w-3 h-3 text-[#4285F4]" />
-            Google Drive
-          </button>
-
-          <button
-            type="button"
             onClick={() => setActiveTab('url')}
             className={`px-3 py-1 rounded-lg transition-colors cursor-pointer ${
               activeTab === 'url'
@@ -195,7 +182,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                 : 'text-[#a89f9e] hover:text-white'
             }`}
           >
-            Enlace URL / YT / Vimeo
+            Enlace URL (Drive / YT / Vimeo / Directo)
           </button>
 
           <button
@@ -256,131 +243,55 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         </div>
       )}
 
-      {/* Mode 2: Google Drive Integration */}
-      {activeTab === 'drive' && (
-        <div className="space-y-3 bg-[#18161c] p-4 rounded-xl border border-[#4285F4]/30">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-xs font-bold text-white">
-              <div className="w-6 h-6 rounded-lg bg-[#4285F4]/20 border border-[#4285F4]/40 flex items-center justify-center text-[#4285F4]">
-                <HardDrive className="w-3.5 h-3.5" />
-              </div>
-              <span>Conectar Enlace de Google Drive</span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <a
-                href="https://drive.google.com"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[11px] font-mono text-[#4285F4] hover:underline flex items-center gap-1 bg-[#4285F4]/10 px-2.5 py-1 rounded-lg border border-[#4285F4]/20"
-              >
-                Abrir mi Google Drive <ExternalLink className="w-3 h-3" />
-              </a>
-
-              <button
-                type="button"
-                onClick={() => setShowDriveHelp(!showDriveHelp)}
-                className="p-1 rounded-lg bg-white/5 hover:bg-white/10 text-[#a89f9e] hover:text-white"
-                title="¿Cómo obtener el enlace?"
-              >
-                <HelpCircle className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-
-          {showDriveHelp && (
-            <div className="p-3 bg-black/60 rounded-xl border border-white/10 text-[11px] text-[#a89f9e] space-y-1.5 font-sans">
-              <p className="font-bold text-[#feba39] flex items-center gap-1">
-                <Sparkles className="w-3.5 h-3.5" /> Pasos para reproducir videos de Google Drive en tu portafolio:
-              </p>
-              <ol className="list-decimal list-inside space-y-1 pl-1 text-white/90">
-                <li>Sube tu video o imagen a tu cuenta de <strong>Google Drive</strong>.</li>
-                <li>Haz clic derecho en el archivo &rarr; <strong>Compartir &rarr; Copiar enlace</strong>.</li>
-                <li>Cambia el acceso a: <strong>"Cualquier persona con el enlace"</strong> (Lector).</li>
-                <li>Pega el enlace abajo, selecciona si es <strong>Video</strong> o <strong>Imagen</strong> y presiona <strong>"Convertir & Usar"</strong>.</li>
-              </ol>
-            </div>
-          )}
-
-          {/* Drive Type Selector (Video vs Imagen) */}
-          <div className="flex items-center justify-between gap-2 pt-1">
-            <span className="text-[11px] font-mono text-[#a89f9e]">Tipo de contenido en Drive:</span>
-            <div className="flex items-center gap-2 text-[11px] font-mono">
-              {allowVideo && (
-                <label className="flex items-center gap-1.5 text-white cursor-pointer bg-black/40 px-2.5 py-1 rounded-lg border border-white/10">
-                  <input
-                    type="radio"
-                    name="driveType"
-                    checked={isDriveVideo}
-                    onChange={() => setIsDriveVideo(true)}
-                    className="accent-[#4285F4]"
-                  />
-                  <Video className="w-3 h-3 text-[#ff5540]" /> Video / Reel (Recomendado)
-                </label>
-              )}
-
-              <label className="flex items-center gap-1.5 text-white cursor-pointer bg-black/40 px-2.5 py-1 rounded-lg border border-white/10">
-                <input
-                  type="radio"
-                  name="driveType"
-                  checked={!isDriveVideo}
-                  onChange={() => setIsDriveVideo(false)}
-                  className="accent-[#4285F4]"
-                />
-                <ImageIcon className="w-3 h-3 text-[#feba39]" /> Imagen Fija
-              </label>
-            </div>
-          </div>
-
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <input
-                type="text"
-                value={driveInput}
-                onChange={(e) => setDriveInput(e.target.value)}
-                placeholder="https://drive.google.com/file/d/1ABC123xyz/view?usp=sharing"
-                className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-black/80 border border-[#4285F4]/40 text-xs text-white placeholder-white/30 font-mono focus:outline-none focus:border-[#4285F4]"
-              />
-              <HardDrive className="w-4 h-4 text-[#4285F4] absolute left-3 top-3" />
-            </div>
-
-            <button
-              type="button"
-              onClick={handleApplyGoogleDrive}
-              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#4285F4] to-[#34A853] text-white font-bold text-xs hover:opacity-90 transition-opacity cursor-pointer whitespace-nowrap shadow-md shadow-[#4285F4]/20 flex items-center gap-1.5"
-            >
-              <Check className="w-3.5 h-3.5" /> Convertir & Usar
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Mode 3: Direct URL Input (Supports YouTube, Vimeo, Direct MP4, Web URLs) */}
+      {/* Mode 2: Universal URL Input (Supports Google Drive, YouTube, Vimeo, Direct MP4 / JPG) */}
       {activeTab === 'url' && (
-        <div className="space-y-2">
+        <div className="space-y-3 bg-black/40 p-4 rounded-xl border border-white/10">
           <div className="flex gap-2">
             <div className="relative flex-1">
               <input
                 type="url"
                 value={urlInput}
-                onChange={(e) => setUrlInput(e.target.value)}
-                placeholder="YouTube, Vimeo, Google Drive o URL directa (.mp4 / .jpg)"
-                className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-black/60 border border-white/15 text-xs text-white placeholder-white/30 font-mono focus:outline-none focus:border-[#feba39]"
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setUrlInput(val);
+                  // Auto apply immediately if user pastes a valid link
+                  if (val.trim()) {
+                    const driveParsed = parseGoogleDriveUrl(val.trim());
+                    if (driveParsed) {
+                      const converted = convertGoogleDriveToDirectUrl(val.trim(), allowVideo);
+                      onChange(converted);
+                    } else {
+                      onChange(val.trim());
+                    }
+                  }
+                }}
+                placeholder="Pega enlace de Google Drive, YouTube, Vimeo o URL directa (.mp4 / .jpg)"
+                className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-black/80 border border-[#feba39]/40 text-xs text-white placeholder-white/40 font-mono focus:outline-none focus:border-[#feba39] shadow-inner"
               />
-              <LinkIcon className="w-4 h-4 text-[#a89f9e] absolute left-3 top-3" />
+              <LinkIcon className="w-4 h-4 text-[#feba39] absolute left-3 top-3" />
             </div>
 
             <button
               type="button"
               onClick={handleApplyUrl}
-              className="px-4 py-2.5 rounded-xl bg-[#feba39] text-[#2c1800] font-bold text-xs hover:bg-[#ffc65c] transition-colors cursor-pointer"
+              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] font-bold text-xs hover:scale-105 active:scale-95 transition-transform cursor-pointer shadow-md whitespace-nowrap"
             >
-              Aplicar URL
+              Aplicar & Optimizar
             </button>
           </div>
-          <p className="text-[10px] text-[#a89f9e] font-mono">
-            Soporta: <strong>YouTube</strong> (youtube.com/watch?v=...), <strong>Vimeo</strong>, <strong>Google Drive</strong> y URLs de video <strong>.mp4</strong> o imágenes <strong>.jpg / .png</strong>.
-          </p>
+
+          {/* Helper box for Google Drive & Media links */}
+          <div className="p-3 bg-[#4285F4]/10 rounded-xl border border-[#4285F4]/30 space-y-1.5 text-[11px]">
+            <p className="font-bold text-[#4285F4] flex items-center gap-1.5 font-mono">
+              <Sparkles className="w-3.5 h-3.5" /> ¿Cómo usar enlaces de Google Drive?
+            </p>
+            <p className="text-[#a89f9e] leading-relaxed font-sans">
+              1. Sube tu video o imagen a tu <strong>Google Drive</strong>.<br />
+              2. Haz clic derecho &rarr; <strong>Compartir &rarr; Copiar enlace</strong>.<br />
+              3. Asegúrate de cambiar el acceso a <strong>"Cualquier persona con el enlace"</strong> (Lector).<br />
+              4. Pega el enlace aquí arriba y la aplicación lo optimizará automáticamente para reproducción fluida en la web.
+            </p>
+          </div>
         </div>
       )}
 

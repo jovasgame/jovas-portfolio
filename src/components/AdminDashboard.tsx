@@ -236,7 +236,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
   const unreadCount = messages.filter(m => !m.read).length;
 
   return (
-    <div className="min-h-screen bg-[#100f12] text-[#e7e1e5] font-sans pb-20">
+    <div className="min-h-screen bg-[#090d16] text-[#e2e8f0] font-sans pb-20 selection:bg-[#38bdf8] selection:text-[#0f172a]">
       
       {/* Toast Notification */}
       <AnimatePresence>
@@ -245,34 +245,35 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-6 right-6 z-50 bg-[#feba39] text-[#2c1800] px-5 py-3 rounded-2xl font-bold shadow-2xl flex items-center gap-2 text-xs"
+            className="fixed top-6 right-6 z-50 bg-[#0284c7] text-white px-5 py-3 rounded-xl font-bold shadow-2xl flex items-center gap-2 text-xs border border-[#38bdf8]/40"
           >
-            <Sparkles className="w-4 h-4" />
+            <Sparkles className="w-4 h-4 text-[#38bdf8]" />
             {toastMsg}
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Top Admin Header Bar */}
-      <header className="sticky top-0 z-30 bg-[#17161a]/95 backdrop-blur-md border-b border-[#b18780]/20 py-4 px-4 sm:px-8">
+      {/* Top Corporate Admin Header Bar */}
+      <header className="sticky top-0 z-30 bg-[#0f172a]/95 backdrop-blur-md border-b border-[#1e293b] py-3.5 px-4 sm:px-8">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#ff5540] to-[#feba39] p-[1px]">
-              <div className="w-full h-full bg-[#1e1c21] rounded-[11px] flex items-center justify-center">
-                <Flame className="w-5 h-5 text-[#feba39]" />
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#0284c7] to-[#38bdf8] p-[1px] shadow-lg shadow-[#0284c7]/20">
+              <div className="w-full h-full bg-[#0f172a] rounded-[11px] flex items-center justify-center">
+                <FolderKanban className="w-5 h-5 text-[#38bdf8]" />
               </div>
             </div>
 
             <div>
-              <h1 className="font-syne font-black text-xl text-white flex items-center gap-2">
-                PANEL DE CONTROL REAL-TIME
-                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-mono border border-emerald-500/30">
-                  Propietario Activo
+              <h1 className="font-syne font-bold text-lg text-white flex items-center gap-2 tracking-wide">
+                JOVAS MOTION &bull; CONSOLA DE ADMINISTRACIÓN
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-mono border border-emerald-500/20 font-semibold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  SISTEMA EN LINEA
                 </span>
               </h1>
-              <p className="text-[11px] font-mono text-[#a89f9e]">
-                Gestión en tiempo real del sitio de Jovas Motion
+              <p className="text-[11px] font-mono text-[#94a3b8]">
+                Panel Corporativo de Gestión en Tiempo Real &bull; Administrador
               </p>
             </div>
           </div>
@@ -280,15 +281,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
           <div className="flex items-center gap-3">
             <button
               onClick={onCloseDashboard}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/15 text-white text-xs font-bold border border-white/10 transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#1e293b] hover:bg-[#334155] text-slate-200 text-xs font-semibold border border-[#334155] transition-all cursor-pointer shadow-sm"
             >
-              <ArrowLeft className="w-4 h-4" />
-              Ver Sitio Público
+              <ArrowLeft className="w-4 h-4 text-[#38bdf8]" />
+              Ver Vista Pública
             </button>
 
             <button
               onClick={logoutAdmin}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-bold border border-red-500/30 transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 text-xs font-semibold border border-rose-500/30 transition-all cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
               Cerrar Sesión
