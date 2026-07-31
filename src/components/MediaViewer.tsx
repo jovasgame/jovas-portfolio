@@ -155,7 +155,11 @@ export const MediaViewer: React.FC<MediaViewerProps> = ({
         }}
         onEnded={onEnded}
         onError={() => {
-          if (activeVideoUrl !== FALLBACK_SAMPLE_VIDEO) {
+          const driveMatch = src.match(/\/d\/([a-zA-Z0-9_-]+)/) || src.match(/id=([a-zA-Z0-9_-]+)/);
+          if (driveMatch && driveMatch[1] && activeVideoUrl.includes('googleusercontent.com')) {
+            // Try Drive preview iframe if direct CDN fails
+            setVideoSrc(`https://drive.google.com/file/d/${driveMatch[1]}/preview`);
+          } else if (activeVideoUrl !== FALLBACK_SAMPLE_VIDEO) {
             setVideoSrc(FALLBACK_SAMPLE_VIDEO);
           } else {
             setHasError(true);
