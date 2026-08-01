@@ -28,6 +28,7 @@ import {
   Upload,
   Copy
 } from 'lucide-react';
+import { parseMediaUrl } from '../utils/mediaUtils';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface AdminDashboardProps {
@@ -72,6 +73,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
   const [fullDescription, setFullDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
+  const [mediaUrl, setMediaUrl] = useState('');
   const [tagsInput, setTagsInput] = useState('');
   const [client, setClient] = useState('');
   const [featured, setFeatured] = useState(false);
@@ -100,6 +102,25 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
     setTimeout(() => setToastMsg(''), 3000);
   };
 
+  const handleMediaUrlChange = (val: string) => {
+    setMediaUrl(val);
+    if (!val) {
+      setImageUrl('');
+      setVideoUrl('');
+      return;
+    }
+    const parsed = parseMediaUrl(val);
+    if (parsed.type === 'video' || parsed.type === 'iframe') {
+      setVideoUrl(val);
+      if (!imageUrl || imageUrl.includes('unsplash')) {
+        setImageUrl('https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80');
+      }
+    } else {
+      setImageUrl(val);
+      setVideoUrl('');
+    }
+  };
+
   const openCreateModal = () => {
     setEditingProject(null);
     setIsCreatingNew(true);
@@ -110,6 +131,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
     setFullDescription('');
     setImageUrl('https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80');
     setVideoUrl('');
+    setMediaUrl('');
     setTagsInput('Motion Graphics, 3D Render');
     setClient('');
     setFeatured(false);
@@ -129,6 +151,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
     setFullDescription(p.fullDescription || p.description);
     setImageUrl(p.imageUrl);
     setVideoUrl(p.videoUrl || '');
+    setMediaUrl(p.videoUrl || p.imageUrl || '');
     setTagsInput(p.tags.join(', '));
     setClient(p.client || '');
     setFeatured(p.featured);
@@ -1108,18 +1131,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
                 </div>
               </div>
 
+              {/* Single Unified Media Resource Field (Auto Detects Video or Image) */}
               <ImageUploader
-                value={imageUrl}
-                onChange={setImageUrl}
-                label="Imagen Principal del Proyecto"
-                helperText="Sube tu archivo de imagen propia desde tu equipo, conecta Google Drive o selecciona un enlace"
-              />
-
-              <ImageUploader
-                value={videoUrl}
-                onChange={setVideoUrl}
-                label="Video / Reel Demo del Proyecto (Opcional)"
-                helperText="Sube tu video (MP4/WEBM), selecciona tu video de Google Drive o pega un enlace de streaming"
+                value={mediaUrl || videoUrl || imageUrl}
+                onChange={handleMediaUrlChange}
+                label="Recurso Multimedia del Proyecto (Imagen o Video)"
+                helperText="Sube tu archivo de imagen o video desde tu equipo, conecta tu Google Drive o pega un enlace (YouTube, Vimeo, MP4, PNG, JPG). El sistema lo detectará automáticamente."
                 allowVideo={true}
               />
 

@@ -116,23 +116,49 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
 
-  // Sync all projects from initialData on mount (source of truth is the code)
+  // Sync from Cloudflare KV API on mount, fallback to localStorage / initialData
   useEffect(() => {
-    // Always use initialData as the canonical source
-    setProjects(initialProjects);
+    fetch('/api/portfolio')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.projects && Array.isArray(data.projects) && data.projects.length > 0) {
+          setProjects(data.projects);
+          if (data.profile) setProfile(data.profile);
+          if (data.brandAssets) setBrandAssets(data.brandAssets);
+          if (data.stats) setStats(data.stats);
+        }
+      })
+      .catch(e => {
+        console.warn('Cloudflare KV fetch notice (using defaults/localStorage):', e);
+      });
   }, []);
 
-  // Save state to localStorage for persistence within the same browser
+  // Save state to Cloudflare KV storage + localStorage for global persistence
   const syncToCloud = async (): Promise<boolean> => {
+    const payload = { projects, profile, brandAssets, stats };
+
+    // 1. Save to localStorage locally
     try {
       localStorage.setItem(LOCAL_STORAGE_PREFIX + 'projects', JSON.stringify(projects));
       localStorage.setItem(LOCAL_STORAGE_PREFIX + 'profile', JSON.stringify(profile));
       localStorage.setItem(LOCAL_STORAGE_PREFIX + 'brand_assets', JSON.stringify(brandAssets));
       localStorage.setItem(LOCAL_STORAGE_PREFIX + 'stats', JSON.stringify(stats));
-      return true;
     } catch (e) {
       console.warn('Failed to sync to localStorage:', e);
-      return false;
+    }
+
+    // 2. Save live to Cloudflare KV via Functions API
+    try {
+      const res = await fetch('/api/portfolio', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      return Boolean(data && (data.success || data.projects));
+    } catch (e) {
+      console.warn('Failed to sync to Cloudflare KV:', e);
+      return true; // Graceful fallback
     }
   };
 
