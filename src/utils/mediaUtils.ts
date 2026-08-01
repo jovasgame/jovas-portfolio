@@ -81,10 +81,18 @@ export function parseMediaUrl(
   // 1. Google Drive
   const driveParsed = parseGoogleDriveUrl(cleaned);
   if (driveParsed) {
-    // Official Google Drive embed iframe player (works 100% on all browsers and devices)
+    if (forceVideo) {
+      return {
+        type: 'iframe',
+        embedUrl: `https://drive.google.com/file/d/${driveParsed.id}/preview`,
+        originalUrl: cleaned,
+        provider: 'drive'
+      };
+    }
+    // Direct Google CDN image stream (works in <img> tags natively with full resolution)
     return {
-      type: 'iframe',
-      embedUrl: `https://drive.google.com/file/d/${driveParsed.id}/preview`,
+      type: 'image',
+      embedUrl: `https://lh3.googleusercontent.com/d/${driveParsed.id}`,
       originalUrl: cleaned,
       provider: 'drive'
     };
