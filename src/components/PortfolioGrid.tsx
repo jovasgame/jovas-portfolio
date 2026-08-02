@@ -269,7 +269,7 @@ export const PortfolioGrid: React.FC = () => {
           </div>
 
           {/* Category Filter Pills */}
-          <div className="flex flex-wrap items-center gap-2 max-w-full pb-2">
+          <div className="flex items-center gap-2 max-w-full pb-2 overflow-x-auto no-scrollbar sm:flex-wrap">
             {categories.map((cat) => {
               const active = selectedCategory === cat.value;
               return (

@@ -425,9 +425,10 @@ export const CoverflowGallery: React.FC = () => {
     const handleResize = () => {
       const w = window.innerWidth;
       if (w < 480) {
-        setDimensions({ width: w - 40, height: Math.min(320, (w - 40) * 1.05) });
+        const cardW = Math.min(280, w - 48);
+        setDimensions({ width: cardW, height: Math.round(cardW * 0.95) });
       } else if (w < 768) {
-        setDimensions({ width: 380, height: 320 });
+        setDimensions({ width: 340, height: 290 });
       } else if (w < 1024) {
         setDimensions({ width: 440, height: 350 });
       } else {

@@ -39,6 +39,8 @@ export const HeroSlider: React.FC = () => {
     return () => clearInterval(timer);
   }, [isPlaying, sliderItems.length]);
 
+  const touchStartX = React.useRef<number | null>(null);
+
   const handleNext = () => {
     setCurrentIndex((prev) => (prev + 1) % sliderItems.length);
   };
@@ -47,21 +49,39 @@ export const HeroSlider: React.FC = () => {
     setCurrentIndex((prev) => (prev - 1 + sliderItems.length) % sliderItems.length);
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX.current - touchEndX;
+    if (Math.abs(diff) > 40) {
+      if (diff > 0) {
+        handleNext();
+      } else {
+        handlePrev();
+      }
+    }
+    touchStartX.current = null;
+  };
+
   if (!currentProject) return null;
 
   return (
-    <section id="hero" className="relative min-h-screen pt-32 pb-24 flex flex-col justify-start overflow-hidden bg-transparent">
+    <section id="hero" className="relative min-h-screen pt-24 sm:pt-32 pb-16 sm:pb-24 flex flex-col justify-start overflow-hidden bg-transparent">
       {/* Background Animated Atmosphere & Grid */}
       <div className="absolute inset-0 z-0 opacity-15 pointer-events-none diagonal-stripes"></div>
       
       {/* Immersive Full Screen Hero Welcome Header */}
-      <div className="text-center max-w-3xl mx-auto px-4 sm:px-6 min-h-[75vh] flex flex-col items-center justify-center space-y-4 z-10 py-8 mb-16 sm:mb-28">
+      <div className="text-center max-w-3xl mx-auto px-4 sm:px-6 min-h-[60vh] sm:min-h-[75vh] flex flex-col items-center justify-center space-y-3 sm:space-y-4 z-10 py-6 sm:py-8 mb-10 sm:mb-28">
         {/* Transparent Large Metallic Paint Icon */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="w-52 h-52 sm:w-72 sm:h-72 relative flex items-center justify-center pointer-events-auto cursor-pointer drop-shadow-[0_15px_45px_rgba(255,85,64,0.45)] mb-2"
+          className="w-40 h-40 sm:w-56 sm:h-56 lg:w-72 lg:h-72 relative flex items-center justify-center pointer-events-auto cursor-pointer drop-shadow-[0_15px_45px_rgba(255,85,64,0.45)] mb-2"
         >
           <MetallicPaint
             imageSrc={
@@ -112,8 +132,12 @@ export const HeroSlider: React.FC = () => {
       </div>
 
       {/* 100% FULL-WIDTH MAIN INTERACTIVE SLIDER CONTAINER (Pushed lower with smooth spacing) */}
-      <div className="w-full px-2 sm:px-4 lg:px-8 z-10 mt-8 sm:mt-16 pt-8">
-        <div className="relative rounded-[2.5rem] overflow-hidden glass-panel border border-white/20 shadow-[0_25px_70px_-15px_rgba(0,0,0,0.9)] min-h-[520px] lg:min-h-[600px] flex flex-col justify-between group/slider hover:border-[#feba39]/50 transition-all duration-500 bg-black/40 backdrop-blur-md">
+      <div 
+        className="w-full px-2 sm:px-4 lg:px-8 z-10 mt-6 sm:mt-16 pt-4 sm:pt-8"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
+        <div className="relative rounded-[2.5rem] overflow-hidden glass-panel border border-white/20 shadow-[0_25px_70px_-15px_rgba(0,0,0,0.9)] min-h-[380px] sm:min-h-[520px] lg:min-h-[600px] flex flex-col justify-between group/slider hover:border-[#feba39]/50 transition-all duration-500 bg-black/40 backdrop-blur-md">
           
           {/* Background Slide Image & Video Overlay */}
           <AnimatePresence mode="wait">
