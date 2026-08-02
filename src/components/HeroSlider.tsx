@@ -54,14 +54,14 @@ export const HeroSlider: React.FC = () => {
       {/* Background Animated Atmosphere & Grid */}
       <div className="absolute inset-0 z-0 opacity-15 pointer-events-none diagonal-stripes"></div>
       
-      {/* Harmonious Metallic Paint Glow Header */}
-      <div className="text-center max-w-4xl mx-auto px-4 sm:px-6 mb-12 space-y-4 z-10 py-4 flex flex-col items-center">
-        {/* Metallic Paint Icon Container */}
+      {/* Harmonious Transparent Metallic Paint Header */}
+      <div className="text-center max-w-3xl mx-auto px-4 sm:px-6 mb-10 space-y-3 z-10 py-2 flex flex-col items-center">
+        {/* Transparent Large Metallic Paint Icon */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="w-24 h-24 sm:w-28 sm:h-28 relative rounded-full overflow-hidden flex items-center justify-center p-1 border border-[#feba39]/30 shadow-[0_0_30px_rgba(255,85,64,0.3)] bg-black/40 backdrop-blur-md mb-2 group cursor-pointer"
+          className="w-48 h-48 sm:w-64 sm:h-64 relative flex items-center justify-center pointer-events-auto cursor-pointer drop-shadow-[0_10px_40px_rgba(255,85,64,0.4)]"
         >
           <MetallicPaint
             imageSrc={
@@ -93,19 +93,19 @@ export const HeroSlider: React.FC = () => {
         </motion.div>
 
         <motion.h1
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="font-syne font-black text-3xl sm:text-5xl lg:text-6xl text-white tracking-tight leading-[1.1] drop-shadow-[0_10px_35px_rgba(0,0,0,0.9)] max-w-3xl"
+          className="font-syne font-black text-2xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-[1.15] drop-shadow-[0_10px_35px_rgba(0,0,0,0.9)] max-w-2xl"
         >
           ¡Un destello creativo para <span className="bg-gradient-to-r from-[#ff5540] via-[#feba39] to-[#ff5540] bg-clip-text text-transparent">iluminar tus proyectos</span>!
         </motion.h1>
 
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="text-sm sm:text-base text-[#e7e1e5]/85 max-w-2xl mx-auto font-sans leading-relaxed drop-shadow"
+          className="text-xs sm:text-sm text-[#e7e1e5]/80 max-w-xl mx-auto font-sans leading-relaxed drop-shadow"
         >
           Explora la colección de animación digital, arte 3D e ilustración conceptual desarrollados con máxima precisión técnica y fluidez.
         </motion.p>
