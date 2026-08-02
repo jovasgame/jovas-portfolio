@@ -205,8 +205,8 @@ export function parseMediaUrl(
       rel: '0',
       enablejsapi: '1',
       playsinline: '1',
-      ...(autoPlay ? { autoplay: '1' } : { autoplay: '0' }),
-      ...(muted ? { mute: '1' } : {}),
+      autoplay: autoPlay ? '1' : '0',
+      mute: autoPlay ? '1' : (muted ? '1' : '0'),
       playlist: ytId,
       loop: '1'
     });
@@ -228,8 +228,8 @@ export function parseMediaUrl(
       portrait: '0',
       autopause: '0',
       dnt: '1',
-      ...(autoPlay ? { autoplay: '1' } : {}),
-      ...(muted ? { muted: '1', background: '1' } : {})
+      autoplay: autoPlay ? '1' : '0',
+      muted: autoPlay ? '1' : (muted ? '1' : '0')
     });
     return {
       type: 'iframe',

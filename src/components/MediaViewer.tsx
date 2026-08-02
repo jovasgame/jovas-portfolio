@@ -130,7 +130,14 @@ export const MediaViewer: React.FC<MediaViewerProps> = ({
             if (muted) el.volume = 0;
             if (autoPlay) {
               const p = el.play();
-              if (p !== undefined) p.catch(() => {});
+              if (p !== undefined) {
+                p.catch(() => {
+                  if (el) {
+                    el.muted = true;
+                    el.play().catch(() => {});
+                  }
+                });
+              }
             }
           }
         }}
@@ -142,20 +149,16 @@ export const MediaViewer: React.FC<MediaViewerProps> = ({
         loop={loop}
         muted={muted}
         playsInline
-        preload="metadata"
-        onPlay={(e) => {
-          if (muted) {
-            e.currentTarget.muted = true;
-            e.currentTarget.volume = 0;
-          }
-        }}
+        preload="auto"
         onCanPlay={(e) => {
-          if (muted) {
-            e.currentTarget.muted = true;
-            e.currentTarget.volume = 0;
-          }
           if (autoPlay) {
-            e.currentTarget.play().catch(() => {});
+            const p = e.currentTarget.play();
+            if (p !== undefined) {
+              p.catch(() => {
+                e.currentTarget.muted = true;
+                e.currentTarget.play().catch(() => {});
+              });
+            }
           }
         }}
         onEnded={onEnded}
