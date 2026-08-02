@@ -19,7 +19,7 @@ export function getDirectHoverVideoUrl(videoUrl?: string, projectId: string = 'p
     // Check if Google Drive
     const driveParsed = parseGoogleDriveUrl(trimmed);
     if (driveParsed) {
-      return `https://lh3.googleusercontent.com/d/${driveParsed.id}`;
+      return `https://drive.google.com/file/d/${driveParsed.id}/preview`;
     }
 
     if (
@@ -29,9 +29,7 @@ export function getDirectHoverVideoUrl(videoUrl?: string, projectId: string = 'p
       trimmed.includes('commondatastorage.googleapis.com') ||
       trimmed.includes('assets.mixkit.co') ||
       trimmed.startsWith('data:video/') ||
-      trimmed.startsWith('blob:') ||
-      trimmed.startsWith('http://') ||
-      trimmed.startsWith('https://')
+      trimmed.startsWith('blob:')
     ) {
       return trimmed;
     }
@@ -57,16 +55,30 @@ export function parseGoogleDriveUrl(url: string): { id: string; rawUrl: string }
   return null;
 }
 
+// Convert Google Drive or expired links to direct thumbnail URL
+export function getDirectThumbnailUrl(url?: string): string {
+  if (!url) return 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80';
+  const trimmed = url.trim();
+  const driveParsed = parseGoogleDriveUrl(trimmed);
+  if (driveParsed) {
+    return `https://drive.google.com/thumbnail?id=${driveParsed.id}&sz=w1200`;
+  }
+  if (trimmed.includes('lh3.googleusercontent.com/aida-public')) {
+    return 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80';
+  }
+  return trimmed;
+}
+
 // Convert Google Drive to Direct Stream or Embed URL
 export function convertGoogleDriveToDirectUrl(url: string, isVideo: boolean = false): string {
   const parsed = parseGoogleDriveUrl(url);
   if (!parsed) return url.trim();
 
   if (isVideo) {
-    return `https://lh3.googleusercontent.com/d/${parsed.id}`;
+    return `https://drive.google.com/file/d/${parsed.id}/preview`;
   }
   
-  return `https://drive.google.com/thumbnail?id=${parsed.id}&sz=w1920`;
+  return `https://drive.google.com/thumbnail?id=${parsed.id}&sz=w1200`;
 }
 
 // Main parser function for any media URL
@@ -83,7 +95,8 @@ export function parseMediaUrl(
   // 1. Google Drive
   const driveParsed = parseGoogleDriveUrl(cleaned);
   if (driveParsed) {
-    if (forceVideo) {
+    // Standard Google Drive file view/sharing link or forceVideo
+    if (forceVideo || cleaned.includes('/file/d/') || cleaned.includes('preview') || cleaned.includes('sharing')) {
       return {
         type: 'iframe',
         embedUrl: `https://drive.google.com/file/d/${driveParsed.id}/preview`,
@@ -91,10 +104,9 @@ export function parseMediaUrl(
         provider: 'drive'
       };
     }
-    // Direct Google CDN image stream (works in <img> tags natively with full resolution)
     return {
       type: 'image',
-      embedUrl: `https://lh3.googleusercontent.com/d/${driveParsed.id}`,
+      embedUrl: `https://drive.google.com/thumbnail?id=${driveParsed.id}&sz=w1200`,
       originalUrl: cleaned,
       provider: 'drive'
     };

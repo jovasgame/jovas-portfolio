@@ -40,6 +40,7 @@ import {
   Share2,
   Camera
 } from 'lucide-react';
+import { getDirectThumbnailUrl } from '../utils/mediaUtils';
 import { parseMediaUrl } from '../utils/mediaUtils';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -789,7 +790,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
                         <tr key={proj.id} className="hover:bg-white/5 transition-colors">
                           <td className="p-4 flex items-center gap-3">
                             <img
-                              src={proj.imageUrl}
+                              src={getDirectThumbnailUrl(proj.imageUrl || proj.videoUrl)}
                               alt={proj.title}
                               className="w-14 h-14 rounded-2xl object-cover border border-white/10"
                             />

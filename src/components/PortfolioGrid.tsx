@@ -4,7 +4,7 @@ import { motion } from 'motion/react';
 import { Sparkles, Eye, Star, Plus, Film, Palette, Box, Image as ImageIcon, Flame, Volume2, VolumeX } from 'lucide-react';
 import { ProjectCategory, Project } from '../types';
 import { MediaViewer } from './MediaViewer';
-import { getDirectHoverVideoUrl, parseMediaUrl } from '../utils/mediaUtils';
+import { getDirectHoverVideoUrl, parseMediaUrl, getDirectThumbnailUrl } from '../utils/mediaUtils';
 
 interface ProjectCardProps {
   project: Project;
@@ -34,6 +34,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   );
 
   const hoverVideoSrc = getDirectHoverVideoUrl(project.videoUrl, project.id);
+  const posterSrc = getDirectThumbnailUrl(project.imageUrl || project.videoUrl);
 
   // Handle play/pause & audio with sound on hover, mute & static preview on leave
   useEffect(() => {
@@ -74,7 +75,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       <div className="absolute inset-0 z-0 overflow-hidden">
         {/* Base Poster Image (Visible when NOT hovered) */}
         <img
-          src={project.imageUrl}
+          src={posterSrc}
           alt={project.title}
           className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 filter brightness-90 contrast-105"
         />
