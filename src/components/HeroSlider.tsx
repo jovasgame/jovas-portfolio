@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { motion, AnimatePresence } from 'motion/react';
 import { MediaViewer } from './MediaViewer';
+import { MagneticButton } from './MagneticButton';
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -166,14 +167,21 @@ export const HeroSlider: React.FC = () => {
 
             {/* Slide Action CTAs & Controls with Dynamic Glass & Glow Effects */}
             <div className="flex flex-col sm:flex-row md:flex-col items-start sm:items-center md:items-end gap-4 shrink-0">
-              <button
+              <MagneticButton
                 onClick={() => setSelectedProjectForModal(currentProject)}
-                className="relative overflow-hidden w-full sm:w-auto px-7 py-4 rounded-2xl bg-gradient-to-r from-[#ff5540] via-[#feba39] to-[#ff5540] bg-[length:200%_auto] hover:bg-right text-[#2b1800] font-black text-sm tracking-wider uppercase flex items-center justify-center gap-2.5 shadow-[0_0_25px_rgba(255,85,64,0.4)] hover:shadow-[0_0_40px_rgba(254,186,57,0.8)] hover:scale-105 active:scale-95 transition-all duration-500 border border-white/30 cursor-pointer group"
+                paddingX={28}
+                paddingY={15}
+                radius={16}
+                magnet={10}
+                fill="linear-gradient(135deg, #ff5540 0%, #feba39 100%)"
+                textColor="#2b1800"
+                sweepColor="#121114"
+                sweepTextColor="#feba39"
               >
-                <Eye className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                Explorar Proyecto
-                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              </button>
+                <Eye className="w-4 h-4" />
+                <span>Explorar Proyecto</span>
+                <ArrowUpRight className="w-4 h-4" />
+              </MagneticButton>
 
               {/* Slider Manual Controls Bar - Dynamic Glassmorphism & Hover Glow */}
               <div className="flex items-center gap-2.5 bg-black/50 backdrop-blur-2xl p-2 rounded-2xl border border-white/20 shadow-2xl shadow-black/80">

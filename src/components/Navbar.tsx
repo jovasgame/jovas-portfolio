@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { Shield, Sparkles, Menu, X, Flame, LogOut, LayoutDashboard } from 'lucide-react';
+import { MagneticButton } from './MagneticButton';
 
 interface NavbarProps {
   onOpenDashboardTab?: () => void;
@@ -147,14 +148,21 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenDashboardTab }) => {
             </button>
           )}
 
-          <a
-            href="#contacto"
+          <MagneticButton
+            link="#contacto"
             onClick={(e) => { e.preventDefault(); scrollToSection('contacto'); }}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] font-bold text-xs tracking-wider uppercase shadow-lg shadow-[#ff5540]/25 hover:shadow-[#ff5540]/40 hover:scale-105 active:scale-95 transition-all duration-200"
+            paddingX={18}
+            paddingY={9}
+            radius={12}
+            magnet={6}
+            fill="linear-gradient(135deg, #ff5540 0%, #feba39 100%)"
+            textColor="#2c1800"
+            sweepColor="#141316"
+            sweepTextColor="#feba39"
           >
             <Sparkles className="w-3.5 h-3.5" />
-            Contrátame
-          </a>
+            <span>Contrátame</span>
+          </MagneticButton>
         </div>
 
         {/* Mobile Hamburger Button */}

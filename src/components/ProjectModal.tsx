@@ -3,6 +3,7 @@ import { usePortfolio } from '../context/PortfolioContext';
 import { X, Play, Tag, Calendar, User, Cpu, Film, Sparkles, Flame, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MediaViewer } from './MediaViewer';
+import { MagneticButton } from './MagneticButton';
 
 export const ProjectModal: React.FC = () => {
   const { selectedProjectForModal, setSelectedProjectForModal } = usePortfolio();
@@ -134,17 +135,25 @@ export const ProjectModal: React.FC = () => {
                 Proyecto verificado del archivo de Jovas Motion
               </div>
 
-              <a
-                href="#contacto"
+              <MagneticButton
+                link="#contacto"
                 onClick={() => {
                   setSelectedProjectForModal(null);
                   const contactEl = document.getElementById('contacto');
                   if (contactEl) contactEl.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] font-bold text-xs uppercase tracking-wider text-center"
+                paddingX={22}
+                paddingY={12}
+                radius={14}
+                magnet={8}
+                fill="linear-gradient(135deg, #ff5540 0%, #feba39 100%)"
+                textColor="#2c1800"
+                sweepColor="#121114"
+                sweepTextColor="#feba39"
               >
-                Solicitar Cotización Similar
-              </a>
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Solicitar Cotización Similar</span>
+              </MagneticButton>
             </div>
 
           </div>

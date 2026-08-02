@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { motion } from 'motion/react';
 import { Send, CheckCircle2, MessageSquare, Sparkles, Mail, User, DollarSign, Flame } from 'lucide-react';
+import { MagneticButton } from './MagneticButton';
 
 export const ContactSection: React.FC = () => {
   const { addContactMessage } = usePortfolio();
@@ -184,13 +185,23 @@ export const ContactSection: React.FC = () => {
                   </div>
 
                   {/* Submit Button */}
-                  <button
-                    type="submit"
-                    className="w-full py-4 rounded-xl bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] font-bold text-sm tracking-wider uppercase flex items-center justify-center gap-2 shadow-lg shadow-[#ff5540]/20 hover:scale-[1.01] active:scale-[0.99] transition-transform cursor-pointer"
-                  >
-                    <Send className="w-4 h-4" />
-                    Enviar Consulta a Jovas
-                  </button>
+                  <div className="pt-2">
+                    <MagneticButton
+                      type="submit"
+                      paddingX={32}
+                      paddingY={16}
+                      radius={16}
+                      magnet={10}
+                      fill="linear-gradient(135deg, #ff5540 0%, #feba39 100%)"
+                      textColor="#2c1800"
+                      sweepColor="#141316"
+                      sweepTextColor="#feba39"
+                      style={{ width: "100%" }}
+                    >
+                      <Send className="w-4 h-4" />
+                      <span>Enviar Consulta a Jovas</span>
+                    </MagneticButton>
+                  </div>
 
                 </form>
               )}
