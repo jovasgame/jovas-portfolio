@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Project, UserProfile, BrandAssets, ContactMessage, Stats } from '../types';
 import { initialProjects, initialProfile, initialBrandAssets, initialMessages, initialStats } from '../data/initialData';
+import { hashPassword } from '../utils/security';
 
 interface PortfolioContextType {
   projects: Project[];
@@ -15,7 +16,7 @@ interface PortfolioContextType {
   
   // Admin & Auth
   isAdminLoggedIn: boolean;
-  loginAdmin: (user: string, pass: string) => boolean;
+  loginAdmin: (user: string, pass: string) => Promise<boolean>;
   logoutAdmin: () => void;
   isLoginModalOpen: boolean;
   setIsLoginModalOpen: (open: boolean) => void;
@@ -38,6 +39,10 @@ interface PortfolioContextType {
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
 
 const LOCAL_STORAGE_PREFIX = 'jovas_portfolio_';
+
+// Credentials SHA-256 Hash Security (No plain text password stored)
+const ADMIN_USERNAME = 'JovasMotion';
+const ADMIN_PASSWORD_HASH = '8e84a7c15b781c94359a4d8456f5d3168e3f7fa3dcfaa7e32041f30921f49bd6';
 
 export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [projects, setProjects] = useState<Project[]>(() => {
@@ -203,17 +208,24 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   }, [stats]);
 
-  // Auth check using explicit credentials requested by user
-  const loginAdmin = (user: string, pass: string): boolean => {
-    if (user === 'JovasMotion' && pass === '25720104') {
-      setIsAdminLoggedIn(true);
-      try {
-        localStorage.setItem(LOCAL_STORAGE_PREFIX + 'admin_session', 'active');
-      } catch (e) {
-        console.warn('Failed to save admin session:', e);
+  // Secure Auth check using SHA-256 password hash comparison
+  const loginAdmin = async (user: string, pass: string): Promise<boolean> => {
+    if (user.trim() !== ADMIN_USERNAME) return false;
+
+    try {
+      const inputHash = await hashPassword(pass.trim());
+      if (inputHash === ADMIN_PASSWORD_HASH) {
+        setIsAdminLoggedIn(true);
+        try {
+          localStorage.setItem(LOCAL_STORAGE_PREFIX + 'admin_session', 'active');
+        } catch (e) {
+          console.warn('Failed to save admin session:', e);
+        }
+        setIsLoginModalOpen(false);
+        return true;
       }
-      setIsLoginModalOpen(false);
-      return true;
+    } catch (e) {
+      console.error('Password hashing failed:', e);
     }
     return false;
   };

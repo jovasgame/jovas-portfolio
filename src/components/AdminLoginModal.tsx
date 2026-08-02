@@ -14,11 +14,11 @@ export const AdminLoginModal: React.FC = () => {
 
   if (!isLoginModalOpen) return null;
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
 
-    const isAuthorized = loginAdmin(username.trim(), password.trim());
+    const isAuthorized = await loginAdmin(username.trim(), password.trim());
 
     if (isAuthorized) {
       setSuccess(true);
