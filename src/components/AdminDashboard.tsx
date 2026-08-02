@@ -216,12 +216,28 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
       setVideoUrl('');
       return;
     }
+    
+    // Direct uploaded images (Base64 data:image, blob:, or image extensions)
+    if (val.startsWith('data:image/') || val.startsWith('blob:') || /\.(jpg|jpeg|png|webp|gif|svg)(\?.*)?$/i.test(val)) {
+      setImageUrl(val);
+      setVideoUrl('');
+      return;
+    }
+
+    // Direct uploaded videos or video links
+    if (val.startsWith('data:video/') || /\.(mp4|webm|mov|ogg)(\?.*)?$/i.test(val)) {
+      setVideoUrl(val);
+      if (!imageUrl || imageUrl.includes('unsplash')) {
+        setImageUrl(getDirectThumbnailUrl(val));
+      }
+      return;
+    }
+
+    // Google Drive, YouTube, Vimeo or generic links
     const parsed = parseMediaUrl(val);
     if (parsed.type === 'video' || parsed.type === 'iframe') {
       setVideoUrl(val);
-      if (!imageUrl || imageUrl.includes('unsplash')) {
-        setImageUrl('https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80');
-      }
+      setImageUrl(getDirectThumbnailUrl(val));
     } else {
       setImageUrl(val);
       setVideoUrl('');
@@ -280,19 +296,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
       finalImageUrl = `https://drive.google.com/thumbnail?id=${driveParsed.id}&sz=w1200`;
       finalVideoUrl = `https://drive.google.com/file/d/${driveParsed.id}/preview`;
     } else if (rawMedia) {
-      const parsed = parseMediaUrl(rawMedia);
-      if (parsed.type === 'video' || parsed.type === 'iframe') {
-        finalVideoUrl = rawMedia;
-        if (!finalImageUrl || finalImageUrl.includes('unsplash')) {
-          finalImageUrl = getDirectThumbnailUrl(rawMedia);
-        }
-      } else {
+      if (rawMedia.startsWith('data:image/') || rawMedia.startsWith('blob:') || /\.(jpg|jpeg|png|webp|gif|svg)(\?.*)?$/i.test(rawMedia)) {
         finalImageUrl = rawMedia;
+        finalVideoUrl = '';
+      } else if (rawMedia.startsWith('data:video/') || /\.(mp4|webm|mov|ogg)(\?.*)?$/i.test(rawMedia)) {
+        finalVideoUrl = rawMedia;
+        if (!finalImageUrl) finalImageUrl = getDirectThumbnailUrl(rawMedia);
+      } else {
+        const parsed = parseMediaUrl(rawMedia);
+        if (parsed.type === 'video' || parsed.type === 'iframe') {
+          finalVideoUrl = rawMedia;
+          if (!finalImageUrl) finalImageUrl = getDirectThumbnailUrl(rawMedia);
+        } else {
+          finalImageUrl = rawMedia;
+          finalVideoUrl = '';
+        }
       }
-    }
-
-    if (!finalImageUrl) {
-      finalImageUrl = 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80';
     }
 
     if (isCreatingNew) {
