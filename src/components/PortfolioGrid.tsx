@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import { Sparkles, Eye, Star, Plus, Film, Palette, Box, Image as ImageIcon, Flame, Volume2, VolumeX } from 'lucide-react';
 import { ProjectCategory, Project } from '../types';
 import { MediaViewer } from './MediaViewer';
+import { ProjectThumbnail } from './ProjectThumbnail';
 import { getDirectThumbnailUrl, isGoogleDriveUrl, getDriveEmbedUrl, isDirectVideoUrl, getCategoryFallbackImage } from '../utils/mediaUtils';
 
 interface ProjectCardProps {
@@ -84,14 +85,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       {/* Image / Video Hover Preview */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         {/* Base Poster Image (Visible when NOT hovered) */}
-        <img
-          src={posterSrc}
-          alt={project.title}
+        <ProjectThumbnail
+          project={project}
           className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 filter brightness-90 contrast-105"
-          onError={(e) => {
-            e.currentTarget.onerror = null;
-            e.currentTarget.src = getCategoryFallbackImage(project.category);
-          }}
         />
 
         {/* Video Preview on Hover */}

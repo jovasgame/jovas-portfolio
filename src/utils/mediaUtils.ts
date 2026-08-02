@@ -117,7 +117,7 @@ export function getCategoryFallbackImage(category?: string): string {
   }
 }
 
-// Convert Google Drive or expired links to direct thumbnail URL
+// Convert Google Drive, YouTube, Vimeo or expired links to direct thumbnail URL
 export function getDirectThumbnailUrl(url?: string, category?: string): string {
   const fallback = getCategoryFallbackImage(category);
   if (!url || !url.trim()) return fallback;
@@ -128,13 +128,29 @@ export function getDirectThumbnailUrl(url?: string, category?: string): string {
     return trimmed;
   }
 
+  // 1. Google Drive
   const driveParsed = parseGoogleDriveUrl(trimmed);
   if (driveParsed) {
     return `https://drive.google.com/thumbnail?id=${driveParsed.id}&sz=w1200`;
   }
+
+  // 2. YouTube
+  const youtubeMatch = trimmed.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([a-zA-Z0-9_-]{11})/);
+  if (youtubeMatch && youtubeMatch[1]) {
+    return `https://img.youtube.com/vi/${youtubeMatch[1]}/hqdefault.jpg`;
+  }
+
+  // 3. Vimeo
+  const vimeoMatch = trimmed.match(/(?:vimeo\.com\/|player\.vimeo\.com\/video\/)([0-9]+)/);
+  if (vimeoMatch && vimeoMatch[1]) {
+    return `https://vumbnail.com/${vimeoMatch[1]}.jpg`;
+  }
+
+  // 4. Expired AIDA links
   if (trimmed.includes('lh3.googleusercontent.com/aida-public')) {
     return fallback;
   }
+
   return trimmed;
 }
 

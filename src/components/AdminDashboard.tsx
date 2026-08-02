@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { Project, ProjectCategory, ProjectSpec, SocialLinkItem, PhotoItem } from '../types';
 import { ImageUploader } from './ImageUploader';
+import { ProjectThumbnail } from './ProjectThumbnail';
 import { 
   Plus, 
   Edit3, 
@@ -831,15 +832,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
                       {filteredProjects.map((proj) => (
                         <tr key={proj.id} className="hover:bg-white/5 transition-colors">
                           <td className="p-4 flex items-center gap-3">
-                            <img
-                              src={getDirectThumbnailUrl(proj.imageUrl || proj.videoUrl, proj.category)}
-                              alt={proj.title}
-                              className="w-14 h-14 rounded-2xl object-cover border border-white/10 bg-[#191524]"
-                              onError={(e) => {
-                                e.currentTarget.onerror = null;
-                                e.currentTarget.src = getCategoryFallbackImage(proj.category);
-                              }}
-                            />
+                            <div className="w-14 h-14 rounded-2xl overflow-hidden border border-white/10 bg-[#191524] shrink-0">
+                              <ProjectThumbnail project={proj} />
+                            </div>
                             <div>
                               <span className="font-bold text-white text-sm block">{proj.title}</span>
                               <span className="text-[11px] text-[#a89f9e] line-clamp-1">{proj.description}</span>
