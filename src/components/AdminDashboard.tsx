@@ -26,7 +26,17 @@ import {
   ArrowLeft,
   Image as ImageIcon,
   Upload,
-  Copy
+  Copy,
+  Activity,
+  ShieldCheck,
+  TrendingUp,
+  Clock,
+  Zap,
+  Globe,
+  Sliders,
+  Mail,
+  CheckCircle2,
+  AlertCircle
 } from 'lucide-react';
 import { parseMediaUrl } from '../utils/mediaUtils';
 import { motion, AnimatePresence } from 'motion/react';
@@ -55,7 +65,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
     syncToCloud
   } = usePortfolio();
 
-  const [activeTab, setActiveTab] = useState<'projects' | 'messages' | 'profile' | 'brand' | 'images' | 'stats'>('projects');
+  const [activeTab, setActiveTab] = useState<'stats' | 'projects' | 'profile' | 'brand' | 'images' | 'messages'>('stats');
   
   // Search & Filter in Dashboard
   const [searchTerm, setSearchTerm] = useState('');
@@ -99,7 +109,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
 
   const showToast = (msg: string) => {
     setToastMsg(msg);
-    setTimeout(() => setToastMsg(''), 3000);
+    setTimeout(() => setToastMsg(''), 3500);
   };
 
   const handleMediaUrlChange = (val: string) => {
@@ -221,7 +231,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
       brandText,
       brandSubtext
     });
-    showToast('¡Información guardada en la nube para todo el mundo!');
+    showToast('¡Información de biografía guardada exitosamente!');
     setTimeout(() => {
       syncToCloud();
     }, 100);
@@ -236,7 +246,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
       heroText,
       heroBgUrl
     });
-    showToast('¡Marca guardada en la nube!');
+    showToast('¡Identidad de marca guardada en la nube!');
     setTimeout(() => {
       syncToCloud();
     }, 100);
@@ -258,8 +268,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
     setSpecs(prev => prev.filter((_, i) => i !== index));
   };
 
-
-  // Filtered projects list in dashboard
   const filteredProjects = projects.filter(p => {
     const matchesSearch = p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           p.tags.some(t => t.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -269,983 +277,889 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
 
   const unreadCount = messages.filter(m => !m.read).length;
 
+  const navigationItems = [
+    { id: 'stats', label: 'Vista General & Métricas', icon: BarChart3 },
+    { id: 'projects', label: 'Gestión de Proyectos', icon: FolderKanban, count: projects.length },
+    { id: 'profile', label: 'Perfil & Biografía', icon: User },
+    { id: 'brand', label: 'Identidad & Marca', icon: Sparkles },
+    { id: 'images', label: 'Galería de Medios', icon: ImageIcon },
+    { id: 'messages', label: 'Bandeja de Entrada', icon: MessageSquare, badge: unreadCount },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#090d16] text-[#e2e8f0] font-sans pb-20 selection:bg-[#38bdf8] selection:text-[#0f172a]">
+    <div className="min-h-screen bg-[#0b0911] text-[#e2e8f0] font-sans flex flex-col lg:flex-row selection:bg-[#ff5540] selection:text-white relative overflow-x-hidden">
       
-      {/* Toast Notification */}
+      {/* Background Ambient Glow Orbs */}
+      <div className="fixed -top-40 -left-40 w-96 h-96 bg-[#ff5540]/15 rounded-full blur-[140px] pointer-events-none z-0" />
+      <div className="fixed top-1/2 right-0 w-96 h-96 bg-[#feba39]/10 rounded-full blur-[140px] pointer-events-none z-0" />
+      <div className="fixed -bottom-40 left-1/3 w-96 h-96 bg-[#38bdf8]/10 rounded-full blur-[140px] pointer-events-none z-0" />
+
+      {/* Toast Feedback Notification */}
       <AnimatePresence>
         {toastMsg && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed top-6 right-6 z-50 bg-[#0284c7] text-white px-5 py-3 rounded-xl font-bold shadow-2xl flex items-center gap-2 text-xs border border-[#38bdf8]/40"
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            className="fixed top-6 right-6 z-50 bg-[#1f1b29] text-white px-5 py-3.5 rounded-2xl font-bold shadow-2xl flex items-center gap-3 text-xs border border-[#feba39]/50 backdrop-blur-xl"
           >
-            <Sparkles className="w-4 h-4 text-[#38bdf8]" />
-            {toastMsg}
+            <Sparkles className="w-4 h-4 text-[#feba39] animate-pulse" />
+            <span>{toastMsg}</span>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Top Corporate Admin Header Bar */}
-      <header className="sticky top-0 z-30 bg-[#0f172a]/95 backdrop-blur-md border-b border-[#1e293b] py-3.5 px-4 sm:px-8">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      {/* LEFT VERTICAL SIDEBAR NAVIGATION RAIL */}
+      <aside className="w-full lg:w-72 bg-[#120f1a]/95 backdrop-blur-2xl border-r border-white/10 flex flex-col justify-between p-5 z-40 relative shrink-0">
+        <div className="space-y-8">
           
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#0284c7] to-[#38bdf8] p-[1px] shadow-lg shadow-[#0284c7]/20">
-              <div className="w-full h-full bg-[#0f172a] rounded-[11px] flex items-center justify-center">
-                <FolderKanban className="w-5 h-5 text-[#38bdf8]" />
+          {/* Sidebar Top Header Logo */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#ff5540] to-[#feba39] p-[1px] shadow-lg shadow-[#ff5540]/25">
+                <div className="w-full h-full bg-[#181423] rounded-[15px] flex items-center justify-center">
+                  <Flame className="w-5 h-5 text-[#feba39]" />
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <span className="font-syne font-black text-lg text-white tracking-wider uppercase flex items-center gap-1.5">
+                  JOVAS ADMIN
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                </span>
+                <span className="text-[10px] font-mono text-[#a89f9e] tracking-widest uppercase">
+                  Control Center v2.0
+                </span>
               </div>
             </div>
 
-            <div>
-              <h1 className="font-syne font-bold text-lg text-white flex items-center gap-2 tracking-wide">
-                JOVAS MOTION &bull; CONSOLA DE ADMINISTRACIÓN
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-mono border border-emerald-500/20 font-semibold">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  SISTEMA EN LINEA
-                </span>
-              </h1>
-              <p className="text-[11px] font-mono text-[#94a3b8]">
-                Panel Corporativo de Gestión en Tiempo Real &bull; Administrador
-              </p>
+            {/* Mobile close button */}
+            <button
+              onClick={onCloseDashboard}
+              className="lg:hidden p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Vertical Menu Nav List */}
+          <nav className="space-y-2">
+            <div className="px-3 pb-2 text-[10px] font-mono font-bold uppercase tracking-widest text-[#8e859b]">
+              Menú Principal
+            </div>
+
+            {navigationItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id as any)}
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-xs font-bold transition-all cursor-pointer relative group ${
+                    isActive
+                      ? 'bg-gradient-to-r from-[#ff5540]/20 to-[#feba39]/20 text-white border border-[#feba39]/40 shadow-lg shadow-[#ff5540]/10'
+                      : 'text-[#a89f9e] hover:text-white hover:bg-white/5 border border-transparent'
+                  }`}
+                >
+                  {isActive && (
+                    <span className="absolute left-0 top-2 bottom-2 w-1.5 rounded-r-full bg-[#feba39]" />
+                  )}
+
+                  <div className="flex items-center gap-3">
+                    <Icon className={`w-4 h-4 transition-transform group-hover:scale-110 ${isActive ? 'text-[#feba39]' : 'text-[#a89f9e]'}`} />
+                    <span className="font-syne tracking-wide">{item.label}</span>
+                  </div>
+
+                  {item.count !== undefined && (
+                    <span className="px-2 py-0.5 rounded-full bg-white/10 text-[10px] font-mono text-white">
+                      {item.count}
+                    </span>
+                  )}
+
+                  {item.badge !== undefined && item.badge > 0 && (
+                    <span className="px-2 py-0.5 rounded-full bg-[#ff5540] text-[10px] font-mono text-white font-bold">
+                      {item.badge}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* Sidebar Bottom Footer Profile & Actions */}
+        <div className="pt-6 mt-6 border-t border-white/10 space-y-3">
+          <div className="p-3.5 rounded-2xl bg-[#191524] border border-white/10 flex items-center gap-3">
+            <img
+              src={profile.avatarUrl || "https://lh3.googleusercontent.com/aida-public/AB6AXuBVIY3R1_ShwuNazpxjXd6xyGf2xO6gNj7SUUo0pqzZuSqI873znEpmiFkgo35w_PAL893uLpJ058D1_ypOtVtWFIXJTYjVkKqCjJCfNkLCWddZ-XkJT2oufbwyt7djs9BoHLKWd5uzWELdKhyl4E4Upa7W_HQVPAIV8FFlbPEvXD8Iks3eYsoe5qy9jL2vF3zJBSzeM36egLzNcX75Cedo6CSDvj1T3QrCDdaSUkUJ_AvNNRoFBvbrWA"}
+              alt="Admin Avatar"
+              className="w-10 h-10 rounded-xl object-cover border border-[#feba39]/30"
+            />
+            <div className="flex flex-col min-w-0 flex-1">
+              <span className="font-syne font-bold text-xs text-white truncate">
+                JovasMotion
+              </span>
+              <span className="text-[10px] font-mono text-emerald-400 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Admin Activo
+              </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 flex-wrap justify-end">
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={onCloseDashboard}
+              className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-white/5 hover:bg-white/15 text-white text-xs font-semibold border border-white/10 transition-all cursor-pointer"
+              title="Volver a la vista pública del sitio"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 text-[#feba39]" />
+              <span>Ver Sitio</span>
+            </button>
 
+            <button
+              onClick={logoutAdmin}
+              className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 text-xs font-semibold border border-rose-500/20 transition-all cursor-pointer"
+              title="Cerrar Sesión de Administrador"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Salir</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      {/* RIGHT MAIN WORKSPACE AREA */}
+      <div className="flex-1 flex flex-col min-w-0 z-10 relative">
+        
+        {/* Top Header Workspace Bar */}
+        <header className="sticky top-0 z-30 bg-[#120f1a]/85 backdrop-blur-xl border-b border-white/10 px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="font-syne font-black text-xl sm:text-2xl text-white tracking-tight flex items-center gap-2">
+              Panel de Control Corporativo
+              <span className="px-2.5 py-0.5 rounded-full bg-[#feba39]/10 text-[#feba39] text-[10px] font-mono font-bold border border-[#feba39]/30">
+                Cloud Sync Enabled
+              </span>
+            </h1>
+            <p className="text-xs font-mono text-[#a89f9e] mt-0.5">
+              Administración integral en tiempo real &bull; Motion Design & Arte 3D
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3 flex-wrap justify-end">
             <button
               onClick={async () => {
                 showToast('Sincronizando con la nube...');
                 const success = await syncToCloud();
                 if (success) {
-                  showToast('⚡ ¡Sitio actualizado globalmente para todos los celulares y navegadores del mundo!');
+                  showToast('⚡ ¡Sitio actualizado globalmente en Cloudflare KV!');
                 } else {
                   showToast('¡Datos guardados localmente!');
                 }
               }}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold transition-all cursor-pointer shadow-lg shadow-emerald-900/30 border border-emerald-400/40"
-              title="Guardar y publicar tus cambios instantáneamente para todos los dispositivos del mundo"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold transition-all cursor-pointer shadow-lg shadow-emerald-900/30 border border-emerald-400/40"
             >
-              <RefreshCw className="w-4 h-4 text-emerald-200 animate-spin-slow" />
-              Publicar a Todo el Mundo
+              <Globe className="w-4 h-4 text-emerald-200 animate-spin-slow" />
+              <span>Publicar a Todo el Mundo</span>
             </button>
 
             <button
-              onClick={onCloseDashboard}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#1e293b] hover:bg-[#334155] text-slate-200 text-xs font-semibold border border-[#334155] transition-all cursor-pointer shadow-sm"
+              onClick={openCreateModal}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] font-black text-xs uppercase shadow-lg shadow-[#ff5540]/20 hover:scale-105 transition-all cursor-pointer"
             >
-              <ArrowLeft className="w-4 h-4 text-[#38bdf8]" />
-              Ver Vista Pública
-            </button>
-
-            <button
-              onClick={logoutAdmin}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 text-xs font-semibold border border-rose-500/30 transition-all cursor-pointer"
-            >
-              <LogOut className="w-4 h-4" />
-              Cerrar Sesión
+              <Plus className="w-4 h-4" />
+              <span>+ Nuevo Proyecto</span>
             </button>
           </div>
+        </header>
 
-        </div>
-      </header>
+        {/* MAIN TAB CONTENT CONTAINER */}
+        <main className="p-6 lg:p-8 space-y-8 flex-1">
 
-      {/* Main Content Container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
-        
-        {/* Navigation Tabs */}
-        <div className="flex items-center gap-2 border-b border-white/10 pb-4 overflow-x-auto">
-          <button
-            onClick={() => setActiveTab('projects')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs tracking-wider transition-all cursor-pointer ${
-              activeTab === 'projects'
-                ? 'bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] shadow-lg shadow-[#ff5540]/20'
-                : 'bg-white/5 text-[#a89f9e] hover:text-white'
-            }`}
-          >
-            <FolderKanban className="w-4 h-4" />
-            Gestión de Proyectos ({projects.length})
-          </button>
-
-          <button
-            onClick={() => setActiveTab('messages')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs tracking-wider transition-all cursor-pointer relative ${
-              activeTab === 'messages'
-                ? 'bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] shadow-lg shadow-[#ff5540]/20'
-                : 'bg-white/5 text-[#a89f9e] hover:text-white'
-            }`}
-          >
-            <MessageSquare className="w-4 h-4" />
-            Mensajes & Leads
-            {unreadCount > 0 && (
-              <span className="w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-mono flex items-center justify-center font-bold">
-                {unreadCount}
-              </span>
-            )}
-          </button>
-
-          <button
-            onClick={() => setActiveTab('profile')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs tracking-wider transition-all cursor-pointer ${
-              activeTab === 'profile'
-                ? 'bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] shadow-lg shadow-[#ff5540]/20'
-                : 'bg-white/5 text-[#a89f9e] hover:text-white'
-            }`}
-          >
-            <User className="w-4 h-4" />
-            Editar Biografía
-          </button>
-
-          <button
-            onClick={() => setActiveTab('brand')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs tracking-wider transition-all cursor-pointer ${
-              activeTab === 'brand'
-                ? 'bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] shadow-lg shadow-[#ff5540]/20'
-                : 'bg-white/5 text-[#a89f9e] hover:text-white'
-            }`}
-          >
-            <Sparkles className="w-4 h-4" />
-            Logo & Marca (SVG/PNG)
-          </button>
-
-          <button
-            onClick={() => setActiveTab('images')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs tracking-wider transition-all cursor-pointer ${
-              activeTab === 'images'
-                ? 'bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] shadow-lg shadow-[#ff5540]/20'
-                : 'bg-white/5 text-[#a89f9e] hover:text-white'
-            }`}
-          >
-            <ImageIcon className="w-4 h-4" />
-            Gestor de Imágenes
-          </button>
-
-          <button
-            onClick={() => setActiveTab('stats')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs tracking-wider transition-all cursor-pointer ${
-              activeTab === 'stats'
-                ? 'bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] shadow-lg shadow-[#ff5540]/20'
-                : 'bg-white/5 text-[#a89f9e] hover:text-white'
-            }`}
-          >
-            <BarChart3 className="w-4 h-4" />
-            Métricas del Portafolio
-          </button>
-        </div>
-
-        {/* TAB 1: PROJECTS MANAGEMENT */}
-        {activeTab === 'projects' && (
-          <div className="space-y-6">
-            
-            {/* Top Toolbar */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#1a181d] p-4 rounded-2xl border border-white/10">
+          {/* TAB 1: OVERVIEW & STATS (Matching reference design) */}
+          {activeTab === 'stats' && (
+            <div className="space-y-6">
               
-              <div className="flex items-center gap-3 flex-1 max-w-lg">
-                <div className="relative flex-1">
-                  <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Buscar por título o tag..."
-                    className="w-full pl-10 pr-4 py-2 rounded-xl bg-black/50 border border-white/10 text-white placeholder-white/30 text-xs focus:outline-none focus:border-[#feba39]"
-                  />
-                  <Search className="w-4 h-4 text-[#a89f9e] absolute left-3.5 top-2.5" />
+              {/* Bento Grid Row 1: Header Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                
+                {/* Metric 1 */}
+                <div className="p-6 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl relative overflow-hidden group">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-xs font-mono text-[#a89f9e] uppercase tracking-wider">
+                      Proyectos Publicados
+                    </span>
+                    <FolderKanban className="w-5 h-5 text-[#ff5540]" />
+                  </div>
+                  <div className="font-syne font-black text-4xl text-white mb-2">
+                    {projects.length}
+                  </div>
+                  <span className="text-[11px] text-emerald-400 flex items-center gap-1 font-mono">
+                    <TrendingUp className="w-3.5 h-3.5" /> 100% Sincronizado en Nube
+                  </span>
                 </div>
 
-                <select
-                  value={categoryFilter}
-                  onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="px-3 py-2 rounded-xl bg-black/50 border border-white/10 text-white text-xs cursor-pointer focus:outline-none"
-                >
-                  <option value="Todos">Todas las Categorías</option>
-                  <option value="Animación">Animación</option>
-                  <option value="Ilustración">Ilustración</option>
-                  <option value="Modelado 3D">Modelado 3D</option>
-                  <option value="Arte Conceptual">Arte Conceptual</option>
-                </select>
+                {/* Metric 2 */}
+                <div className="p-6 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl relative overflow-hidden group">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-xs font-mono text-[#a89f9e] uppercase tracking-wider">
+                      Visitas Estimadas
+                    </span>
+                    <Eye className="w-5 h-5 text-[#feba39]" />
+                  </div>
+                  <div className="font-syne font-black text-4xl text-white mb-2">
+                    {stats.totalViews}
+                  </div>
+                  <span className="text-[11px] text-[#feba39] font-mono">
+                    +18.4% este mes
+                  </span>
+                </div>
+
+                {/* Metric 3 */}
+                <div className="p-6 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl relative overflow-hidden group">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-xs font-mono text-[#a89f9e] uppercase tracking-wider">
+                      Mensajes & Leads
+                    </span>
+                    <MessageSquare className="w-5 h-5 text-emerald-400" />
+                  </div>
+                  <div className="font-syne font-black text-4xl text-white mb-2">
+                    {messages.length}
+                  </div>
+                  <span className="text-[11px] text-emerald-400 font-mono">
+                    {unreadCount} sin leer
+                  </span>
+                </div>
+
+                {/* Metric 4 */}
+                <div className="p-6 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl relative overflow-hidden group">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-xs font-mono text-[#a89f9e] uppercase tracking-wider">
+                      Años de Trayectoria
+                    </span>
+                    <Flame className="w-5 h-5 text-[#ff5540]" />
+                  </div>
+                  <div className="font-syne font-black text-4xl text-white mb-2">
+                    {profile.experienceYears}
+                  </div>
+                  <span className="text-[11px] font-mono text-[#a89f9e]">
+                    Motion & Arte 3D
+                  </span>
+                </div>
+
               </div>
 
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={resetToDefaults}
-                  className="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-[#a89f9e] text-xs font-mono border border-white/10 flex items-center gap-1.5 cursor-pointer"
-                  title="Restablecer proyectos iniciales"
-                >
-                  <RefreshCw className="w-3.5 h-3.5" />
-                  Restablecer
-                </button>
+              {/* Bento Grid Row 2: Performance Graphs & System Status (Ref Style) */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                {/* Left Card: System Activity & Cloud State */}
+                <div className="lg:col-span-8 p-6 sm:p-8 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl space-y-6">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                    <div>
+                      <h3 className="font-syne font-bold text-lg text-white">
+                        Rendimiento del Portafolio & Actividad
+                      </h3>
+                      <p className="text-xs text-[#a89f9e] font-mono">
+                        Estado operativo de entrega de medios y velocidad GPU
+                      </p>
+                    </div>
+                    <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-mono border border-emerald-500/20 font-bold flex items-center gap-1.5">
+                      <ShieldCheck className="w-4 h-4" /> 99.9% Optimal
+                    </span>
+                  </div>
 
-                <button
-                  onClick={openCreateModal}
-                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] font-bold text-xs uppercase flex items-center gap-2 shadow-lg shadow-[#ff5540]/20 hover:scale-105 active:scale-95 transition-all cursor-pointer"
-                >
-                  <Plus className="w-4 h-4" />
-                  Añadir Nuevo Proyecto
-                </button>
-              </div>
-
-            </div>
-
-            {/* Projects Table / List */}
-            <div className="bg-[#1a181d] rounded-2xl border border-white/10 overflow-hidden shadow-xl">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-[#232026] text-[#a89f9e] font-mono uppercase tracking-wider border-b border-white/10">
-                    <tr>
-                      <th className="p-4">Obra / Título</th>
-                      <th className="p-4">Categoría</th>
-                      <th className="p-4">Año</th>
-                      <th className="p-4 text-center">Slider Destacado</th>
-                      <th className="p-4 text-right">Acciones en Tiempo Real</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/5">
-                    {filteredProjects.map((proj) => (
-                      <tr key={proj.id} className="hover:bg-white/5 transition-colors">
-                        <td className="p-4 flex items-center gap-3">
-                          <img
-                            src={proj.imageUrl}
-                            alt={proj.title}
-                            className="w-12 h-12 rounded-lg object-cover border border-white/10"
+                  {/* Simulated Neon Chart Bar UI */}
+                  <div className="h-48 flex items-end justify-between gap-3 pt-6 px-2">
+                    {[65, 80, 45, 90, 75, 100, 85, 95, 70, 90, 85, 98].map((h, i) => (
+                      <div key={i} className="flex-1 flex flex-col items-center gap-2 group cursor-pointer">
+                        <div className="w-full bg-white/5 rounded-t-xl h-36 relative overflow-hidden flex items-end">
+                          <motion.div
+                            initial={{ height: 0 }}
+                            animate={{ height: `${h}%` }}
+                            transition={{ duration: 0.8, delay: i * 0.05 }}
+                            className="w-full bg-gradient-to-t from-[#ff5540] to-[#feba39] rounded-t-xl opacity-80 group-hover:opacity-100 transition-opacity"
                           />
-                          <div>
-                            <span className="font-bold text-white text-sm block">{proj.title}</span>
-                            <span className="text-[11px] text-[#a89f9e] line-clamp-1">{proj.description}</span>
-                          </div>
-                        </td>
-
-                        <td className="p-4">
-                          <span className="px-2.5 py-1 rounded-full bg-white/5 text-[#feba39] border border-white/10 font-bold">
-                            {proj.category}
-                          </span>
-                        </td>
-
-                        <td className="p-4 font-mono text-[#a89f9e]">
-                          {proj.year}
-                        </td>
-
-                        <td className="p-4 text-center">
-                          <button
-                            onClick={() => {
-                              toggleFeatured(proj.id);
-                              showToast(`Estado destacado de "${proj.title}" actualizado.`);
-                            }}
-                            className={`p-2 rounded-xl border transition-colors cursor-pointer ${
-                              proj.featured
-                                ? 'bg-[#feba39]/20 border-[#feba39] text-[#feba39]'
-                                : 'bg-white/5 border-white/10 text-[#a89f9e] hover:text-white'
-                            }`}
-                            title={proj.featured ? "Quitar de Destacados" : "Destacar en Slider Principal"}
-                          >
-                            <Star className="w-4 h-4 fill-current" />
-                          </button>
-                        </td>
-
-                        <td className="p-4 text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            <button
-                              onClick={() => openEditModal(proj)}
-                              className="p-2 rounded-xl bg-white/5 hover:bg-white/15 text-white border border-white/10 transition-colors cursor-pointer"
-                              title="Editar Proyecto"
-                            >
-                              <Edit3 className="w-4 h-4" />
-                            </button>
-
-                            <button
-                              onClick={() => {
-                                if (confirm(`¿Eliminar el proyecto "${proj.title}" de tu portafolio?`)) {
-                                  deleteProject(proj.id);
-                                  showToast('Proyecto eliminado en tiempo real');
-                                }
-                              }}
-                              className="p-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition-colors cursor-pointer"
-                              title="Eliminar Proyecto"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {filteredProjects.length === 0 && (
-                <div className="p-12 text-center text-[#a89f9e]">
-                  No se encontraron proyectos con ese criterio de búsqueda.
-                </div>
-              )}
-            </div>
-
-          </div>
-        )}
-
-        {/* TAB 2: MESSAGES & LEADS */}
-        {activeTab === 'messages' && (
-          <div className="space-y-6">
-            <h2 className="font-syne font-bold text-2xl text-white">
-              Prospectos & Consultas Recibidas ({messages.length})
-            </h2>
-
-            <div className="grid grid-cols-1 gap-4">
-              {messages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={`p-6 rounded-2xl border transition-all ${
-                    msg.read
-                      ? 'bg-[#1a181d] border-white/10'
-                      : 'bg-[#231f28] border-[#feba39]/40 shadow-lg'
-                  }`}
-                >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-3 h-3 rounded-full ${msg.read ? 'bg-white/20' : 'bg-[#feba39] animate-ping'}`} />
-                      <div>
-                        <h3 className="font-bold text-white text-base">{msg.name}</h3>
-                        <a href={`mailto:${msg.email}`} className="text-xs font-mono text-[#feba39] hover:underline">
-                          {msg.email}
-                        </a>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-[#a89f9e]">
-                        Servicio: {msg.projectType}
-                      </span>
-                      {msg.budget && (
-                        <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-mono text-emerald-400">
-                          {msg.budget}
-                        </span>
-                      )}
-                      <span className="text-xs font-mono text-[#a89f9e]">{msg.date}</span>
-                    </div>
-                  </div>
-
-                  <p className="text-sm text-[#e7e1e5] bg-black/40 p-4 rounded-xl border border-white/5 mb-4 leading-relaxed">
-                    {msg.message}
-                  </p>
-
-                  <div className="flex items-center justify-between pt-2 border-t border-white/5 text-xs">
-                    <div className="flex items-center gap-2">
-                      {!msg.read && (
-                        <button
-                          onClick={() => markMessageAsRead(msg.id)}
-                          className="px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-colors font-mono cursor-pointer"
-                        >
-                          Marcar como Leído
-                        </button>
-                      )}
-                      <a
-                        href={`mailto:${msg.email}?subject=Respuesta a tu consulta - Jovas Motion`}
-                        className="px-3 py-1 rounded-lg bg-[#ff5540]/20 text-[#ff5540] hover:bg-[#ff5540]/30 transition-colors font-mono"
-                      >
-                        Responder por Correo
-                      </a>
-                    </div>
-
-                    <button
-                      onClick={() => deleteMessage(msg.id)}
-                      className="text-red-400 hover:text-red-300 font-mono"
-                    >
-                      Eliminar Mensaje
-                    </button>
-                  </div>
-
-                </div>
-              ))}
-
-              {messages.length === 0 && (
-                <div className="p-12 text-center text-[#a89f9e] bg-[#1a181d] rounded-2xl border border-white/10">
-                  No hay mensajes recibidos aún.
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* TAB 3: PROFILE & BRAND EDITING */}
-        {activeTab === 'profile' && (
-          <form onSubmit={handleSaveProfile} className="space-y-6 max-w-3xl bg-[#1a181d] p-8 rounded-3xl border border-white/10">
-            <h2 className="font-syne font-bold text-2xl text-white border-b border-white/10 pb-4">
-              Editar Información de José Luis Vasquez
-            </h2>
-
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-mono text-[#a89f9e] uppercase">Nombre Comercial</label>
-                  <input
-                    type="text"
-                    value={profileName}
-                    onChange={(e) => setProfileName(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-black/50 border border-white/10 text-white text-sm"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-mono text-[#a89f9e] uppercase">Título Profesional</label>
-                  <input
-                    type="text"
-                    value={profileTitle}
-                    onChange={(e) => setProfileTitle(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-black/50 border border-white/10 text-white text-sm"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-mono text-[#a89f9e] uppercase">Años de Experiencia</label>
-                  <input
-                    type="text"
-                    value={experienceYears}
-                    onChange={(e) => setExperienceYears(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-black/50 border border-white/10 text-white text-sm"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-mono text-[#a89f9e] uppercase">Proyectos Liderados</label>
-                  <input
-                    type="text"
-                    value={projectsCount}
-                    onChange={(e) => setProjectsCount(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-black/50 border border-white/10 text-white text-sm"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-mono text-[#a89f9e] uppercase">Título Hero Banner</label>
-                <input
-                  type="text"
-                  value={heroText}
-                  onChange={(e) => setHeroText(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-black/50 border border-white/10 text-white text-sm"
-                />
-              </div>
-
-              {/* Profile Picture / Avatar Uploader */}
-              <ImageUploader
-                value={profileAvatar}
-                onChange={setProfileAvatar}
-                label="Foto de Perfil / Retrato de José Luis Vasquez"
-                helperText="Sube tu propia foto de perfil o retrato personal para la sección 'Sobre Mí'"
-              />
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-mono text-[#a89f9e] uppercase">Biografía (Separar párrafos con una línea vacía)</label>
-                <textarea
-                  rows={6}
-                  value={profileBio}
-                  onChange={(e) => setProfileBio(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-white text-sm"
-                ></textarea>
-              </div>
-
-              <button
-                type="submit"
-                className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] font-bold text-xs uppercase cursor-pointer"
-              >
-                Guardar Cambios de Perfil en Tiempo Real
-              </button>
-            </div>
-          </form>
-        )}
-
-        {/* TAB 3.5: LOGO & MARCA (SVG / PNG & TEXTO) */}
-        {activeTab === 'brand' && (
-          <div className="space-y-8">
-            <div className="bg-[#1a181d] p-6 sm:p-8 rounded-3xl border border-white/10 space-y-6">
-              <div>
-                <h2 className="font-syne font-bold text-2xl text-white flex items-center gap-2">
-                  <Sparkles className="w-6 h-6 text-[#feba39]" />
-                  Configuración de Logo & Identidad de Marca
-                </h2>
-                <p className="text-xs text-[#a89f9e] mt-1">
-                  Sube tu propio archivo de logo (SVG vectorial, PNG transparente, JPG o WEBP) y personaliza el nombre y subtítulo de tu marca que se muestra en el menú principal y pie de página.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-2">
-                {/* Left Column: Logo Uploader and Text Inputs */}
-                <form onSubmit={handleSaveBrand} className="lg:col-span-7 space-y-6">
-                  {/* Logo Image Uploader */}
-                  <div className="space-y-2">
-                    <ImageUploader
-                      value={logoUrl}
-                      onChange={(newUrl) => {
-                        setLogoUrl(newUrl);
-                        updateBrandAssets({ logoUrl: newUrl });
-                        showToast('¡Logo actualizado!');
-                      }}
-                      label="Subir Isotipo / Logo de Marca (SVG o PNG)"
-                      helperText="Selecciona o arrastra tu archivo de logo (Soporta SVG vectorial o PNG transparente)"
-                    />
-                  </div>
-
-                  {/* Brand Main Text Field */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-mono font-bold text-[#feba39] uppercase flex items-center gap-1.5">
-                      Texto Principal del Logo / Marca
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={brandText}
-                      onChange={(e) => {
-                        setBrandText(e.target.value);
-                        updateBrandAssets({ brandText: e.target.value });
-                      }}
-                      placeholder="Ej: JOVAS"
-                      className="w-full px-4 py-3 rounded-xl bg-black/60 border border-white/15 text-white font-syne font-extrabold text-lg uppercase focus:outline-none focus:border-[#feba39]"
-                    />
-                    <p className="text-[11px] text-[#a89f9e]">
-                      Este texto aparece en mayúsculas destacadas en la parte superior izquierda de la web.
-                    </p>
-                  </div>
-
-                  {/* Brand Subtitle / Specialty Field */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-mono font-bold text-[#feba39] uppercase flex items-center gap-1.5">
-                      Subtítulo / Especialidad de Marca
-                    </label>
-                    <input
-                      type="text"
-                      value={brandSubtext}
-                      onChange={(e) => {
-                        setBrandSubtext(e.target.value);
-                        updateBrandAssets({ brandSubtext: e.target.value });
-                      }}
-                      placeholder="Ej: Motion Design"
-                      className="w-full px-4 py-3 rounded-xl bg-black/60 border border-white/15 text-white font-mono text-xs uppercase focus:outline-none focus:border-[#feba39]"
-                    />
-                    <p className="text-[11px] text-[#a89f9e]">
-                      Aparece debajo del texto principal del logo con espaciado tipográfico.
-                    </p>
-                  </div>
-
-                  <div className="pt-2">
-                    <button
-                      type="submit"
-                      className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-[#ff5540]/30 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
-                    >
-                      <Save className="w-4 h-4" />
-                      Guardar Cambios de Marca
-                    </button>
-                  </div>
-                </form>
-
-                {/* Right Column: Live Navbar Preview */}
-                <div className="lg:col-span-5 space-y-6">
-                  <div className="bg-black/80 p-6 rounded-2xl border border-white/15 space-y-6 relative overflow-hidden">
-                    <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                      <span className="text-xs font-mono text-[#feba39] font-bold uppercase flex items-center gap-1.5">
-                        <Eye className="w-4 h-4 text-[#ff5540]" />
-                        Vista Previa en Vivo
-                      </span>
-                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-mono border border-emerald-500/20">
-                        ● Sincronizado
-                      </span>
-                    </div>
-
-                    {/* Preview Navbar Header Widget */}
-                    <div className="space-y-3">
-                      <span className="text-[10px] font-mono text-[#a89f9e] uppercase">Logotipo en Barra de Navegación (Header)</span>
-                      
-                      <div className="bg-[#141316] p-4 rounded-xl border border-white/20 flex items-center gap-3">
-                        {logoUrl ? (
-                          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#ff5540]/30 to-[#feba39]/30 p-[1px] shadow-lg shadow-[#ff5540]/20">
-                            <div className="w-full h-full bg-[#1e1c21] rounded-[11px] p-1.5 flex items-center justify-center overflow-hidden">
-                              <img
-                                src={logoUrl}
-                                alt={brandText || "Logo"}
-                                className="w-full h-full object-contain filter drop-shadow"
-                              />
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#ff5540] to-[#feba39] p-[1px] shadow-lg shadow-[#ff5540]/20">
-                            <div className="w-full h-full bg-[#1e1c21] rounded-[11px] flex items-center justify-center relative overflow-hidden">
-                              <Flame className="w-5 h-5 text-[#feba39]" />
-                            </div>
-                          </div>
-                        )}
-
-                        <div className="flex flex-col">
-                          <span className="font-syne font-extrabold text-2xl tracking-wider text-white flex items-center gap-1 uppercase">
-                            {brandText || 'JOVAS'}
-                            <span className="text-[#ff5540] inline-block w-1.5 h-1.5 rounded-full bg-[#ff5540] animate-pulse"></span>
-                          </span>
-                          <span className="font-jetbrains text-[10px] tracking-widest text-[#a89f9e] uppercase -mt-1">
-                            {brandSubtext || 'Motion Design'}
-                          </span>
                         </div>
-                      </div>
-                    </div>
-
-                    {/* Preview Footer Widget */}
-                    <div className="space-y-3 pt-2 border-t border-white/10">
-                      <span className="text-[10px] font-mono text-[#a89f9e] uppercase">Logotipo en Pie de Página (Footer)</span>
-                      
-                      <div className="bg-[#100f12] p-4 rounded-xl border border-white/10 flex items-center gap-3">
-                        {logoUrl ? (
-                          <div className="w-8 h-8 rounded-lg overflow-hidden bg-black/40 border border-white/10 p-1 flex items-center justify-center">
-                            <img
-                              src={logoUrl}
-                              alt={brandText || "Logo"}
-                              className="w-full h-full object-contain"
-                            />
-                          </div>
-                        ) : (
-                          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#ff5540] to-[#feba39] p-[1px]">
-                            <div className="w-full h-full bg-[#1e1c21] rounded-[7px] flex items-center justify-center">
-                              <Flame className="w-4 h-4 text-[#feba39]" />
-                            </div>
-                          </div>
-                        )}
-                        <span className="font-syne font-extrabold text-lg text-white uppercase">
-                          {brandText || 'JOVAS'} {brandSubtext ? ` - ${brandSubtext}` : ''}
+                        <span className="text-[10px] font-mono text-[#a89f9e]">
+                          {['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][i]}
                         </span>
                       </div>
-                    </div>
-
-                    <div className="p-3 bg-[#feba39]/10 rounded-xl border border-[#feba39]/20 text-[11px] text-[#feba39]">
-                      💡 Tip: Si subes un logo en formato SVG o PNG con fondo transparente, se integrará perfectamente con el diseño oscuro Neón.
-                    </div>
+                    ))}
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        )}
 
-        {/* TAB 4: GESTOR DE IMÁGENES Y SUBIDA */}
-        {activeTab === 'images' && (
-          <div className="space-y-8">
-            <div className="bg-[#1a181d] p-6 sm:p-8 rounded-3xl border border-white/10 space-y-4">
-              <div>
-                <h2 className="font-syne font-bold text-2xl text-white flex items-center gap-2">
-                  <ImageIcon className="w-6 h-6 text-[#feba39]" />
-                  Gestor de Imágenes & Subida de Archivos Propios
-                </h2>
-                <p className="text-xs text-[#a89f9e] mt-1">
-                  Sube tus propias imágenes directamente desde tu computador o dispositivo para utilizarlas en tus proyectos, perfil o banner de portada.
-                </p>
-              </div>
+                {/* Right Card: Quick Tools & Status */}
+                <div className="lg:col-span-4 p-6 sm:p-8 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl space-y-6 flex flex-col justify-between">
+                  <div>
+                    <h3 className="font-syne font-bold text-lg text-white mb-1">
+                      Herramientas en Uso
+                    </h3>
+                    <p className="text-xs text-[#a89f9e] font-mono mb-6">
+                      Software y motores de render 3D
+                    </p>
 
-              {/* Upload New Custom Image Box */}
-              <div className="pt-2">
-                <ImageUploader
-                  value=""
-                  onChange={(newImg) => {
-                    if (newImg) {
-                      showToast('¡Imagen cargada! Selecciona abajo a qué proyecto o perfil asignarla.');
-                    }
-                  }}
-                  label="Cargar Nueva Imagen a la Galería Local"
-                  helperText="Selecciona cualquier archivo PNG, JPG, GIF o WEBP desde tu equipo"
-                />
-              </div>
-            </div>
-
-            {/* Profile Avatar Card */}
-            <div className="bg-[#1a181d] p-6 rounded-3xl border border-white/10 space-y-4">
-              <h3 className="font-syne font-bold text-lg text-white flex items-center gap-2">
-                <User className="w-5 h-5 text-[#ff5540]" />
-                Foto de Perfil & Biografía ("Sobre Mí")
-              </h3>
-
-              <div className="flex flex-col md:flex-row items-center gap-6 bg-black/40 p-4 rounded-2xl border border-white/5">
-                <img
-                  src={profile.avatarUrl || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBVIY3R1_ShwuNazpxjXd6xyGf2xO6gNj7SUUo0pqzZuSqI873znEpmiFkgo35w_PAL893uLpJ058D1_ypOtVtWFIXJTYjVkKqCjJCfNkLCWddZ-XkJT2oufbwyt7djs9BoHLKWd5uzWELdKhyl4E4Upa7W_HQVPAIV8FFlbPEvXD8Iks3eYsoe5qy9jL2vF3zJBSzeM36egLzNcX75Cedo6CSDvj1T3QrCDdaSUkUJ_AvNNRoFBvbrWA'}
-                  alt={profile.name}
-                  className="w-24 h-24 rounded-2xl object-cover border-2 border-[#feba39]"
-                />
-                <div className="flex-1 w-full space-y-2">
-                  <span className="text-sm font-bold text-white block">{profile.name} — {profile.title}</span>
-                  <p className="text-xs text-[#a89f9e]">Esta es la imagen principal que aparece en tu tarjeta biográfica.</p>
-                  
-                  <ImageUploader
-                    value={profileAvatar}
-                    onChange={(val) => {
-                      setProfileAvatar(val);
-                      updateProfile({ avatarUrl: val });
-                      showToast('¡Foto de perfil actualizada!');
-                    }}
-                    label="Cambiar Foto de Perfil"
-                    helperText="Sube tu archivo propio para reemplazar esta foto"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Projects Image Gallery */}
-            <div className="space-y-4">
-              <h3 className="font-syne font-bold text-xl text-white flex items-center gap-2">
-                <FolderKanban className="w-5 h-5 text-[#feba39]" />
-                Imágenes de los Proyectos ({projects.length})
-              </h3>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {projects.map((proj) => (
-                  <div key={proj.id} className="bg-[#1a181d] p-5 rounded-2xl border border-white/10 space-y-4 flex flex-col justify-between">
-                    <div className="space-y-3">
-                      <div className="relative rounded-xl overflow-hidden h-44 border border-white/10">
-                        <img
-                          src={proj.imageUrl}
-                          alt={proj.title}
-                          className="w-full h-full object-cover"
-                        />
-                        <span className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full bg-black/70 backdrop-blur-md text-[10px] font-mono text-[#feba39] border border-white/10 font-bold">
-                          {proj.category}
-                        </span>
-                      </div>
-
-                      <div>
-                        <h4 className="font-bold text-white text-base">{proj.title}</h4>
-                        <p className="text-xs text-[#a89f9e] line-clamp-1">{proj.description}</p>
-                      </div>
-                    </div>
-
-                    <div className="pt-2 border-t border-white/10">
-                      <ImageUploader
-                        value={proj.imageUrl}
-                        onChange={(newUrl) => {
-                          if (newUrl) {
-                            updateProject(proj.id, { imageUrl: newUrl });
-                            showToast(`¡Imagen de "${proj.title}" actualizada!`);
-                          }
-                        }}
-                        label="Modificar / Subir Nueva Imagen"
-                        helperText="Reemplaza la portada de este proyecto"
-                      />
+                    <div className="grid grid-cols-2 gap-3">
+                      {['Cinema 4D', 'Redshift', 'After Effects', 'Substance', 'ZBrush', 'Houdini'].map((tool, idx) => (
+                        <div key={idx} className="p-3 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-2.5">
+                          <Zap className="w-4 h-4 text-[#feba39]" />
+                          <span className="text-xs font-bold text-white">{tool}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                ))}
+
+                  <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs text-[#a89f9e] font-mono">
+                    <span>Base de Datos KV:</span>
+                    <span className="text-emerald-400 font-bold">Cloudflare Pages</span>
+                  </div>
+                </div>
+
               </div>
+
             </div>
-          </div>
-        )}
+          )}
 
-        {/* TAB 4: METRICS */}
-        {activeTab === 'stats' && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="p-6 rounded-2xl bg-[#1a181d] border border-white/10 space-y-2">
-              <span className="text-xs font-mono text-[#a89f9e] uppercase block">Visualizaciones Totales</span>
-              <span className="font-syne font-black text-3xl text-white block">{stats.totalViews}</span>
-              <span className="text-[10px] text-emerald-400 font-mono">+18% este mes</span>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-[#1a181d] border border-white/10 space-y-2">
-              <span className="text-xs font-mono text-[#a89f9e] uppercase block">Oportunidades / Leads</span>
-              <span className="font-syne font-black text-3xl text-[#feba39] block">{stats.newLeadsCount}</span>
-              <span className="text-[10px] text-[#a89f9e] font-mono">Recibidos vía formulario</span>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-[#1a181d] border border-white/10 space-y-2">
-              <span className="text-xs font-mono text-[#a89f9e] uppercase block">Proyectos Activos</span>
-              <span className="font-syne font-black text-3xl text-[#ff5540] block">{projects.length}</span>
-              <span className="text-[10px] text-white/60 font-mono">En catálogo live</span>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-[#1a181d] border border-white/10 space-y-2">
-              <span className="text-xs font-mono text-[#a89f9e] uppercase block">Tasa de Retención</span>
-              <span className="font-syne font-black text-3xl text-emerald-400 block">{stats.retentionRate}</span>
-              <span className="text-[10px] text-[#a89f9e] font-mono">Clientes recurrentes</span>
-            </div>
-          </div>
-        )}
-
-      </main>
-
-      {/* CREATE / EDIT PROJECT MODAL */}
-      {(isCreatingNew || editingProject) && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
-          <div className="relative w-full max-w-2xl bg-[#1e1c21] border border-[#feba39]/30 rounded-3xl p-6 sm:p-8 space-y-6 my-8 max-h-[90vh] overflow-y-auto">
-            
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
-              <h3 className="font-syne font-black text-2xl text-white">
-                {isCreatingNew ? 'Añadir Nuevo Proyecto' : `Editar: ${editingProject?.title}`}
-              </h3>
-              <button
-                onClick={() => { setIsCreatingNew(false); setEditingProject(null); }}
-                className="p-2 rounded-full bg-white/5 hover:bg-white/15 text-white"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveProject} className="space-y-4">
+          {/* TAB 2: PROJECTS MANAGEMENT */}
+          {activeTab === 'projects' && (
+            <div className="space-y-6">
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-mono text-[#a89f9e] uppercase">Título del Proyecto</label>
-                  <input
-                    type="text"
-                    required
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Ej: Ignis Core 3D"
-                    className="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white text-sm"
-                  />
-                </div>
+              {/* Toolbar */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#191524]/90 p-4 rounded-3xl border border-white/10 backdrop-blur-xl">
+                <div className="flex items-center gap-3 flex-1 max-w-lg">
+                  <div className="relative flex-1">
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="Buscar proyecto por nombre o tag..."
+                      className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-black/40 border border-white/10 text-white placeholder-white/30 text-xs focus:outline-none focus:border-[#feba39]"
+                    />
+                    <Search className="w-4 h-4 text-[#a89f9e] absolute left-3.5 top-3" />
+                  </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-xs font-mono text-[#a89f9e] uppercase">Categoría</label>
                   <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value as ProjectCategory)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white text-sm cursor-pointer"
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(e.target.value)}
+                    className="px-3.5 py-2.5 rounded-2xl bg-black/40 border border-white/10 text-white text-xs cursor-pointer focus:outline-none"
                   >
+                    <option value="Todos">Todas las Categorías</option>
                     <option value="Animación">Animación</option>
                     <option value="Ilustración">Ilustración</option>
                     <option value="Modelado 3D">Modelado 3D</option>
                     <option value="Arte Conceptual">Arte Conceptual</option>
                   </select>
                 </div>
-              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-mono text-[#a89f9e] uppercase">Año</label>
-                  <input
-                    type="text"
-                    value={year}
-                    onChange={(e) => setYear(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white text-sm"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-mono text-[#a89f9e] uppercase">Cliente / Marca</label>
-                  <input
-                    type="text"
-                    value={client}
-                    onChange={(e) => setClient(e.target.value)}
-                    placeholder="Ej: Jovas Original"
-                    className="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white text-sm"
-                  />
-                </div>
-              </div>
-
-              {/* Single Unified Media Resource Field (Auto Detects Video or Image) */}
-              <ImageUploader
-                value={mediaUrl || videoUrl || imageUrl}
-                onChange={handleMediaUrlChange}
-                label="Recurso Multimedia del Proyecto (Imagen o Video)"
-                helperText="Sube tu archivo de imagen o video desde tu equipo, conecta tu Google Drive o pega un enlace (YouTube, Vimeo, MP4, PNG, JPG). El sistema lo detectará automáticamente."
-                allowVideo={true}
-              />
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-mono text-[#a89f9e] uppercase">Resumen Corto (Para Tarjetas)</label>
-                <input
-                  type="text"
-                  required
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white text-sm"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-mono text-[#a89f9e] uppercase">Descripción Completa (Modal Detalle)</label>
-                <textarea
-                  rows={3}
-                  value={fullDescription}
-                  onChange={(e) => setFullDescription(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white text-sm"
-                ></textarea>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-mono text-[#a89f9e] uppercase">Tags (Separados por coma)</label>
-                <input
-                  type="text"
-                  value={tagsInput}
-                  onChange={(e) => setTagsInput(e.target.value)}
-                  placeholder="After Effects, Cinema 4D, Redshift"
-                  className="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white text-sm"
-                />
-              </div>
-
-              {/* Dynamic Specs List */}
-              <div className="space-y-2 border-t border-white/10 pt-4">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-mono text-[#feba39] uppercase font-bold">Ficha Técnica & Especificaciones</label>
+                <div className="flex items-center gap-3">
                   <button
-                    type="button"
-                    onClick={handleAddSpec}
-                    className="text-xs text-[#ff5540] hover:underline font-mono"
+                    onClick={resetToDefaults}
+                    className="px-3.5 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 text-[#a89f9e] text-xs font-mono border border-white/10 flex items-center gap-2 cursor-pointer transition-colors"
                   >
-                    + Añadir Parámetro
+                    <RefreshCw className="w-3.5 h-3.5" />
+                    <span>Restablecer</span>
+                  </button>
+
+                  <button
+                    onClick={openCreateModal}
+                    className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] font-black text-xs uppercase flex items-center gap-2 shadow-lg shadow-[#ff5540]/20 hover:scale-105 transition-all cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Crear Proyecto</span>
                   </button>
                 </div>
+              </div>
 
-                {specs.map((spec, idx) => (
-                  <div key={idx} className="flex items-center gap-2">
+              {/* Projects Table */}
+              <div className="bg-[#191524]/90 rounded-3xl border border-white/10 overflow-hidden shadow-2xl backdrop-blur-xl">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-white/5 text-[#a89f9e] font-mono uppercase tracking-wider border-b border-white/10">
+                      <tr>
+                        <th className="p-4">Proyecto / Portada</th>
+                        <th className="p-4">Categoría</th>
+                        <th className="p-4">Año</th>
+                        <th className="p-4 text-center">Slider Destacado</th>
+                        <th className="p-4 text-right">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {filteredProjects.map((proj) => (
+                        <tr key={proj.id} className="hover:bg-white/5 transition-colors">
+                          <td className="p-4 flex items-center gap-3">
+                            <img
+                              src={proj.imageUrl}
+                              alt={proj.title}
+                              className="w-14 h-14 rounded-2xl object-cover border border-white/10"
+                            />
+                            <div>
+                              <span className="font-bold text-white text-sm block">{proj.title}</span>
+                              <span className="text-[11px] text-[#a89f9e] line-clamp-1">{proj.description}</span>
+                            </div>
+                          </td>
+
+                          <td className="p-4">
+                            <span className="px-3 py-1 rounded-full bg-white/5 text-[#feba39] border border-white/10 font-bold text-[11px]">
+                              {proj.category}
+                            </span>
+                          </td>
+
+                          <td className="p-4 font-mono text-[#a89f9e]">
+                            {proj.year}
+                          </td>
+
+                          <td className="p-4 text-center">
+                            <button
+                              onClick={() => {
+                                toggleFeatured(proj.id);
+                                showToast(`Estado destacado de "${proj.title}" actualizado.`);
+                              }}
+                              className={`p-2.5 rounded-2xl border transition-colors cursor-pointer ${
+                                proj.featured
+                                  ? 'bg-[#feba39]/20 border-[#feba39] text-[#feba39]'
+                                  : 'bg-white/5 border-white/10 text-[#a89f9e] hover:text-white'
+                              }`}
+                              title={proj.featured ? "Quitar de Destacados" : "Destacar en Slider"}
+                            >
+                              <Star className="w-4 h-4 fill-current" />
+                            </button>
+                          </td>
+
+                          <td className="p-4 text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                onClick={() => openEditModal(proj)}
+                                className="p-2.5 rounded-2xl bg-white/5 hover:bg-white/15 text-white border border-white/10 transition-colors cursor-pointer"
+                                title="Editar Proyecto"
+                              >
+                                <Edit3 className="w-4 h-4" />
+                              </button>
+
+                              <button
+                                onClick={() => {
+                                  if (confirm(`¿Eliminar el proyecto "${proj.title}"?`)) {
+                                    deleteProject(proj.id);
+                                    showToast('Proyecto eliminado en tiempo real');
+                                  }
+                                }}
+                                className="p-2.5 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 transition-colors cursor-pointer"
+                                title="Eliminar Proyecto"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {filteredProjects.length === 0 && (
+                  <div className="p-12 text-center text-[#a89f9e]">
+                    No se encontraron proyectos con ese criterio.
+                  </div>
+                )}
+              </div>
+
+            </div>
+          )}
+
+          {/* TAB 3: EDIT PROFILE BIO */}
+          {activeTab === 'profile' && (
+            <div className="max-w-4xl space-y-6">
+              <div className="p-6 sm:p-8 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl space-y-6">
+                <div className="border-b border-white/10 pb-4">
+                  <h2 className="font-syne font-bold text-xl text-white">
+                    Editar Biografía & Manifiesto Creativo
+                  </h2>
+                  <p className="text-xs text-[#a89f9e] font-mono">
+                    Los cambios realizados aquí se reflejarán instantáneamente en la sección Biografía.
+                  </p>
+                </div>
+
+                <form onSubmit={handleSaveProfile} className="space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">Nombre Artístico</label>
+                      <input
+                        type="text"
+                        value={profileName}
+                        onChange={(e) => setProfileName(e.target.value)}
+                        className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-[#feba39]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">Título Profesional</label>
+                      <input
+                        type="text"
+                        value={profileTitle}
+                        onChange={(e) => setProfileTitle(e.target.value)}
+                        className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-[#feba39]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">Años de Experiencia</label>
+                      <input
+                        type="text"
+                        value={experienceYears}
+                        onChange={(e) => setExperienceYears(e.target.value)}
+                        className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-[#feba39]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">Proyectos Completados</label>
+                      <input
+                        type="text"
+                        value={projectsCount}
+                        onChange={(e) => setProjectsCount(e.target.value)}
+                        className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-[#feba39]"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">URL del Avatar / Foto de Perfil</label>
                     <input
                       type="text"
-                      value={spec.label}
-                      onChange={(e) => handleUpdateSpec(idx, e.target.value, spec.value)}
-                      placeholder="Ej: Polígonos"
-                      className="w-1/2 px-3 py-1.5 rounded-lg bg-black/40 border border-white/10 text-xs text-white"
+                      value={profileAvatar}
+                      onChange={(e) => setProfileAvatar(e.target.value)}
+                      placeholder="https://..."
+                      className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-[#feba39]"
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">Párrafos de Biografía (Separados por doble enter)</label>
+                    <textarea
+                      rows={6}
+                      value={profileBio}
+                      onChange={(e) => setProfileBio(e.target.value)}
+                      className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-[#feba39]"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="px-6 py-3 rounded-2xl bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] font-black text-xs uppercase shadow-lg shadow-[#ff5540]/20 hover:scale-105 transition-all cursor-pointer flex items-center gap-2"
+                  >
+                    <Save className="w-4 h-4" />
+                    Guardar Cambios de Biografía
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 4: BRAND & LOGO */}
+          {activeTab === 'brand' && (
+            <div className="max-w-4xl space-y-6">
+              <div className="p-6 sm:p-8 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl space-y-6">
+                <div className="border-b border-white/10 pb-4">
+                  <h2 className="font-syne font-bold text-xl text-white">
+                    Configuración de Marca & Logo SVG/PNG
+                  </h2>
+                  <p className="text-xs text-[#a89f9e] font-mono">
+                    Personaliza la imagen corporativa y textos del encabezado principal.
+                  </p>
+                </div>
+
+                <form onSubmit={handleSaveBrand} className="space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">Nombre Principal de la Marca</label>
+                      <input
+                        type="text"
+                        value={brandText}
+                        onChange={(e) => setBrandText(e.target.value)}
+                        className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-[#feba39]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">Subtítulo / Especialidad</label>
+                      <input
+                        type="text"
+                        value={brandSubtext}
+                        onChange={(e) => setBrandSubtext(e.target.value)}
+                        className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-[#feba39]"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">URL del Logo Personalizado (PNG o SVG)</label>
                     <input
                       type="text"
-                      value={spec.value}
-                      onChange={(e) => handleUpdateSpec(idx, spec.label, e.target.value)}
-                      placeholder="Ej: 2.4M"
-                      className="w-1/2 px-3 py-1.5 rounded-lg bg-black/40 border border-white/10 text-xs text-white"
+                      value={logoUrl}
+                      onChange={(e) => setLogoUrl(e.target.value)}
+                      placeholder="https://..."
+                      className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-[#feba39]"
                     />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveSpec(idx)}
-                      className="p-1 text-red-400 hover:text-red-300"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                  </div>
+
+                  {logoUrl && (
+                    <div className="p-4 rounded-2xl bg-white/5 border border-white/10 inline-block">
+                      <span className="text-[10px] font-mono uppercase text-[#a89f9e] block mb-2">Vista previa de Logo:</span>
+                      <img src={logoUrl} alt="Logo Preview" className="h-10 object-contain" />
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    className="px-6 py-3 rounded-2xl bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] font-black text-xs uppercase shadow-lg shadow-[#ff5540]/20 hover:scale-105 transition-all cursor-pointer flex items-center gap-2"
+                  >
+                    <Save className="w-4 h-4" />
+                    Guardar Marca
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 5: MEDIA GALLERY MANAGER */}
+          {activeTab === 'images' && (
+            <div className="space-y-6">
+              <div className="p-6 sm:p-8 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl">
+                <ImageUploader
+                  value={mediaUrl}
+                  onChange={handleMediaUrlChange}
+                  allowVideo={true}
+                  label="Gestor & Carga de Medios Portafolio"
+                  helperText="Carga o vincula imágenes y videos (Drive, YouTube, Vimeo, MP4) para utilizarlos en tus obras."
+                />
+              </div>
+            </div>
+          )}
+
+          {/* TAB 6: MESSAGES & INBOX */}
+          {activeTab === 'messages' && (
+            <div className="space-y-6">
+              <h2 className="font-syne font-bold text-xl text-white">
+                Bandeja de Entrada ({messages.length})
+              </h2>
+
+              <div className="grid grid-cols-1 gap-4">
+                {messages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`p-6 rounded-3xl border transition-all ${
+                      msg.read
+                        ? 'bg-[#191524]/90 border-white/10'
+                        : 'bg-[#211b30] border-[#feba39]/50 shadow-xl'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <span className="font-syne font-bold text-base text-white block">{msg.name}</span>
+                        <span className="font-mono text-xs text-[#feba39]">{msg.email}</span>
+                      </div>
+                      <span className="text-[10px] font-mono text-[#a89f9e]">{msg.date}</span>
+                    </div>
+
+                    <p className="text-xs text-[#e7e1e5]/90 leading-relaxed mb-4">
+                      {msg.message}
+                    </p>
+
+                    <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
+                      <a
+                        href={`mailto:${msg.email}?subject=Re: Tu consulta en Jovas Motion`}
+                        className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/15 text-white text-xs font-mono border border-white/10 flex items-center gap-2"
+                      >
+                        <Mail className="w-3.5 h-3.5 text-[#feba39]" />
+                        Responder por Email
+                      </a>
+
+                      {!msg.read && (
+                        <button
+                          onClick={() => {
+                            markMessageAsRead(msg.id);
+                            showToast('Mensaje marcado como leído');
+                          }}
+                          className="px-4 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-xs font-mono border border-emerald-500/20 flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          Marcar Leído
+                        </button>
+                      )}
+
+                      <button
+                        onClick={() => {
+                          deleteMessage(msg.id);
+                          showToast('Mensaje eliminado');
+                        }}
+                        className="px-3 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 text-xs font-mono border border-rose-500/20 cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
                 ))}
+
+                {messages.length === 0 && (
+                  <div className="p-12 text-center text-[#a89f9e] font-mono text-xs">
+                    No tienes mensajes nuevos en tu bandeja de entrada.
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+        </main>
+      </div>
+
+      {/* CREATE & EDIT PROJECT MODAL SLIDE-OVER */}
+      <AnimatePresence>
+        {(isCreatingNew || editingProject) && (
+          <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/80 backdrop-blur-md">
+            
+            {/* Backdrop Click */}
+            <div
+              className="fixed inset-0"
+              onClick={() => {
+                setEditingProject(null);
+                setIsCreatingNew(false);
+              }}
+            />
+
+            <motion.div
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 100 }}
+              transition={{ duration: 0.3 }}
+              className="relative w-full max-w-2xl h-full bg-[#14111d] border-l border-white/10 shadow-2xl p-6 sm:p-8 overflow-y-auto space-y-6 z-10"
+            >
+              <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                <div>
+                  <h2 className="font-syne font-black text-xl text-white">
+                    {isCreatingNew ? 'Crear Nuevo Proyecto' : 'Editar Proyecto'}
+                  </h2>
+                  <p className="text-xs font-mono text-[#a89f9e]">
+                    Configura los detalles de la obra para el portafolio 3D
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setEditingProject(null);
+                    setIsCreatingNew(false);
+                  }}
+                  className="p-2 rounded-2xl bg-white/5 hover:bg-white/15 text-white cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
 
-              <div className="flex items-center gap-3 pt-2">
-                <label className="flex items-center gap-2 text-xs font-mono text-white cursor-pointer">
+              <form onSubmit={handleSaveProject} className="space-y-6">
+                <div>
+                  <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">Título del Proyecto *</label>
+                  <input
+                    type="text"
+                    required
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Ej. Cybernetic Neon Core 3D"
+                    className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-[#feba39]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">Categoría</label>
+                    <select
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value as any)}
+                      className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-[#feba39]"
+                    >
+                      <option value="Animación">Animación</option>
+                      <option value="Ilustración">Ilustración</option>
+                      <option value="Modelado 3D">Modelado 3D</option>
+                      <option value="Arte Conceptual">Arte Conceptual</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">Año</label>
+                    <input
+                      type="text"
+                      value={year}
+                      onChange={(e) => setYear(e.target.value)}
+                      className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-[#feba39]"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">URL del Video / Demostración o Imagen Portada *</label>
+                  <input
+                    type="text"
+                    required
+                    value={mediaUrl}
+                    onChange={(e) => handleMediaUrlChange(e.target.value)}
+                    placeholder="Enlace MP4, Vimeo, YouTube o URL de imagen..."
+                    className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-[#feba39]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">Descripción Corta</label>
+                  <textarea
+                    rows={2}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-[#feba39]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">Etiquetas / Tags (Separadas por comas)</label>
+                  <input
+                    type="text"
+                    value={tagsInput}
+                    onChange={(e) => setTagsInput(e.target.value)}
+                    placeholder="Motion Graphics, Cinema 4D, Octane, Redshift"
+                    className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-[#feba39]"
+                  />
+                </div>
+
+                <div className="flex items-center gap-3 p-4 rounded-2xl bg-white/5 border border-white/10">
                   <input
                     type="checkbox"
+                    id="featured-check"
                     checked={featured}
                     onChange={(e) => setFeatured(e.target.checked)}
-                    className="w-4 h-4 rounded bg-black border-white/20 text-[#feba39]"
+                    className="w-4 h-4 accent-[#feba39] cursor-pointer"
                   />
-                  Destacar este proyecto en el Slider Principal
-                </label>
-              </div>
+                  <label htmlFor="featured-check" className="text-xs font-bold text-white cursor-pointer">
+                    Destacar en el Slider Principal de la Página de Inicio
+                  </label>
+                </div>
 
-              <div className="pt-4 border-t border-white/10 flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => { setIsCreatingNew(false); setEditingProject(null); }}
-                  className="px-4 py-2 rounded-xl bg-white/5 text-white text-xs"
-                >
-                  Cancelar
-                </button>
+                <div className="pt-4 border-t border-white/10 flex items-center justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingProject(null);
+                      setIsCreatingNew(false);
+                    }}
+                    className="px-5 py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-[#a89f9e] text-xs font-bold"
+                  >
+                    Cancelar
+                  </button>
 
-                <button
-                  type="submit"
-                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] font-bold text-xs uppercase"
-                >
-                  Guardar en Tiempo Real
-                </button>
-              </div>
-
-            </form>
-
+                  <button
+                    type="submit"
+                    className="px-6 py-3 rounded-2xl bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] font-black text-xs uppercase shadow-lg shadow-[#ff5540]/20 hover:scale-105 transition-all cursor-pointer flex items-center gap-2"
+                  >
+                    <Save className="w-4 h-4" />
+                    Guardar Proyecto
+                  </button>
+                </div>
+              </form>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
 
     </div>
   );
