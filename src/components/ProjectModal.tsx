@@ -78,29 +78,6 @@ export const ProjectModal: React.FC = () => {
               </p>
             </div>
 
-            {/* Technical Specifications Grid */}
-            {project.specs && project.specs.length > 0 && (
-              <div className="bg-[#26232b] p-6 rounded-2xl border border-white/10 space-y-4">
-                <div className="flex items-center gap-2 text-xs font-mono text-[#feba39] uppercase tracking-wider">
-                  <Cpu className="w-4 h-4" />
-                  Ficha Técnica & Parámetros
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  {project.specs.map((spec, idx) => (
-                    <div key={idx} className="bg-[#1e1c21] p-3 rounded-xl border border-white/5 space-y-1">
-                      <span className="text-[10px] font-mono text-[#a89f9e] uppercase block">
-                        {spec.label}
-                      </span>
-                      <span className="text-xs font-bold text-white block">
-                        {spec.value}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* Client & Tools Tags */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
               {project.client && (

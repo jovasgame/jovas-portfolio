@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { motion, AnimatePresence } from 'motion/react';
 import { MediaViewer } from './MediaViewer';
+import { getDirectThumbnailUrl } from '../utils/mediaUtils';
 import { MagneticButton } from './MagneticButton';
 import { MetallicPaint } from './MetallicPaint';
 import { 
@@ -155,7 +156,7 @@ export const HeroSlider: React.FC = () => {
                     key={`slider-video-${currentProject.id}`}
                     src={currentProject.videoUrl || currentProject.imageUrl}
                     alt={currentProject.title}
-                    poster={currentProject.imageUrl}
+                    poster={getDirectThumbnailUrl(currentProject.imageUrl || currentProject.videoUrl)}
                     forceVideo={true}
                     className="w-full h-full object-cover object-center filter brightness-90 contrast-105 group-hover/slider:scale-105 transition-transform duration-1000 pointer-events-none"
                     controls={false}
@@ -172,7 +173,7 @@ export const HeroSlider: React.FC = () => {
                 </div>
               ) : (
                 <img
-                  src={currentProject.imageUrl}
+                  src={getDirectThumbnailUrl(currentProject.imageUrl || currentProject.videoUrl)}
                   alt={currentProject.title}
                   className="w-full h-full object-cover object-center filter brightness-90 contrast-105 group-hover/slider:scale-105 transition-transform duration-1000"
                 />

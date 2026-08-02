@@ -1371,14 +1371,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
                 </div>
 
                 <div>
-                  <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">URL del Video / Demostración o Imagen Portada *</label>
-                  <input
-                    type="text"
-                    required
+                  <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">Imagen / Demostración / Video del Proyecto *</label>
+                  <ImageUploader
                     value={mediaUrl}
-                    onChange={(e) => handleMediaUrlChange(e.target.value)}
-                    placeholder="Enlace MP4, Vimeo, YouTube o URL de imagen..."
-                    className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-[#feba39]"
+                    onChange={(newUrl) => handleMediaUrlChange(newUrl)}
+                    allowVideo={true}
+                    label="Subir o Seleccionar Recurso del Proyecto"
+                    helperText="Selecciona un archivo (JPG/PNG/WEBP/MP4) desde tu dispositivo, o pega una URL de Google Drive, YouTube, Vimeo o enlace directo."
                   />
                 </div>
 
