@@ -104,22 +104,22 @@ export const Footer: React.FC = () => {
 
       </div>
 
-      {/* Strands Ambient Waves Effect at the very bottom (Background z-0 so it doesn't obstruct text) */}
-      <div className="absolute bottom-0 left-0 right-0 h-36 sm:h-48 w-full pointer-events-none z-0 opacity-70">
+      {/* Single Subtle Strands Ambient Wave Effect at the very bottom */}
+      <div className="absolute bottom-0 left-0 right-0 h-28 sm:h-36 w-full pointer-events-none z-0 opacity-60">
         <Strands
-          colors={["#ff5540", "#feba39", "#ff3366", "#feba39"]}
-          count={4}
-          speed={0.35}
-          amplitude={0.35}
-          waviness={1.1}
-          thickness={0.65}
-          glow={1.4}
-          taper={2.8}
-          spread={1.1}
-          intensity={0.65}
-          saturation={1.1}
-          opacity={0.85}
-          scale={1.3}
+          colors={["#ff5540", "#feba39", "#ff5540"]}
+          count={1}
+          speed={0.25}
+          amplitude={0.2}
+          waviness={0.6}
+          thickness={0.4}
+          glow={0.9}
+          taper={0.5}
+          spread={0}
+          intensity={0.4}
+          saturation={1.0}
+          opacity={0.6}
+          scale={1.0}
           glass={false}
         />
       </div>

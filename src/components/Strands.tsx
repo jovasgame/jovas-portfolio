@@ -60,8 +60,10 @@ void main() {
   vec2 uv = (gl_FragCoord.xy - 0.5 * uResolution) / uResolution.y;
   uv /= max(uScale, 0.0001);
 
+  float aspect = uResolution.x / max(uResolution.y, 1.0);
+  float normX = uv.x / (aspect * 0.5);
+  float env = clamp(1.0 - pow(abs(clamp(normX, -1.0, 1.0)), max(uTaper, 0.2)), 0.0, 1.0);
   float e = 0.06 + uIntensity * 0.94;
-  float env = pow(max(cos(uv.x * PI * 1.3), 0.0), uTaper);
 
   vec3 col = vec3(0.0);
 
