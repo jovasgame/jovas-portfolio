@@ -33,16 +33,16 @@ export const AboutSection: React.FC = () => {
               className="w-full flex flex-col justify-between"
               style={{ borderRadius: "24px", overflow: "hidden" }}
             >
-              <div className="relative w-full h-[340px] sm:h-[480px]">
+              <div className="relative w-full h-full min-h-[420px] sm:min-h-[500px] flex flex-col justify-end">
                 <img
                   src={profile.avatarUrl || "https://lh3.googleusercontent.com/aida-public/AB6AXuBVIY3R1_ShwuNazpxjXd6xyGf2xO6gNj7SUUo0pqzZuSqI873znEpmiFkgo35w_PAL893uLpJ058D1_ypOtVtWFIXJTYjVkKqCjJCfNkLCWddZ-XkJT2oufbwyt7djs9BoHLKWd5uzWELdKhyl4E4Upa7W_HQVPAIV8FFlbPEvXD8Iks3eYsoe5qy9jL2vF3zJBSzeM36egLzNcX75Cedo6CSDvj1T3QrCDdaSUkUJ_AvNNRoFBvbrWA"}
                   alt={profile.name}
-                  className="w-full h-full object-cover object-top filter brightness-95 hover:scale-105 transition-transform duration-700"
+                  className="absolute inset-0 w-full h-full object-cover object-top filter brightness-95 hover:scale-105 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#141316] via-[#141316]/30 to-transparent"></div>
 
-                {/* Stat Overlay Badge */}
-                <div className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-[#1e1c21]/90 backdrop-blur-md border border-white/10 flex items-center justify-around z-10">
+                {/* Stat Overlay Badge Pinned at the Very Foot of the Photo */}
+                <div className="relative z-10 p-4 sm:p-5 m-4 sm:m-6 mt-auto rounded-2xl bg-[#1e1c21]/90 backdrop-blur-md border border-white/10 flex items-center justify-around shadow-2xl">
                   <div className="text-center">
                     <span className="font-syne font-black text-2xl text-[#feba39] block">
                       {profile.experienceYears}
