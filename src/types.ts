@@ -57,6 +57,7 @@ export interface BrandAssets {
   heroText: string;
   heroSubtext: string;
   heroBgUrl?: string;
+  metallicIconUrl?: string;
 }
 
 export interface Stats {

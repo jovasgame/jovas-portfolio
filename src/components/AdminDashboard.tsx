@@ -101,6 +101,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
   const [profileAvatar, setProfileAvatar] = useState(profile.avatarUrl || '');
   const [heroBgUrl, setHeroBgUrl] = useState(brandAssets.heroBgUrl || '');
   const [logoUrl, setLogoUrl] = useState(brandAssets.logoUrl || '');
+  const [metallicIconUrl, setMetallicIconUrl] = useState(brandAssets.metallicIconUrl || '');
   const [brandText, setBrandText] = useState(brandAssets.brandText || 'JOVAS');
   const [brandSubtext, setBrandSubtext] = useState(brandAssets.brandSubtext || 'Motion Design');
 
@@ -229,7 +230,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
       heroBgUrl,
       logoUrl,
       brandText,
-      brandSubtext
+      brandSubtext,
+      metallicIconUrl
     });
     showToast('¡Información de biografía guardada exitosamente!');
     setTimeout(() => {
@@ -244,7 +246,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
       brandText,
       brandSubtext,
       heroText,
-      heroBgUrl
+      heroBgUrl,
+      metallicIconUrl
     });
     showToast('¡Identidad de marca guardada en la nube!');
     setTimeout(() => {
@@ -903,6 +906,26 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
                       <span className="text-xs font-mono uppercase text-[#a89f9e]">Vista previa de Logo Activo:</span>
                       <div className="p-2.5 rounded-xl bg-[#141316] border border-[#feba39]/30">
                         <img src={logoUrl} alt="Logo Preview" className="h-10 max-w-[180px] object-contain" />
+                      </div>
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2 font-bold text-[#feba39]">Ícono por Defecto para el Efecto Metálico (MetallicPaint Header)</label>
+                    <ImageUploader
+                      value={metallicIconUrl}
+                      onChange={(newUrl) => setMetallicIconUrl(newUrl)}
+                      allowVideo={false}
+                      label="Subir o Vincular Ícono Metálico SVG/PNG"
+                      helperText="Sube o vincula tu logo/icono personalizado (SVG o PNG) para animarlo con el efecto WebGL de metal líquido en el banner principal."
+                    />
+                  </div>
+
+                  {metallicIconUrl && (
+                    <div className="p-4 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between">
+                      <span className="text-xs font-mono uppercase text-[#a89f9e]">Vista previa de Ícono Metálico:</span>
+                      <div className="p-2.5 rounded-xl bg-[#141316] border border-[#feba39]/30">
+                        <img src={metallicIconUrl} alt="Metallic Icon Preview" className="h-10 max-w-[180px] object-contain" />
                       </div>
                     </div>
                   )}
