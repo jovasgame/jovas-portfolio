@@ -67,7 +67,7 @@ export function parseGoogleDriveUrl(url: string): { id: string; rawUrl: string }
                   cleaned.match(/id=([a-zA-Z0-9_-]+)/) ||
                   cleaned.match(/googleusercontent\.com\/d\/([a-zA-Z0-9_-]+)/);
                   
-  if (idMatch && idMatch[1]) {
+  if (idMatch && idMatch[1] && idMatch[1].length >= 20) {
     return { id: idMatch[1], rawUrl: cleaned };
   }
   return null;

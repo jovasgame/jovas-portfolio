@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Project, PhotoItem, UserProfile, BrandAssets, ContactMessage, Stats } from '../types';
 import { initialProjects, initialPhotos, initialProfile, initialBrandAssets, initialMessages, initialStats } from '../data/initialData';
 import { hashPassword } from '../utils/security';
+import { parseGoogleDriveUrl, getCategoryFallbackImage } from '../utils/mediaUtils';
 
 interface PortfolioContextType {
   projects: Project[];
@@ -14,31 +15,25 @@ interface PortfolioContextType {
   setSelectedCategory: (category: string) => void;
   selectedProjectForModal: Project | null;
   setSelectedProjectForModal: (project: Project | null) => void;
-  
-  // Admin & Auth
   isAdminLoggedIn: boolean;
-  loginAdmin: (user: string, pass: string) => Promise<boolean>;
+  loginAdmin: (u: string, p: string) => Promise<boolean>;
   logoutAdmin: () => void;
   isLoginModalOpen: boolean;
   setIsLoginModalOpen: (open: boolean) => void;
-  
-  // Real-time CRUD
-  addProject: (project: Omit<Project, 'id' | 'createdAt'>) => void;
-  updateProject: (id: string, updatedFields: Partial<Project>) => void;
+  addProject: (p: Omit<Project, 'id' | 'createdAt'>) => void;
+  updateProject: (id: string, p: Partial<Project>) => void;
   deleteProject: (id: string) => void;
   toggleFeatured: (id: string) => void;
-
   addPhotoItem: (photo: Omit<PhotoItem, 'id' | 'createdAt'>) => void;
-  updatePhotoItem: (id: string, updatedFields: Partial<PhotoItem>) => void;
+  updatePhotoItem: (id: string, photo: Partial<PhotoItem>) => void;
   deletePhotoItem: (id: string) => void;
-  
   updateProfile: (profile: Partial<UserProfile>) => void;
   updateBrandAssets: (assets: Partial<BrandAssets>) => void;
   addContactMessage: (msg: Omit<ContactMessage, 'id' | 'date' | 'read'>) => void;
   markMessageAsRead: (id: string) => void;
   deleteMessage: (id: string) => void;
   resetToDefaults: () => void;
-  syncToCloud: () => Promise<boolean>;
+  syncToCloud: (customProjects?: Project[]) => Promise<boolean>;
 }
 
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
@@ -49,25 +44,52 @@ const LOCAL_STORAGE_PREFIX = 'jovas_portfolio_';
 const ADMIN_USERNAME = 'JovasMotion';
 const ADMIN_PASSWORD_HASH = '8e84a7c15b781c94359a4d8456f5d3168e3f7fa3dcfaa7e32041f30921f49bd6';
 
+const sanitizeProjectList = (projList: Project[]): Project[] => {
+  return projList.map((p) => {
+    const match = initialProjects.find((ip) => ip.id === p.id);
+
+    let cleanImg = p.imageUrl || '';
+    let cleanVid = p.videoUrl || '';
+
+    // Check if videoUrl is a corrupted Google Drive URL
+    if (cleanVid) {
+      if (cleanVid.includes('drive.google.com')) {
+        const driveParsed = parseGoogleDriveUrl(cleanVid);
+        if (!driveParsed) {
+          cleanVid = match?.videoUrl || '';
+        }
+      }
+    }
+
+    // Check if imageUrl is a corrupted Google Drive thumbnail or broken link
+    if (cleanImg) {
+      if (cleanImg.includes('drive.google.com')) {
+        const driveParsed = parseGoogleDriveUrl(cleanImg);
+        if (!driveParsed) {
+          cleanImg = match?.imageUrl || getCategoryFallbackImage(p.category);
+        }
+      } else if (cleanImg.includes('lh3.googleusercontent.com/aida-public')) {
+        cleanImg = match?.imageUrl || getCategoryFallbackImage(p.category);
+      }
+    } else {
+      cleanImg = match?.imageUrl || getCategoryFallbackImage(p.category);
+    }
+
+    return {
+      ...p,
+      imageUrl: cleanImg,
+      videoUrl: cleanVid || undefined
+    };
+  });
+};
+
 export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [projects, setProjects] = useState<Project[]>(() => {
     try {
       const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'projects');
       if (saved) {
         const parsed: Project[] = JSON.parse(saved);
-        return parsed.map((p) => {
-          const match = initialProjects.find((ip) => ip.id === p.id);
-          const hasExpiredImg = !p.imageUrl || p.imageUrl.includes('lh3.googleusercontent.com/aida-public');
-          const hasExpiredVid = p.videoUrl ? (p.videoUrl.includes('commondatastorage.googleapis.com') || p.videoUrl.includes('w3schools.com')) : false;
-          if (hasExpiredImg || hasExpiredVid) {
-            return {
-              ...p,
-              imageUrl: hasExpiredImg ? (match?.imageUrl || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80') : p.imageUrl,
-              videoUrl: hasExpiredVid ? (match?.videoUrl || 'https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-99648-large.mp4') : p.videoUrl
-            };
-          }
-          return p;
-        });
+        return sanitizeProjectList(parsed);
       }
       return initialProjects;
     } catch (e) {
@@ -145,7 +167,9 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       .then(res => res.json())
       .then(data => {
         if (data && data.projects && Array.isArray(data.projects) && data.projects.length > 0) {
-          setProjects(data.projects);
+          const sanitized = sanitizeProjectList(data.projects);
+          setProjects(sanitized);
+          syncToCloud(sanitized);
           if (data.photos && Array.isArray(data.photos)) setPhotos(data.photos);
           if (data.profile) setProfile(data.profile);
           if (data.brandAssets) setBrandAssets(data.brandAssets);
@@ -158,12 +182,13 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }, []);
 
   // Save state to Cloudflare KV storage + localStorage for global persistence
-  const syncToCloud = async (): Promise<boolean> => {
-    const payload = { projects, photos, profile, brandAssets, stats };
+  const syncToCloud = async (customProjects?: Project[]): Promise<boolean> => {
+    const projectsToSync = customProjects || projects;
+    const payload = { projects: projectsToSync, photos, profile, brandAssets, stats };
 
     // 1. Save to localStorage locally
     try {
-      localStorage.setItem(LOCAL_STORAGE_PREFIX + 'projects', JSON.stringify(projects));
+      localStorage.setItem(LOCAL_STORAGE_PREFIX + 'projects', JSON.stringify(projectsToSync));
       localStorage.setItem(LOCAL_STORAGE_PREFIX + 'photos', JSON.stringify(photos));
       localStorage.setItem(LOCAL_STORAGE_PREFIX + 'profile', JSON.stringify(profile));
       localStorage.setItem(LOCAL_STORAGE_PREFIX + 'brand_assets', JSON.stringify(brandAssets));
@@ -259,18 +284,26 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     } catch (e) {}
   };
 
-  // CRUD Operations (localStorage only)
+  // CRUD Operations with instant Cloudflare KV sync
   const addProject = (newProjectData: Omit<Project, 'id' | 'createdAt'>) => {
     const newProj: Project = {
       ...newProjectData,
       id: 'proj-' + Date.now(),
       createdAt: new Date().toISOString().split('T')[0]
     };
-    setProjects(prev => [newProj, ...prev]);
+    setProjects(prev => {
+      const updated = [newProj, ...prev];
+      syncToCloud(updated);
+      return updated;
+    });
   };
 
   const updateProject = (id: string, updatedFields: Partial<Project>) => {
-    setProjects(prev => prev.map(p => (p.id === id ? { ...p, ...updatedFields } : p)));
+    setProjects(prev => {
+      const updated = prev.map(p => (p.id === id ? { ...p, ...updatedFields } : p));
+      syncToCloud(updated);
+      return updated;
+    });
     // If updating currently open modal project, sync it as well
     if (selectedProjectForModal && selectedProjectForModal.id === id) {
       setSelectedProjectForModal(prev => prev ? { ...prev, ...updatedFields } : null);
@@ -278,11 +311,19 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const deleteProject = (id: string) => {
-    setProjects(prev => prev.filter(p => p.id !== id));
+    setProjects(prev => {
+      const updated = prev.filter(p => p.id !== id);
+      syncToCloud(updated);
+      return updated;
+    });
   };
 
   const toggleFeatured = (id: string) => {
-    setProjects(prev => prev.map(p => (p.id === id ? { ...p, featured: !p.featured } : p)));
+    setProjects(prev => {
+      const updated = prev.map(p => (p.id === id ? { ...p, featured: !p.featured } : p));
+      syncToCloud(updated);
+      return updated;
+    });
   };
 
   const addPhotoItem = (photoData: Omit<PhotoItem, 'id' | 'createdAt'>) => {
@@ -347,6 +388,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     localStorage.removeItem(LOCAL_STORAGE_PREFIX + 'brand_assets');
     localStorage.removeItem(LOCAL_STORAGE_PREFIX + 'messages');
     localStorage.removeItem(LOCAL_STORAGE_PREFIX + 'stats');
+    syncToCloud(initialProjects);
   };
 
   return (
