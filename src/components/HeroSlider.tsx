@@ -77,40 +77,29 @@ export const HeroSlider: React.FC = () => {
       
       {/* Immersive Full Screen Hero Welcome Header */}
       <div className="text-center max-w-3xl mx-auto px-4 sm:px-6 min-h-[60vh] sm:min-h-[75vh] flex flex-col items-center justify-center space-y-3 sm:space-y-4 z-10 py-6 sm:py-8 mb-10 sm:mb-28">
-        {/* Transparent Large Metallic Paint Icon */}
+        {/* Clean Glowing Logo (Without square canvas box) */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="w-40 h-40 sm:w-56 sm:h-56 lg:w-72 lg:h-72 relative flex items-center justify-center pointer-events-auto cursor-pointer drop-shadow-[0_15px_45px_rgba(255,85,64,0.45)] mb-2"
+          className="w-28 h-28 sm:w-36 sm:h-36 lg:w-44 lg:h-44 relative flex items-center justify-center pointer-events-auto cursor-pointer group mb-4"
         >
-          <MetallicPaint
-            imageSrc={
-              brandAssets.metallicIconUrl ||
-              brandAssets.logoUrl ||
-              "https://lh3.googleusercontent.com/aida-public/AB6AXuBVIY3R1_ShwuNazpxjXd6xyGf2xO6gNj7SUUo0pqzZuSqI873znEpmiFkgo35w_PAL893uLpJ058D1_ypOtVtWFIXJTYjVkKqCjJCfNkLCWddZ-XkJT2oufbwyt7djs9BoHLKWd5uzWELdKhyl4E4Upa7W_HQVPAIV8FFlbPEvXD8Iks3eYsoe5qy9jL2vF3zJBSzeM36egLzNcX75Cedo6CSDvj1T3QrCDdaSUkUJ_AvNNRoFBvbrWA"
-            }
-            seed={42}
-            scale={4}
-            patternSharpness={1}
-            noiseScale={0.8}
-            speed={0.4}
-            liquid={0.75}
-            mouseAnimation={true}
-            brightness={2}
-            contrast={0.6}
-            refraction={0.015}
-            blur={0.015}
-            chromaticSpread={2}
-            fresnel={1}
-            angle={0}
-            waveAmplitude={1}
-            distortion={1}
-            contour={0.2}
-            lightColor="#ffffff"
-            darkColor="#111111"
-            tintColor="#feba39"
-          />
+          {/* Subtle Ambient Radial Glow */}
+          <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#ff5540]/40 via-[#feba39]/30 to-transparent blur-2xl group-hover:scale-125 transition-transform duration-700 pointer-events-none" />
+
+          {brandAssets.logoUrl || brandAssets.metallicIconUrl ? (
+            <img
+              src={brandAssets.logoUrl || brandAssets.metallicIconUrl}
+              alt={brandAssets.brandText || "Logo"}
+              className="w-full h-full object-contain filter drop-shadow-[0_10px_30px_rgba(255,85,64,0.5)] relative z-10 group-hover:scale-105 transition-transform duration-300"
+            />
+          ) : (
+            <div className="w-full h-full rounded-3xl bg-gradient-to-br from-[#ff5540] to-[#feba39] p-[2px] shadow-2xl shadow-[#ff5540]/30 relative z-10 group-hover:scale-105 transition-transform duration-300">
+              <div className="w-full h-full bg-[#1e1c21] rounded-[22px] flex items-center justify-center">
+                <Flame className="w-12 h-12 sm:w-16 sm:h-16 text-[#feba39] animate-pulse" />
+              </div>
+            </div>
+          )}
         </motion.div>
 
         <motion.h1

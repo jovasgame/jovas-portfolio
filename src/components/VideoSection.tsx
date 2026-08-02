@@ -237,12 +237,8 @@ const VideoCard: React.FC<VideoCardProps> = ({ project, index, onSelectProject }
 export const VideoSection: React.FC = () => {
   const { projects, setSelectedProjectForModal } = usePortfolio();
 
-  // Filter video & animation projects
-  const videoProjects = projects.filter(p => 
-    p.category === 'Animación' || 
-    Boolean(p.videoUrl?.trim()) ||
-    p.tags?.some(t => t.toLowerCase().includes('animaci') || t.toLowerCase().includes('video'))
-  );
+  // Filter strictly Animación category projects for the video reel
+  const videoProjects = projects.filter(p => p.category === 'Animación');
 
   return (
     <section id="video-section" className="py-24 relative bg-[#0e0d10] border-t border-b border-white/10">

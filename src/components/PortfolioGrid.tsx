@@ -224,8 +224,8 @@ export const PortfolioGrid: React.FC = () => {
   ];
 
   const filteredProjects = selectedCategory === 'Todos'
-    ? projects
-    : projects.filter(p => p.category === selectedCategory);
+    ? projects.filter(p => p.category !== 'Animación')
+    : projects.filter(p => p.category === selectedCategory && p.category !== 'Animación');
 
   const getCategoryBadgeColor = (cat: ProjectCategory) => {
     switch (cat) {
@@ -309,8 +309,23 @@ export const PortfolioGrid: React.FC = () => {
         </div>
 
         {filteredProjects.length === 0 && (
-          <div className="text-center py-16 bg-[#232026]/40 rounded-3xl border border-white/10">
-            <p className="text-lg text-[#a89f9e]">No hay proyectos en esta categoría aún.</p>
+          <div className="text-center py-16 bg-[#232026]/40 rounded-3xl border border-white/10 space-y-4">
+            <p className="text-lg text-[#a89f9e]">
+              {selectedCategory === 'Animación' 
+                ? 'Los reels y obras de animación se encuentran organizados en la sección exclusiva de vídeos.'
+                : 'No hay proyectos en esta categoría aún.'}
+            </p>
+            {selectedCategory === 'Animación' && (
+              <button
+                onClick={() => {
+                  const el = document.getElementById('video-section');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] font-bold text-xs uppercase cursor-pointer"
+              >
+                Ir al Reel de Animación &rarr;
+              </button>
+            )}
           </div>
         )}
 
