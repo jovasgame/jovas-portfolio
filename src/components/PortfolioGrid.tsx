@@ -145,44 +145,47 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         </span>
       </div>
 
-      {/* Bottom Card Content (Title, Description, Tags, CTA) - Fades out on hover */}
-      <div className="relative z-30 p-6 space-y-3 bg-gradient-to-t from-[#141316] via-[#141316]/95 to-transparent pt-12 transition-all duration-500 group-hover:opacity-0 group-hover:pointer-events-none">
-        <h3 className="font-syne font-bold text-2xl text-white group-hover:text-[#feba39] transition-colors line-clamp-1">
-          {project.title}
-        </h3>
+      {/* Bottom Card Content */}
+      <div className="relative z-30 p-6 space-y-3 bg-gradient-to-t from-[#141316]/90 via-[#141316]/60 to-transparent pt-12">
+        {/* Title, Description & Tags (Fade out on hover for clear image view) */}
+        <div className="space-y-3 transition-all duration-500 group-hover:opacity-0 group-hover:pointer-events-none">
+          <h3 className="font-syne font-bold text-2xl text-white group-hover:text-[#feba39] transition-colors line-clamp-1">
+            {project.title}
+          </h3>
 
-        <p className="text-xs text-[#a89f9e] line-clamp-2 leading-relaxed">
-          {project.description}
-        </p>
+          <p className="text-xs text-[#a89f9e] line-clamp-2 leading-relaxed">
+            {project.description}
+          </p>
 
-        {/* Tags */}
-        <div className="flex flex-wrap gap-1.5 pt-1">
-          {project.tags.slice(0, 3).map((tag, idx) => (
-            <span
-              key={idx}
-              className="px-2 py-0.5 rounded bg-white/5 text-[10px] font-mono text-[#a89f9e] border border-white/5"
-            >
-              #{tag}
-            </span>
-          ))}
-          {project.tags.length > 3 && (
-            <span className="px-2 py-0.5 rounded bg-white/5 text-[10px] font-mono text-[#a89f9e]">
-              +{project.tags.length - 3}
-            </span>
-          )}
+          {/* Tags */}
+          <div className="flex flex-wrap gap-1.5 pt-1">
+            {project.tags.slice(0, 3).map((tag, idx) => (
+              <span
+                key={idx}
+                className="px-2 py-0.5 rounded bg-white/5 text-[10px] font-mono text-[#a89f9e] border border-white/5"
+              >
+                #{tag}
+              </span>
+            ))}
+            {project.tags.length > 3 && (
+              <span className="px-2 py-0.5 rounded bg-white/5 text-[10px] font-mono text-[#a89f9e]">
+                +{project.tags.length - 3}
+              </span>
+            )}
+          </div>
         </div>
 
-        {/* Bottom Subtle View Project Link & CTA Button */}
-        <div className="pt-3 flex items-center justify-between border-t border-white/10">
+        {/* Bottom View Project Link & CTA Button (Exempt from hover fade-out, ALWAYS VISIBLE) */}
+        <div className="pt-3 flex items-center justify-between border-t border-white/10 relative z-40 pointer-events-auto">
           <button
             onClick={(e) => {
               e.stopPropagation();
               setSelectedProjectForModal(project);
             }}
-            className="inline-flex items-center gap-1.5 text-xs font-mono text-[#a89f9e] hover:text-[#feba39] transition-colors cursor-pointer group/link"
+            className="inline-flex items-center gap-1.5 text-xs font-mono text-white hover:text-[#feba39] transition-colors cursor-pointer group/link"
           >
-            <span className="group-hover/link:translate-x-1 transition-transform font-bold">
-              Ver Proyecto &rarr;
+            <span className="group-hover/link:translate-x-1 transition-transform font-bold flex items-center gap-1">
+              Ver Proyecto <span className="text-[#feba39]">&rarr;</span>
             </span>
           </button>
 
