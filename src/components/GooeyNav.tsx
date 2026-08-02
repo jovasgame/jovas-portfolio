@@ -26,12 +26,12 @@ export interface GooeyNavProps {
 
 export const GooeyNav: React.FC<GooeyNavProps> = ({
   items,
-  animationTime = 600,
+  animationTime = 500,
   particleCount = 15,
-  particleDistances = [90, 10],
-  particleR = 100,
-  timeVariance = 300,
-  colors = [1, 2, 3, 1, 2, 3, 1, 4],
+  particleDistances = [80, 15],
+  particleR = 90,
+  timeVariance = 250,
+  colors = [1, 2, 3, 4],
   initialActiveIndex = 0,
   activeIndex: externalActiveIndex,
   onItemSelect,
@@ -87,7 +87,7 @@ export const GooeyNav: React.FC<GooeyNavProps> = ({
         particle.style.setProperty("--end-y", `${p.end[1]}px`);
         particle.style.setProperty("--time", `${p.time}ms`);
         particle.style.setProperty("--scale", `${p.scale}`);
-        particle.style.setProperty("--color", `var(--color-${p.color}, white)`);
+        particle.style.setProperty("--color", `var(--color-${p.color}, #feba39)`);
         particle.style.setProperty("--rotate", `${p.rotate}deg`);
 
         point.classList.add("point");
