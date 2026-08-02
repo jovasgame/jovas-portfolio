@@ -1,20 +1,31 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
-import { X, Play, Tag, Calendar, User, Cpu, Film, Sparkles, Flame, CheckCircle } from 'lucide-react';
+import { X, Sparkles, CheckCircle, Flame, Calendar, Tag, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MediaViewer } from './MediaViewer';
-import { MagneticButton } from './MagneticButton';
 
 export const ProjectModal: React.FC = () => {
   const { selectedProjectForModal, setSelectedProjectForModal } = usePortfolio();
 
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedProjectForModal(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [setSelectedProjectForModal]);
+
   if (!selectedProjectForModal) return null;
 
   const project = selectedProjectForModal;
+  const isVideoProject = Boolean(project.videoUrl?.trim()) || project.category === 'Animación';
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 lg:p-8 overflow-y-auto bg-black/80 backdrop-blur-md">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 lg:p-6 bg-black/92 backdrop-blur-2xl overflow-y-auto">
         
         {/* Backdrop click to close */}
         <div 
@@ -22,44 +33,45 @@ export const ProjectModal: React.FC = () => {
           onClick={() => setSelectedProjectForModal(null)}
         />
 
-        {/* Modal Container */}
+        {/* Large Immersive Cinema Lightbox Modal Container */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          transition={{ duration: 0.3 }}
-          className="relative w-full max-w-4xl bg-[#1e1c21] border border-[#b18780]/30 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden z-10 my-4 sm:my-8 max-h-[92vh] sm:max-h-[90vh] flex flex-col"
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.96 }}
+          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="relative w-full max-w-6xl bg-[#121115] border border-white/15 rounded-2xl sm:rounded-3xl shadow-[0_30px_90px_rgba(0,0,0,0.95)] overflow-hidden z-10 my-auto max-h-[96vh] flex flex-col"
         >
-          {/* Top Sticky Header */}
-          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/10 bg-[#1e1c21]/90 backdrop-blur-md sticky top-0 z-20">
+          {/* Top Header Bar */}
+          <div className="flex items-center justify-between px-4 py-3 sm:px-6 border-b border-white/10 bg-[#121115]/90 backdrop-blur-md shrink-0">
             <div className="flex items-center gap-2 sm:gap-3">
-              <span className="px-2.5 sm:px-3 py-1 rounded-full bg-[#ff5540]/20 text-[#ff5540] border border-[#ff5540]/30 text-[10px] sm:text-xs font-bold uppercase">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#ff5540]/20 text-[#ff7563] border border-[#ff5540]/30 text-[10px] sm:text-xs font-bold uppercase tracking-wider">
                 {project.category}
               </span>
-              <span className="text-[11px] sm:text-xs font-mono text-[#a89f9e]">
+              <span className="text-[11px] font-mono text-[#a89f9e]">
                 Año: {project.year}
               </span>
             </div>
 
             <button
               onClick={() => setSelectedProjectForModal(null)}
-              className="p-1.5 sm:p-2 rounded-full bg-white/5 hover:bg-white/15 text-white transition-colors cursor-pointer"
+              className="p-1.5 sm:p-2 rounded-full bg-white/10 hover:bg-[#ff5540] text-white transition-colors cursor-pointer"
+              title="Cerrar (Esc)"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
-          {/* Scrollable Body Content */}
-          <div className="p-3.5 sm:p-8 space-y-5 sm:space-y-8 overflow-y-auto">
+          {/* Large Screen-Filling Cinema Player & Details */}
+          <div className="p-3 sm:p-6 space-y-4 overflow-y-auto max-h-[calc(96vh-55px)] flex flex-col justify-between">
             
-            {/* Media Display Section (Video or Image) */}
-            <div className="relative rounded-xl sm:rounded-2xl overflow-hidden border border-white/10 bg-black aspect-video min-h-[200px] xs:min-h-[250px] sm:min-h-[380px] w-full flex items-center justify-center group shadow-xl">
+            {/* Dominant 16:9 Large Video Frame */}
+            <div className="relative rounded-xl sm:rounded-2xl overflow-hidden bg-black aspect-video w-full max-h-[68vh] shadow-2xl flex items-center justify-center border border-white/10 group">
               <MediaViewer
                 src={project.videoUrl || project.imageUrl}
                 alt={project.title}
                 poster={project.imageUrl}
-                forceVideo={!!project.videoUrl}
-                className="w-full h-full object-cover"
+                forceVideo={isVideoProject}
+                className="w-full h-full object-contain"
                 controls={true}
                 autoPlay={true}
                 loop={true}
@@ -67,70 +79,55 @@ export const ProjectModal: React.FC = () => {
               />
             </div>
 
-            {/* Title & Description */}
-            <div className="space-y-4">
-              <h2 className="font-syne font-black text-3xl sm:text-4xl text-white">
-                {project.title}
-              </h2>
-
-              <p className="text-sm sm:text-base text-[#e7e1e5]/90 leading-relaxed">
-                {project.fullDescription || project.description}
-              </p>
-            </div>
-
-            {/* Client & Tools Tags */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
-              {project.client && (
-                <div className="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/5">
-                  <User className="w-5 h-5 text-[#feba39]" />
-                  <div>
-                    <span className="text-[10px] font-mono text-[#a89f9e] block uppercase">Cliente / Estudio</span>
-                    <span className="text-sm font-bold text-white">{project.client}</span>
-                  </div>
+            {/* Subtle YouTube-Style Info Bar below video */}
+            <div className="space-y-3 pt-1">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
+                <div className="space-y-1">
+                  <h2 className="font-syne font-black text-xl sm:text-3xl text-white tracking-tight">
+                    {project.title}
+                  </h2>
+                  <p className="text-xs sm:text-sm text-[#a89f9e] leading-relaxed max-w-4xl">
+                    {project.fullDescription || project.description}
+                  </p>
                 </div>
-              )}
 
-              <div className="p-4 rounded-xl bg-white/5 border border-white/5 space-y-2">
-                <span className="text-[10px] font-mono text-[#a89f9e] block uppercase">Herramientas & Software</span>
-                <div className="flex flex-wrap gap-1.5">
+                {/* Subtle Discreet CTA Button in Corner */}
+                <div className="shrink-0 pt-1 sm:pt-0">
+                  <button
+                    onClick={() => {
+                      setSelectedProjectForModal(null);
+                      const contactEl = document.getElementById('contacto');
+                      if (contactEl) contactEl.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] font-bold text-xs uppercase shadow-md hover:scale-105 transition-transform cursor-pointer"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Solicitar Cotización</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Minimal Specs & Tags Footer */}
+              <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-[#a89f9e]/80">
+                <div className="flex flex-wrap items-center gap-2">
+                  {project.client && (
+                    <span className="px-2.5 py-0.5 rounded bg-white/5 border border-white/10 text-white/90">
+                      Cliente: <strong className="text-white font-bold">{project.client}</strong>
+                    </span>
+                  )}
                   {project.tags.map((tag, idx) => (
-                    <span
-                      key={idx}
-                      className="px-2.5 py-1 rounded bg-[#1e1c21] text-xs font-mono text-[#feba39] border border-white/10"
-                    >
-                      {tag}
+                    <span key={idx} className="px-2 py-0.5 rounded bg-white/5 text-[#feba39]">
+                      #{tag}
                     </span>
                   ))}
                 </div>
-              </div>
-            </div>
 
-            {/* CTA Footer inside Modal */}
-            <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-2 text-xs text-[#a89f9e]">
-                <CheckCircle className="w-4 h-4 text-emerald-400" />
-                Proyecto verificado del archivo de Jovas Motion
+                <div className="flex items-center gap-1 text-[10px] text-emerald-400 font-sans">
+                  <CheckCircle className="w-3.5 h-3.5" />
+                  <span>Proyecto verificado del archivo de Jovas Motion</span>
+                </div>
               </div>
 
-              <MagneticButton
-                link="#contacto"
-                onClick={() => {
-                  setSelectedProjectForModal(null);
-                  const contactEl = document.getElementById('contacto');
-                  if (contactEl) contactEl.scrollIntoView({ behavior: 'smooth' });
-                }}
-                paddingX={22}
-                paddingY={12}
-                radius={14}
-                magnet={8}
-                fill="linear-gradient(135deg, #ff5540 0%, #feba39 100%)"
-                textColor="#2c1800"
-                sweepColor="#121114"
-                sweepTextColor="#feba39"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Solicitar Cotización Similar</span>
-              </MagneticButton>
             </div>
 
           </div>

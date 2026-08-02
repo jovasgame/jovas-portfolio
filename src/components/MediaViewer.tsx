@@ -48,12 +48,17 @@ export const MediaViewer: React.FC<MediaViewerProps> = ({
       videoRef.current.defaultMuted = muted;
       if (muted) {
         videoRef.current.volume = 0;
+      } else {
+        videoRef.current.volume = 0.9;
       }
       if (autoPlay) {
         const playPromise = videoRef.current.play();
         if (playPromise !== undefined) {
           playPromise.catch(() => {
-            // Silence autoplay restrictions
+            if (videoRef.current) {
+              videoRef.current.muted = true;
+              videoRef.current.play().catch(() => {});
+            }
           });
         }
       }
