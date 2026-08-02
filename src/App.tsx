@@ -13,7 +13,7 @@ import { Footer } from './components/Footer';
 import { ProjectModal } from './components/ProjectModal';
 import { AdminLoginModal } from './components/AdminLoginModal';
 import { AdminDashboard } from './components/AdminDashboard';
-import { SoftAurora } from './components/SoftAurora';
+import PrismaticBurst from './components/PrismaticBurst';
 
 const MainPortfolioContent: React.FC = () => {
   const { isAdminLoggedIn } = usePortfolio();
@@ -25,23 +25,19 @@ const MainPortfolioContent: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#0a090c] text-[#e7e1e5] relative selection:bg-[#feba39] selection:text-[#432c00]">
-      {/* Dynamic WebGL Soft Aurora Background & Lava Lamp Orbs */}
+      {/* Dynamic WebGL Prismatic Burst Background & Lava Lamp Orbs */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <SoftAurora
-          speed={0.6}
-          scale={1.5}
-          brightness={1.1}
-          color1="#ff5540"
-          color2="#feba39"
-          noiseFrequency={2.5}
-          noiseAmplitude={1.0}
-          bandHeight={0.5}
-          bandSpread={1.0}
-          octaveDecay={0.1}
-          layerOffset={0}
-          colorSpeed={1.0}
-          enableMouseInteraction={true}
-          mouseInfluence={0.25}
+        <PrismaticBurst
+          animationType="rotate3d"
+          intensity={1.8}
+          speed={0.4}
+          distort={0.8}
+          paused={false}
+          offset={{ x: 0, y: 0 }}
+          hoverDampness={0.25}
+          rayCount={18}
+          mixBlendMode="lighten"
+          colors={['#ff5540', '#feba39', '#ff007a', '#1e1c21']}
         />
         <div className="absolute top-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full bg-gradient-to-br from-[#ff5540]/20 to-[#feba39]/10 blur-[130px] lava-blob-1" />
         <div className="absolute top-[30%] right-[-10%] w-[600px] h-[600px] rounded-full bg-gradient-to-bl from-[#feba39]/15 to-[#ff5540]/10 blur-[150px] lava-blob-2" />
