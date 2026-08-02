@@ -40,7 +40,7 @@ import {
   Share2,
   Camera
 } from 'lucide-react';
-import { getDirectThumbnailUrl, isGoogleDriveUrl, parseMediaUrl } from '../utils/mediaUtils';
+import { getDirectThumbnailUrl, isGoogleDriveUrl, parseMediaUrl, parseGoogleDriveUrl, isDirectVideoUrl } from '../utils/mediaUtils';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface AdminDashboardProps {
@@ -267,9 +267,33 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
 
   const handleSaveProject = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !imageUrl) return;
+    if (!title) return;
 
     const tagsArray = tagsInput.split(',').map(t => t.trim()).filter(Boolean);
+    const rawMedia = mediaUrl || imageUrl || videoUrl;
+    const driveParsed = parseGoogleDriveUrl(rawMedia);
+
+    let finalImageUrl = imageUrl;
+    let finalVideoUrl = videoUrl;
+
+    if (driveParsed) {
+      finalImageUrl = `https://drive.google.com/thumbnail?id=${driveParsed.id}&sz=w1200`;
+      finalVideoUrl = `https://drive.google.com/file/d/${driveParsed.id}/preview`;
+    } else if (rawMedia) {
+      const parsed = parseMediaUrl(rawMedia);
+      if (parsed.type === 'video' || parsed.type === 'iframe') {
+        finalVideoUrl = rawMedia;
+        if (!finalImageUrl || finalImageUrl.includes('unsplash')) {
+          finalImageUrl = getDirectThumbnailUrl(rawMedia);
+        }
+      } else {
+        finalImageUrl = rawMedia;
+      }
+    }
+
+    if (!finalImageUrl) {
+      finalImageUrl = 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80';
+    }
 
     if (isCreatingNew) {
       addProject({
@@ -277,9 +301,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
         category,
         year,
         description,
-        fullDescription,
-        imageUrl,
-        videoUrl: videoUrl || undefined,
+        fullDescription: fullDescription || description,
+        imageUrl: finalImageUrl,
+        videoUrl: finalVideoUrl || undefined,
         tags: tagsArray,
         featured,
         client: client || undefined,
@@ -292,9 +316,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
         category,
         year,
         description,
-        fullDescription,
-        imageUrl,
-        videoUrl: videoUrl || undefined,
+        fullDescription: fullDescription || description,
+        imageUrl: finalImageUrl,
+        videoUrl: finalVideoUrl || undefined,
         tags: tagsArray,
         featured,
         client: client || undefined,
@@ -789,9 +813,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
                         <tr key={proj.id} className="hover:bg-white/5 transition-colors">
                           <td className="p-4 flex items-center gap-3">
                             <img
-                              src={isGoogleDriveUrl(proj.videoUrl) ? getDirectThumbnailUrl(proj.videoUrl) : getDirectThumbnailUrl(proj.imageUrl || proj.videoUrl)}
+                              src={getDirectThumbnailUrl(proj.imageUrl || proj.videoUrl)}
                               alt={proj.title}
-                              className="w-14 h-14 rounded-2xl object-cover border border-white/10"
+                              className="w-14 h-14 rounded-2xl object-cover border border-white/10 bg-[#191524]"
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80';
+                              }}
                             />
                             <div>
                               <span className="font-bold text-white text-sm block">{proj.title}</span>

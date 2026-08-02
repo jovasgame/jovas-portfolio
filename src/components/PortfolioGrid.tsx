@@ -89,6 +89,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           src={posterSrc}
           alt={project.title}
           className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 filter brightness-90 contrast-105"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80';
+          }}
         />
 
         {/* Video Preview on Hover */}
