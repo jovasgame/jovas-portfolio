@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Cpu, Flame } from 'lucide-react';
+import { MagicBentoCard } from './MagicBento';
 
 export const WorkflowSection: React.FC = () => {
   const steps = [
@@ -68,35 +69,45 @@ export const WorkflowSection: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: idx * 0.15 }}
-              className="p-6 rounded-2xl glass-card border border-white/10 relative group hover:border-[#ff5540]/40 flex flex-col justify-between"
             >
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="font-syne font-black text-4xl text-[#ff5540] opacity-80 group-hover:scale-110 transition-transform">
-                    {step.number}
-                  </span>
-                  <Flame className="w-5 h-5 text-[#feba39] opacity-40 group-hover:opacity-100 transition-opacity" />
+              <MagicBentoCard
+                glowColor={idx % 2 === 0 ? "255, 85, 64" : "254, 186, 57"}
+                enableBorderGlow={true}
+                enableStars={true}
+                enableTilt={true}
+                enableMagnetism={true}
+                clickEffect={true}
+                className="p-6 h-full flex flex-col justify-between"
+                style={{ backgroundColor: "rgba(26, 24, 29, 0.85)", minHeight: "260px" }}
+              >
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="font-syne font-black text-4xl text-[#ff5540] opacity-90">
+                      {step.number}
+                    </span>
+                    <Flame className="w-5 h-5 text-[#feba39] opacity-70" />
+                  </div>
+
+                  <h3 className="font-syne font-bold text-lg text-white">
+                    {step.title}
+                  </h3>
+
+                  <p className="text-xs text-[#a89f9e] leading-relaxed">
+                    {step.description}
+                  </p>
                 </div>
 
-                <h3 className="font-syne font-bold text-lg text-white">
-                  {step.title}
-                </h3>
-
-                <p className="text-xs text-[#a89f9e] leading-relaxed">
-                  {step.description}
-                </p>
-              </div>
-
-              <div className="pt-4 mt-6 border-t border-white/10 flex flex-wrap gap-1.5">
-                {step.tools.map((tool, tIdx) => (
-                  <span
-                    key={tIdx}
-                    className="px-2 py-0.5 rounded bg-white/5 text-[10px] font-mono text-[#feba39]"
-                  >
-                    {tool}
-                  </span>
-                ))}
-              </div>
+                <div className="pt-4 mt-6 border-t border-white/10 flex flex-wrap gap-1.5 z-10 relative">
+                  {step.tools.map((tool, tIdx) => (
+                    <span
+                      key={tIdx}
+                      className="px-2 py-0.5 rounded bg-white/5 text-[10px] font-mono text-[#feba39] border border-white/10"
+                    >
+                      {tool}
+                    </span>
+                  ))}
+                </div>
+              </MagicBentoCard>
             </motion.div>
           ))}
         </div>
