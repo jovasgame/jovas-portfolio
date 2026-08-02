@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { parseMediaUrl } from '../utils/mediaUtils';
+import { parseMediaUrl, parseGoogleDriveUrl } from '../utils/mediaUtils';
 import { Image as ImageIcon, AlertCircle } from 'lucide-react';
 
 interface MediaViewerProps {
@@ -176,10 +176,10 @@ export const MediaViewer: React.FC<MediaViewerProps> = ({
       alt={alt}
       className={className}
       onError={(e) => {
-        const driveMatch = src.match(/\/d\/([a-zA-Z0-9_-]+)/) || src.match(/id=([a-zA-Z0-9_-]+)/);
-        if (driveMatch && driveMatch[1]) {
+        const driveParsed = parseGoogleDriveUrl(src);
+        if (driveParsed) {
           const target = e.target as HTMLImageElement;
-          const fallback = `https://drive.google.com/uc?export=view&id=${driveMatch[1]}`;
+          const fallback = `https://drive.google.com/uc?export=view&id=${driveParsed.id}`;
           if (target.src !== fallback) {
             target.src = fallback;
             return;

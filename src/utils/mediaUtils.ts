@@ -45,6 +45,24 @@ export function getDirectHoverVideoUrl(videoUrl?: string, projectId: string = 'p
 export function parseGoogleDriveUrl(url: string): { id: string; rawUrl: string } | null {
   if (!url) return null;
   const cleaned = url.trim();
+
+  // Data URLs, blob URLs, or local file paths are NEVER Google Drive URLs
+  if (
+    cleaned.startsWith('data:') ||
+    cleaned.startsWith('blob:') ||
+    cleaned.startsWith('/') ||
+    cleaned.startsWith('./') ||
+    cleaned.startsWith('../')
+  ) {
+    return null;
+  }
+
+  // Must belong to a Google domain (drive.google.com, docs.google.com, googleusercontent.com, etc.)
+  const isGoogleDomain = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)*(google\.com|googleusercontent\.com)/i.test(cleaned);
+  if (!isGoogleDomain) {
+    return null;
+  }
+
   const idMatch = cleaned.match(/\/d\/([a-zA-Z0-9_-]+)/) || 
                   cleaned.match(/id=([a-zA-Z0-9_-]+)/) ||
                   cleaned.match(/googleusercontent\.com\/d\/([a-zA-Z0-9_-]+)/);
@@ -104,6 +122,12 @@ export function getDirectThumbnailUrl(url?: string, category?: string): string {
   const fallback = getCategoryFallbackImage(category);
   if (!url || !url.trim()) return fallback;
   const trimmed = url.trim();
+
+  // Data URLs or Blob URLs are direct local resources
+  if (trimmed.startsWith('data:') || trimmed.startsWith('blob:')) {
+    return trimmed;
+  }
+
   const driveParsed = parseGoogleDriveUrl(trimmed);
   if (driveParsed) {
     return `https://drive.google.com/thumbnail?id=${driveParsed.id}&sz=w1200`;
