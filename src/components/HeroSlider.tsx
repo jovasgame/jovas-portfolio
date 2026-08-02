@@ -49,38 +49,26 @@ export const HeroSlider: React.FC = () => {
   if (!currentProject) return null;
 
   return (
-    <section id="hero" className="relative min-h-screen pt-28 pb-16 flex flex-col justify-center overflow-hidden bg-transparent">
+    <section id="hero" className="relative min-h-screen pt-36 pb-20 flex flex-col justify-center overflow-hidden bg-transparent">
       {/* Background Animated Atmosphere & Grid */}
       <div className="absolute inset-0 z-0 opacity-15 pointer-events-none diagonal-stripes"></div>
       
-      {/* React Bits Inspired Glow Welcome Header */}
-      <div className="text-center max-w-4xl mx-auto px-4 mb-8 space-y-4 z-10">
-        <motion.div
-          initial={{ opacity: 0, y: -15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-xs font-mono text-[#feba39] shadow-lg shadow-black/40"
-        >
-          <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-[#ff5540] to-[#feba39] text-black font-extrabold text-[10px] tracking-wider uppercase">
-            NUEVO
-          </span>
-          <span>Motion Design & 3D Showcase v2.0</span>
-        </motion.div>
-
+      {/* Expanded Hero Welcome Header */}
+      <div className="text-center max-w-5xl mx-auto px-4 sm:px-6 mb-16 space-y-6 sm:space-y-8 z-10 py-8">
         <motion.h1
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.1 }}
-          className="font-syne font-black text-4xl sm:text-6xl lg:text-7xl text-white tracking-tight leading-[1.08] drop-shadow-[0_10px_35px_rgba(0,0,0,0.9)]"
+          transition={{ duration: 0.7 }}
+          className="font-syne font-black text-5xl sm:text-7xl lg:text-8xl text-white tracking-tight leading-[1.05] drop-shadow-[0_15px_45px_rgba(0,0,0,0.95)]"
         >
           ¡Un destello creativo para <span className="bg-gradient-to-r from-[#ff5540] via-[#feba39] to-[#ff5540] bg-clip-text text-transparent">iluminar tus proyectos</span>!
         </motion.h1>
 
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="text-base sm:text-lg text-[#e7e1e5]/85 max-w-2xl mx-auto font-sans leading-relaxed"
+          transition={{ duration: 0.7, delay: 0.15 }}
+          className="text-lg sm:text-2xl text-[#e7e1e5]/90 max-w-3xl mx-auto font-sans leading-relaxed font-normal drop-shadow-lg"
         >
           Explora la colección de animación digital, arte 3D e ilustración conceptual desarrollados con máxima precisión técnica y fluidez.
         </motion.p>
