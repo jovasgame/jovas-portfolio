@@ -289,13 +289,19 @@ export const initialProfile: UserProfile = {
   "projectsCompletedCount": "120+",
   "email": "jovas.motion@design.com",
   "avatarUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuBVIY3R1_ShwuNazpxjXd6xyGf2xO6gNj7SUUo0pqzZuSqI873znEpmiFkgo35w_PAL893uLpJ058D1_ypOtVtWFIXJTYjVkKqCjJCfNkLCWddZ-XkJT2oufbwyt7djs9BoHLKWd5uzWELdKhyl4E4Upa7W_HQVPAIV8FFlbPEvXD8Iks3eYsoe5qy9jL2vF3zJBSzeM36egLzNcX75Cedo6CSDvj1T3QrCDdaSUkUJ_AvNNRoFBvbrWA",
-  "socialLinks": {
-    "instagram": "https://instagram.com",
-    "artstation": "https://artstation.com",
-    "linkedin": "https://linkedin.com",
-    "behance": "https://behance.net",
-    "vimeo": "https://vimeo.com"
-  }
+  socialLinks: {
+    instagram: "https://instagram.com",
+    artstation: "https://artstation.com",
+    linkedin: "https://linkedin.com",
+    behance: "https://behance.net",
+    vimeo: "https://vimeo.com"
+  },
+  customSocialLinks: [
+    { id: '1', name: 'Instagram', url: 'https://instagram.com', icon: 'instagram' },
+    { id: '2', name: 'ArtStation', url: 'https://artstation.com', icon: 'artstation' },
+    { id: '3', name: 'Vimeo', url: 'https://vimeo.com', icon: 'vimeo' },
+    { id: '4', name: 'LinkedIn', url: 'https://linkedin.com', icon: 'linkedin' }
+  ]
 };
 
 export const initialBrandAssets: BrandAssets = {

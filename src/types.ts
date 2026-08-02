@@ -32,6 +32,13 @@ export interface ContactMessage {
   read: boolean;
 }
 
+export interface SocialLinkItem {
+  id: string;
+  name: string;
+  url: string;
+  icon?: string;
+}
+
 export interface UserProfile {
   name: string;
   title: string;
@@ -48,6 +55,7 @@ export interface UserProfile {
     behance: string;
     vimeo: string;
   };
+  customSocialLinks?: SocialLinkItem[];
 }
 
 export interface BrandAssets {

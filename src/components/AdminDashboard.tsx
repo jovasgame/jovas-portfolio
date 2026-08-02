@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
-import { Project, ProjectCategory, ProjectSpec } from '../types';
+import { Project, ProjectCategory, ProjectSpec, SocialLinkItem } from '../types';
 import { ImageUploader } from './ImageUploader';
 import { 
   Plus, 
@@ -36,7 +36,8 @@ import {
   Sliders,
   Mail,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Share2
 } from 'lucide-react';
 import { parseMediaUrl } from '../utils/mediaUtils';
 import { motion, AnimatePresence } from 'motion/react';
@@ -104,6 +105,36 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
   const [metallicIconUrl, setMetallicIconUrl] = useState(brandAssets.metallicIconUrl || '');
   const [brandText, setBrandText] = useState(brandAssets.brandText || 'JOVAS');
   const [brandSubtext, setBrandSubtext] = useState(brandAssets.brandSubtext || 'Motion Design');
+
+  // Dynamic Social Media Links List State
+  const [socialLinksList, setSocialLinksList] = useState<SocialLinkItem[]>(() => {
+    if (profile.customSocialLinks && profile.customSocialLinks.length > 0) {
+      return profile.customSocialLinks;
+    }
+    return [
+      { id: '1', name: 'Instagram', url: profile.socialLinks?.instagram || 'https://instagram.com', icon: 'instagram' },
+      { id: '2', name: 'ArtStation', url: profile.socialLinks?.artstation || 'https://artstation.com', icon: 'artstation' },
+      { id: '3', name: 'Vimeo', url: profile.socialLinks?.vimeo || 'https://vimeo.com', icon: 'vimeo' },
+      { id: '4', name: 'LinkedIn', url: profile.socialLinks?.linkedin || 'https://linkedin.com', icon: 'linkedin' }
+    ];
+  });
+
+  const handleAddSocialLink = () => {
+    setSocialLinksList(prev => [
+      ...prev,
+      { id: Date.now().toString(), name: 'Nueva Red', url: 'https://', icon: 'globe' }
+    ]);
+  };
+
+  const handleUpdateSocialLink = (id: string, field: keyof SocialLinkItem, val: string) => {
+    setSocialLinksList(prev =>
+      prev.map(item => (item.id === id ? { ...item, [field]: val } : item))
+    );
+  };
+
+  const handleDeleteSocialLink = (id: string) => {
+    setSocialLinksList(prev => prev.filter(item => item.id !== id));
+  };
 
   // Feedback toast
   const [toastMsg, setToastMsg] = useState('');
@@ -223,7 +254,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
       bioParagraphs: paragraphs,
       experienceYears,
       projectsCompletedCount: projectsCount,
-      avatarUrl: profileAvatar
+      avatarUrl: profileAvatar,
+      customSocialLinks: socialLinksList
     });
     updateBrandAssets({
       heroText,
@@ -233,7 +265,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
       brandSubtext,
       metallicIconUrl
     });
-    showToast('¡Información de biografía guardada exitosamente!');
+    showToast('¡Información de biografía y redes guardadas exitosamente!');
     setTimeout(() => {
       syncToCloud();
     }, 100);
@@ -241,6 +273,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
 
   const handleSaveBrand = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    updateProfile({
+      customSocialLinks: socialLinksList
+    });
     updateBrandAssets({
       logoUrl,
       brandText,
@@ -249,7 +284,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
       heroBgUrl,
       metallicIconUrl
     });
-    showToast('¡Identidad de marca guardada en la nube!');
+    showToast('¡Identidad de marca y redes sociales guardadas en la nube!');
     setTimeout(() => {
       syncToCloud();
     }, 100);
@@ -921,21 +956,87 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
                     />
                   </div>
 
-                  {metallicIconUrl && (
-                    <div className="p-4 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between">
-                      <span className="text-xs font-mono uppercase text-[#a89f9e]">Vista previa de Ícono Metálico:</span>
-                      <div className="p-2.5 rounded-xl bg-[#141316] border border-[#feba39]/30">
-                        <img src={metallicIconUrl} alt="Metallic Icon Preview" className="h-10 max-w-[180px] object-contain" />
+                  {/* DYNAMIC SOCIAL MEDIA LINKS MANAGER LIST */}
+                  <div className="pt-6 border-t border-white/10 space-y-4">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                      <div>
+                        <h3 className="font-syne font-bold text-base text-white flex items-center gap-2">
+                          <Share2 className="w-4 h-4 text-[#feba39]" />
+                          Redes Sociales & Enlaces del Pie de Página (Footer)
+                        </h3>
+                        <p className="text-xs text-[#a89f9e] font-mono">
+                          Agrega, edita o elimina redes sociales e íconos dinámicos en el footer.
+                        </p>
                       </div>
+                      <button
+                        type="button"
+                        onClick={handleAddSocialLink}
+                        className="px-3.5 py-2 rounded-xl bg-[#feba39]/15 hover:bg-[#feba39]/25 text-[#feba39] border border-[#feba39]/40 text-xs font-bold font-mono transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        Agregar Red Social
+                      </button>
                     </div>
-                  )}
+
+                    <div className="space-y-3">
+                      {socialLinksList.map((item) => (
+                        <div
+                          key={item.id}
+                          className="p-3.5 sm:p-4 rounded-2xl bg-black/40 border border-white/10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3"
+                        >
+                          <div className="flex items-center gap-2 sm:w-1/3">
+                            <select
+                              value={item.icon || 'globe'}
+                              onChange={(e) => handleUpdateSocialLink(item.id, 'icon', e.target.value)}
+                              className="px-2.5 py-2.5 rounded-xl bg-[#1e1c21] border border-white/15 text-white text-xs font-mono focus:outline-none focus:border-[#feba39]"
+                            >
+                              <option value="instagram">Instagram</option>
+                              <option value="artstation">ArtStation</option>
+                              <option value="vimeo">Vimeo</option>
+                              <option value="linkedin">LinkedIn</option>
+                              <option value="youtube">YouTube</option>
+                              <option value="twitter">Twitter / X</option>
+                              <option value="globe">Otro Enlace</option>
+                            </select>
+
+                            <input
+                              type="text"
+                              value={item.name}
+                              onChange={(e) => handleUpdateSocialLink(item.id, 'name', e.target.value)}
+                              placeholder="Nombre (ej. Instagram)"
+                              className="w-full px-3 py-2.5 rounded-xl bg-[#1e1c21] border border-white/15 text-white text-xs focus:outline-none focus:border-[#feba39]"
+                            />
+                          </div>
+
+                          <div className="flex-1 flex items-center gap-2">
+                            <input
+                              type="text"
+                              value={item.url}
+                              onChange={(e) => handleUpdateSocialLink(item.id, 'url', e.target.value)}
+                              placeholder="https://..."
+                              className="w-full px-3 py-2.5 rounded-xl bg-[#1e1c21] border border-white/15 text-white text-xs font-mono focus:outline-none focus:border-[#feba39]"
+                            />
+
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteSocialLink(item.id)}
+                              className="p-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition-colors cursor-pointer shrink-0"
+                              title="Eliminar Red Social"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
                   <button
                     type="submit"
                     className="px-6 py-3 rounded-2xl bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] font-black text-xs uppercase shadow-lg shadow-[#ff5540]/20 hover:scale-105 transition-all cursor-pointer flex items-center gap-2"
                   >
                     <Save className="w-4 h-4" />
-                    Guardar Marca
+                    Guardar Marca y Redes Sociales
                   </button>
                 </form>
               </div>
