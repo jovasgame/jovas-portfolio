@@ -819,13 +819,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
                   </div>
 
                   <div>
-                    <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">URL del Avatar / Foto de Perfil</label>
-                    <input
-                      type="text"
+                    <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">Foto de Perfil / Avatar</label>
+                    <ImageUploader
                       value={profileAvatar}
-                      onChange={(e) => setProfileAvatar(e.target.value)}
-                      placeholder="https://..."
-                      className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-[#feba39]"
+                      onChange={(newUrl) => setProfileAvatar(newUrl)}
+                      allowVideo={false}
+                      label="Subir o Vincular Avatar de Perfil"
+                      helperText="Sube una foto o ilustración desde tu equipo (PNG, JPG, WEBP, SVG) o pega un enlace."
                     />
                   </div>
 
@@ -888,20 +888,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
                   </div>
 
                   <div>
-                    <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">URL del Logo Personalizado (PNG o SVG)</label>
-                    <input
-                      type="text"
+                    <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">Logo Personalizado (PNG o SVG)</label>
+                    <ImageUploader
                       value={logoUrl}
-                      onChange={(e) => setLogoUrl(e.target.value)}
-                      placeholder="https://..."
-                      className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-[#feba39]"
+                      onChange={(newUrl) => setLogoUrl(newUrl)}
+                      allowVideo={false}
+                      label="Subir o Vincular Logo SVG/PNG"
+                      helperText="Selecciona un archivo SVG o PNG desde tu computadora, arrástralo aquí o pega un enlace de imagen."
                     />
                   </div>
 
                   {logoUrl && (
-                    <div className="p-4 rounded-2xl bg-white/5 border border-white/10 inline-block">
-                      <span className="text-[10px] font-mono uppercase text-[#a89f9e] block mb-2">Vista previa de Logo:</span>
-                      <img src={logoUrl} alt="Logo Preview" className="h-10 object-contain" />
+                    <div className="p-4 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between">
+                      <span className="text-xs font-mono uppercase text-[#a89f9e]">Vista previa de Logo Activo:</span>
+                      <div className="p-2.5 rounded-xl bg-[#141316] border border-[#feba39]/30">
+                        <img src={logoUrl} alt="Logo Preview" className="h-10 max-w-[180px] object-contain" />
+                      </div>
                     </div>
                   )}
 
