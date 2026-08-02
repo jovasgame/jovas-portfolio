@@ -87,7 +87,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         {/* Base Poster Image (Visible when NOT hovered) */}
         <ProjectThumbnail
           project={project}
-          className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 filter brightness-90 contrast-105"
+          className="w-full h-full object-cover object-center group-hover:scale-105 transition-all duration-700 filter brightness-90 contrast-105 group-hover:brightness-100 group-hover:contrast-100"
         />
 
         {/* Video Preview on Hover */}
@@ -118,7 +118,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             )}
             
             {/* Live Preview Badge */}
-            <div className="absolute top-16 left-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/85 backdrop-blur-md border border-[#feba39]/60 text-[10px] font-mono text-[#feba39] font-bold tracking-wider shadow-xl pointer-events-none">
+            <div className="absolute top-16 left-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/85 backdrop-blur-md border border-[#feba39]/60 text-[10px] font-mono text-[#feba39] font-bold tracking-wider shadow-xl pointer-events-none transition-opacity duration-500 group-hover:opacity-0">
               <Volume2 className="w-3.5 h-3.5 text-[#feba39] animate-pulse" />
               <span>{isDriveVideo ? 'VISTA PREVIA' : 'REPRODUCIENDO CON SONIDO'}</span>
             </div>
@@ -127,25 +127,26 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
         {/* Play Badge Icon for Video or Animation Projects when NOT Hovered */}
         {!isHovered && isVideoOrAnimation && (
-          <div className="absolute inset-0 flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+          <div className="absolute inset-0 flex items-center justify-center opacity-80 group-hover:opacity-0 transition-opacity pointer-events-none z-10">
             <div className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-md border border-[#ff5540]/60 flex items-center justify-center text-[#ff5540] shadow-xl group-hover:scale-110 transition-transform">
               <Film className="w-6 h-6" />
             </div>
           </div>
         )}
 
-        <div className="absolute inset-0 bg-gradient-to-t from-[#141316] via-[#141316]/50 to-transparent pointer-events-none z-10"></div>
+        {/* Dark Vignette Overlay - Fades out on hover for maximum image clarity */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#141316] via-[#141316]/60 to-transparent pointer-events-none z-10 transition-opacity duration-500 group-hover:opacity-0"></div>
       </div>
 
-      {/* Top Card Badge */}
-      <div className="relative z-30 p-5 flex items-center justify-between pointer-events-none">
+      {/* Top Card Badge - Fades out on hover */}
+      <div className="relative z-30 p-5 flex items-center justify-between pointer-events-none transition-opacity duration-500 group-hover:opacity-0">
         <span className={`px-3 py-1 rounded-full text-[11px] font-bold border backdrop-blur-md shadow-sm pointer-events-auto shrink-0 whitespace-nowrap ${getCategoryBadgeColor(project.category)}`}>
           {project.category}
         </span>
       </div>
 
-      {/* Bottom Card Content */}
-      <div className="relative z-30 p-6 space-y-3 bg-gradient-to-t from-[#141316] via-[#141316]/95 to-transparent pt-12">
+      {/* Bottom Card Content (Title, Description, Tags, CTA) - Fades out on hover */}
+      <div className="relative z-30 p-6 space-y-3 bg-gradient-to-t from-[#141316] via-[#141316]/95 to-transparent pt-12 transition-all duration-500 group-hover:opacity-0 group-hover:pointer-events-none">
         <h3 className="font-syne font-bold text-2xl text-white group-hover:text-[#feba39] transition-colors line-clamp-1">
           {project.title}
         </h3>
