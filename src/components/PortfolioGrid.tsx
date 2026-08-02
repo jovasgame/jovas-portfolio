@@ -4,7 +4,7 @@ import { motion } from 'motion/react';
 import { Sparkles, Eye, Star, Plus, Film, Palette, Box, Image as ImageIcon, Flame, Volume2, VolumeX } from 'lucide-react';
 import { ProjectCategory, Project } from '../types';
 import { MediaViewer } from './MediaViewer';
-import { getDirectHoverVideoUrl, parseMediaUrl, getDirectThumbnailUrl } from '../utils/mediaUtils';
+import { getDirectThumbnailUrl, isGoogleDriveUrl, getDriveEmbedUrl, isDirectVideoUrl } from '../utils/mediaUtils';
 
 interface ProjectCardProps {
   project: Project;
@@ -26,18 +26,25 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const [isHovered, setIsHovered] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  // Determine media type for hover preview
+  const videoUrl = project.videoUrl?.trim() || '';
+  const isDriveVideo = isGoogleDriveUrl(videoUrl);
+  const isDirectMp4 = isDirectVideoUrl(videoUrl);
+  const hasVideoPreview = isDriveVideo || isDirectMp4;
+
   // Check if project is a video or animation item
   const isVideoOrAnimation = Boolean(
-    project.videoUrl ||
+    hasVideoPreview ||
     project.category === 'Animación' ||
     project.tags?.some(t => t.toLowerCase().includes('animaci'))
   );
 
-  const hoverVideoSrc = getDirectHoverVideoUrl(project.videoUrl, project.id);
+  // Poster / thumbnail image
   const posterSrc = getDirectThumbnailUrl(project.imageUrl || project.videoUrl);
 
-  // Handle play/pause & audio with sound on hover, mute & static preview on leave
+  // Handle <video> tag play/pause with sound on hover
   useEffect(() => {
+    if (!isDirectMp4) return; // Only for direct MP4 videos
     const el = videoRef.current;
     if (!el) return;
 
@@ -48,7 +55,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       const playPromise = el.play();
       if (playPromise !== undefined) {
         playPromise.catch(() => {
-          // If browser restricts unmuted autoplay before user interaction, fallback to muted play
+          // Fallback to muted play if browser blocks unmuted autoplay
           el.muted = true;
           el.play().catch(() => {});
         });
@@ -58,7 +65,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       el.volume = 0;
       el.pause();
     }
-  }, [isHovered]);
+  }, [isHovered, isDirectMp4]);
 
   return (
     <motion.div
@@ -80,34 +87,37 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 filter brightness-90 contrast-105"
         />
 
-        {/* Video Preview on Hover with Sound */}
-        {isHovered && isVideoOrAnimation && (
-          <div className="absolute inset-0 z-10 overflow-hidden bg-black transition-opacity duration-500 pointer-events-none opacity-100">
-            {project.videoUrl && parseMediaUrl(project.videoUrl).type === 'iframe' ? (
-              <MediaViewer
-                src={project.videoUrl}
-                alt={project.title}
-                controls={false}
-                autoPlay={true}
-                muted={false}
-                className="w-full h-full object-cover pointer-events-none"
+        {/* Video Preview on Hover */}
+        {isHovered && isVideoOrAnimation && hasVideoPreview && (
+          <div className="absolute inset-0 z-10 overflow-hidden bg-black transition-opacity duration-500 opacity-100">
+            
+            {/* GOOGLE DRIVE: Use iframe embed */}
+            {isDriveVideo && (
+              <iframe
+                src={getDriveEmbedUrl(videoUrl)}
+                className="absolute inset-0 w-full h-full border-0"
+                allow="autoplay; encrypted-media"
+                title={`Preview: ${project.title}`}
               />
-            ) : (
+            )}
+
+            {/* DIRECT MP4: Use native <video> tag with sound */}
+            {isDirectMp4 && !isDriveVideo && (
               <video
                 ref={videoRef}
-                src={hoverVideoSrc}
-                poster={project.imageUrl}
+                src={videoUrl}
+                poster={posterSrc}
                 loop
                 playsInline
                 preload="auto"
-                className="w-full h-full object-cover object-center scale-105 transition-transform duration-700 pointer-events-none"
+                className="w-full h-full object-cover object-center scale-105 transition-transform duration-700"
               />
             )}
             
-            {/* Live Audio Preview Badge */}
+            {/* Live Preview Badge */}
             <div className="absolute top-16 left-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/85 backdrop-blur-md border border-[#feba39]/60 text-[10px] font-mono text-[#feba39] font-bold tracking-wider shadow-xl pointer-events-none">
               <Volume2 className="w-3.5 h-3.5 text-[#feba39] animate-pulse" />
-              <span>REPRODUCIENDO CON SONIDO</span>
+              <span>{isDriveVideo ? 'VISTA PREVIA' : 'REPRODUCIENDO CON SONIDO'}</span>
             </div>
           </div>
         )}

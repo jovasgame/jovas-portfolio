@@ -55,6 +55,35 @@ export function parseGoogleDriveUrl(url: string): { id: string; rawUrl: string }
   return null;
 }
 
+// Simple boolean check: is this a Google Drive URL?
+export function isGoogleDriveUrl(url?: string): boolean {
+  if (!url) return false;
+  return parseGoogleDriveUrl(url) !== null;
+}
+
+// Get the Drive embed preview URL for iframe playback
+export function getDriveEmbedUrl(url: string): string {
+  const parsed = parseGoogleDriveUrl(url);
+  if (!parsed) return url;
+  return `https://drive.google.com/file/d/${parsed.id}/preview`;
+}
+
+// Check if URL is a direct MP4/WebM video that works in <video> tag
+export function isDirectVideoUrl(url?: string): boolean {
+  if (!url) return false;
+  const trimmed = url.trim().toLowerCase();
+  return (
+    trimmed.endsWith('.mp4') ||
+    trimmed.endsWith('.webm') ||
+    trimmed.endsWith('.mov') ||
+    trimmed.endsWith('.ogg') ||
+    trimmed.includes('commondatastorage.googleapis.com') ||
+    trimmed.includes('assets.mixkit.co') ||
+    trimmed.startsWith('data:video/') ||
+    trimmed.startsWith('blob:')
+  );
+}
+
 // Convert Google Drive or expired links to direct thumbnail URL
 export function getDirectThumbnailUrl(url?: string): string {
   if (!url) return 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80';
