@@ -3,6 +3,7 @@ import { PortfolioProvider, usePortfolio } from './context/PortfolioContext';
 import { Navbar } from './components/Navbar';
 import { HeroSlider } from './components/HeroSlider';
 import { PortfolioGrid } from './components/PortfolioGrid';
+import { VideoSection } from './components/VideoSection';
 import { WorkflowSection } from './components/WorkflowSection';
 import { CoverflowGallery } from './components/CoverflowGallery';
 import { PhotoGallerySection } from './components/PhotoGallerySection';
@@ -57,6 +58,9 @@ const MainPortfolioContent: React.FC = () => {
 
         {/* 2. Dynamic Bento Portfolio Grid with Filter Pills */}
         <PortfolioGrid />
+
+        {/* 2.5 Dedicated Video & Animation YouTube-Style Section */}
+        <VideoSection />
 
         {/* 3. Technical Workflow & Performance Section */}
         <WorkflowSection />

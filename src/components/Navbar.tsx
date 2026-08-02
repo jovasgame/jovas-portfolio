@@ -53,13 +53,17 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenDashboardTab }) => {
 
   const handleCategoryClick = (catValue: string) => {
     setSelectedCategory(catValue);
-    scrollToSection('portfolio-grid');
+    if (catValue === 'Animación') {
+      scrollToSection('video-section');
+    } else {
+      scrollToSection('portfolio-grid');
+    }
   };
 
   const gooeyItems: GooeyNavItem[] = categories.map((cat) => ({
     label: cat.label,
     value: cat.value,
-    href: '#portfolio-grid',
+    href: cat.value === 'Animación' ? '#video-section' : '#portfolio-grid',
     onClick: () => handleCategoryClick(cat.value),
   }));
 

@@ -14,6 +14,7 @@ export interface Project {
   fullDescription?: string;
   imageUrl: string;
   videoUrl?: string;
+  thumbnailUrl?: string;
   tags: string[];
   featured: boolean;
   client?: string;

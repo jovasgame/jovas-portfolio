@@ -5,6 +5,7 @@ interface ProjectThumbnailProps {
   project: {
     imageUrl?: string;
     videoUrl?: string;
+    thumbnailUrl?: string;
     category?: string;
     title?: string;
   };
@@ -17,8 +18,8 @@ export const ProjectThumbnail: React.FC<ProjectThumbnailProps> = ({
 }) => {
   const [hasError, setHasError] = useState(false);
 
-  const rawSrc = (project.imageUrl && project.imageUrl.trim()) || (project.videoUrl && project.videoUrl.trim()) || '';
-  const isVideo = isDirectVideoUrl(rawSrc) && (!project.imageUrl || !project.imageUrl.trim());
+  const rawSrc = (project.thumbnailUrl && project.thumbnailUrl.trim()) || (project.imageUrl && project.imageUrl.trim()) || (project.videoUrl && project.videoUrl.trim()) || '';
+  const isVideo = isDirectVideoUrl(rawSrc) && (!project.thumbnailUrl || !project.thumbnailUrl.trim()) && (!project.imageUrl || !project.imageUrl.trim());
   const thumbSrc = getDirectThumbnailUrl(rawSrc, project.category);
 
   if (hasError || !rawSrc) {

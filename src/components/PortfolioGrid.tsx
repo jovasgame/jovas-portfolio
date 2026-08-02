@@ -272,7 +272,13 @@ export const PortfolioGrid: React.FC = () => {
               return (
                 <button
                   key={cat.value}
-                  onClick={() => setSelectedCategory(cat.value)}
+                  onClick={() => {
+                    setSelectedCategory(cat.value);
+                    if (cat.value === 'Animación') {
+                      const el = document.getElementById('video-section');
+                      if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
                   className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold tracking-wider transition-all duration-300 whitespace-nowrap shrink-0 cursor-pointer ${
                     active
                       ? 'bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] shadow-lg shadow-[#ff5540]/25 scale-105'

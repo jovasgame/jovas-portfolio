@@ -150,6 +150,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
   const [fullDescription, setFullDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
+  const [thumbnailUrl, setThumbnailUrl] = useState('');
   const [mediaUrl, setMediaUrl] = useState('');
   const [tagsInput, setTagsInput] = useState('');
   const [client, setClient] = useState('');
@@ -255,6 +256,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
     setFullDescription('');
     setImageUrl('https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80');
     setVideoUrl('');
+    setThumbnailUrl('');
     setMediaUrl('');
     setTagsInput('Motion Graphics, 3D Render');
     setClient('');
@@ -275,6 +277,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
     setFullDescription(p.fullDescription || p.description);
     setImageUrl(p.imageUrl);
     setVideoUrl(p.videoUrl || '');
+    setThumbnailUrl(p.thumbnailUrl || '');
     setMediaUrl(p.videoUrl || p.imageUrl || '');
     setTagsInput(p.tags.join(', '));
     setClient(p.client || '');
@@ -324,6 +327,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
         fullDescription: fullDescription || description,
         imageUrl: finalImageUrl,
         videoUrl: finalVideoUrl || undefined,
+        thumbnailUrl: thumbnailUrl || undefined,
         tags: tagsArray,
         featured,
         client: client || undefined,
@@ -339,6 +343,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
         fullDescription: fullDescription || description,
         imageUrl: finalImageUrl,
         videoUrl: finalVideoUrl || undefined,
+        thumbnailUrl: thumbnailUrl || undefined,
         tags: tagsArray,
         featured,
         client: client || undefined,
@@ -1420,6 +1425,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
                     allowVideo={true}
                     label="Subir o Seleccionar Recurso del Proyecto"
                     helperText="Selecciona un archivo (JPG/PNG/WEBP/MP4) desde tu dispositivo, o pega una URL de Google Drive, YouTube, Vimeo o enlace directo."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">Miniatura de Vídeo / Portada Personalizada (Opcional)</label>
+                  <ImageUploader
+                    value={thumbnailUrl}
+                    onChange={(newUrl) => setThumbnailUrl(newUrl)}
+                    allowVideo={false}
+                    label="Subir o Seleccionar Miniatura para Sección de Vídeos"
+                    helperText="Esta imagen se mostrará en la sección de vídeos (estilo YouTube) antes de pasar el ratón."
                   />
                 </div>
 
