@@ -40,7 +40,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   );
 
   // Poster / thumbnail image
-  const posterSrc = getDirectThumbnailUrl(project.imageUrl || project.videoUrl);
+  // If the project has a Google Drive video, generate the thumbnail from the video itself
+  // so the card always shows actual project content, not a stock/placeholder image.
+  const posterSrc = isDriveVideo
+    ? getDirectThumbnailUrl(project.videoUrl)
+    : getDirectThumbnailUrl(project.imageUrl || project.videoUrl);
 
   // Handle <video> tag play/pause with sound on hover
   useEffect(() => {

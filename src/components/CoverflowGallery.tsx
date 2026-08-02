@@ -5,7 +5,7 @@ import { usePortfolio } from "../context/PortfolioContext";
 import { Project } from "../types";
 import { motion } from "motion/react";
 import { ChevronLeft, ChevronRight, Play, Pause, Maximize2, Layers } from "lucide-react";
-import { getDirectThumbnailUrl } from "../utils/mediaUtils";
+import { getDirectThumbnailUrl, isGoogleDriveUrl } from "../utils/mediaUtils";
 
 const useIsStaticRenderer = () => false;
 
@@ -445,7 +445,7 @@ export const CoverflowGallery: React.FC = () => {
     projects && projects.length > 0
       ? projects.map((p) => ({
           image: {
-            src: getDirectThumbnailUrl(p.imageUrl || p.videoUrl),
+            src: isGoogleDriveUrl(p.videoUrl) ? getDirectThumbnailUrl(p.videoUrl) : getDirectThumbnailUrl(p.imageUrl || p.videoUrl),
             alt: p.title,
           },
           title: `${p.title}\n${p.category} (${p.year})`,
