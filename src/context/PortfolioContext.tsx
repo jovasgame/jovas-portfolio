@@ -57,10 +57,13 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         const parsed: Project[] = JSON.parse(saved);
         return parsed.map((p) => {
           const match = initialProjects.find((ip) => ip.id === p.id);
-          if (!p.videoUrl || p.videoUrl.includes('w3schools.com')) {
+          const hasExpiredImg = !p.imageUrl || p.imageUrl.includes('lh3.googleusercontent.com/aida-public');
+          const hasExpiredVid = !p.videoUrl || p.videoUrl.includes('commondatastorage.googleapis.com') || p.videoUrl.includes('w3schools.com');
+          if (hasExpiredImg || hasExpiredVid) {
             return {
               ...p,
-              videoUrl: match?.videoUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
+              imageUrl: hasExpiredImg ? (match?.imageUrl || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80') : p.imageUrl,
+              videoUrl: hasExpiredVid ? (match?.videoUrl || 'https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-99648-large.mp4') : p.videoUrl
             };
           }
           return p;

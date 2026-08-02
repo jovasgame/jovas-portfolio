@@ -15,7 +15,7 @@ interface MediaViewerProps {
   onEnded?: () => void;
 }
 
-const FALLBACK_SAMPLE_VIDEO = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
+const FALLBACK_SAMPLE_VIDEO = 'https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-99648-large.mp4';
 
 export const MediaViewer: React.FC<MediaViewerProps> = ({
   src,
