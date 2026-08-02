@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { Shield, Sparkles, Menu, X, Flame, LogOut, LayoutDashboard } from 'lucide-react';
 import { MagneticButton } from './MagneticButton';
+import { GooeyNav, GooeyNavItem } from './GooeyNav';
 
 interface NavbarProps {
   onOpenDashboardTab?: () => void;
@@ -55,6 +56,17 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenDashboardTab }) => {
     scrollToSection('portfolio-grid');
   };
 
+  const gooeyItems: GooeyNavItem[] = categories.map((cat) => ({
+    label: cat.label,
+    value: cat.value,
+    href: '#portfolio-grid',
+    onClick: () => handleCategoryClick(cat.value),
+  }));
+
+  const activeCategoryIndex = categories.findIndex(
+    (c) => c.value === selectedCategory
+  );
+
   return (
     <header className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
       scrolled 
@@ -99,25 +111,18 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenDashboardTab }) => {
           </div>
         </a>
 
-        {/* Desktop Category Navigation */}
-        <nav className="hidden md:flex items-center gap-1 bg-[#232026]/70 backdrop-blur-lg border border-[#b18780]/20 px-3 py-1.5 rounded-full shadow-inner">
-          {categories.map((cat) => {
-            const isActive = selectedCategory === cat.value;
-            return (
-              <button
-                key={cat.value}
-                onClick={() => handleCategoryClick(cat.value)}
-                className={`px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider transition-all duration-200 cursor-pointer ${
-                  isActive
-                    ? 'bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2b1800] shadow-md shadow-[#ff5540]/20 font-bold'
-                    : 'text-[#e7e1e5]/80 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                {cat.label}
-              </button>
-            );
-          })}
-        </nav>
+        {/* Desktop Gooey Category Navigation */}
+        <div className="hidden md:block">
+          <GooeyNav
+            items={gooeyItems}
+            activeIndex={activeCategoryIndex >= 0 ? activeCategoryIndex : 0}
+            particleCount={18}
+            particleDistances={[80, 15]}
+            particleR={90}
+            animationTime={500}
+            colors={[1, 2, 3, 1, 2, 4]}
+          />
+        </div>
 
         {/* Actions & Hidden Admin Lock */}
         <div className="hidden md:flex items-center gap-3">
