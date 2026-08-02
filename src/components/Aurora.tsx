@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Renderer, Program, Mesh, Color, Triangle } from 'ogl';
+import { Renderer, Program, Mesh, Triangle } from 'ogl';
 import './Aurora.css';
 
 export interface AuroraProps {
@@ -7,7 +7,6 @@ export interface AuroraProps {
   speed?: number;
   blend?: number;
   amplitude?: number;
-  time?: number;
 }
 
 const VERT = `#version 300 es
@@ -116,12 +115,25 @@ void main() {
 }
 `;
 
+const hexToRgb01 = (hex: string): [number, number, number] => {
+  let h = hex.trim().replace('#', '');
+  if (h.length === 3) {
+    h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+  }
+  const intVal = parseInt(h.slice(0, 6), 16);
+  if (isNaN(intVal)) return [1, 0.33, 0.25];
+  const r = ((intVal >> 16) & 255) / 255;
+  const g = ((intVal >> 8) & 255) / 255;
+  const b = (intVal & 255) / 255;
+  return [r, g, b];
+};
+
 export const Aurora: React.FC<AuroraProps> = (props) => {
-  const { 
-    colorStops = ['#ff5540', '#feba39', '#ff7563'], 
-    amplitude = 1.0, 
+  const {
+    colorStops = ['#ff5540', '#feba39', '#ff7563'],
+    amplitude = 1.0,
     blend = 0.5,
-    speed = 0.5 
+    speed = 0.5
   } = props;
 
   const propsRef = useRef(props);
@@ -133,113 +145,111 @@ export const Aurora: React.FC<AuroraProps> = (props) => {
     const ctn = ctnDom.current;
     if (!ctn) return;
 
-    // Cap DPR at 1.0/1.25 for max mobile performance
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
-    const renderer = new Renderer({
-      dpr,
-      alpha: true,
-      premultipliedAlpha: true,
-      antialias: false
-    });
-    const gl = renderer.gl;
-    gl.clearColor(0, 0, 0, 0);
-    gl.enable(gl.BLEND);
-    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-    gl.canvas.style.backgroundColor = 'transparent';
-
-    let program: Program;
-
-    function resize() {
-      if (!ctn) return;
-      const width = ctn.offsetWidth || 1;
-      const height = ctn.offsetHeight || 1;
-      renderer.setSize(width, height);
-      if (program) {
-        program.uniforms.uResolution.value = [width, height];
-      }
-    }
-
-    let ro: ResizeObserver | null = null;
-    if ('ResizeObserver' in window) {
-      ro = new ResizeObserver(resize);
-      ro.observe(ctn);
-    } else {
-      window.addEventListener('resize', resize);
-    }
-
-    const geometry = new Triangle(gl);
-    if (geometry.attributes.uv) {
-      delete geometry.attributes.uv;
-    }
-
-    const colorStopsArray = colorStops.map(hex => {
-      const c = new Color(hex);
-      return [c.r, c.g, c.b];
-    });
-
-    program = new Program(gl, {
-      vertex: VERT,
-      fragment: FRAG,
-      uniforms: {
-        uTime: { value: 0 },
-        uAmplitude: { value: amplitude },
-        uColorStops: { value: colorStopsArray },
-        uResolution: { value: [ctn.offsetWidth || 1, ctn.offsetHeight || 1] },
-        uBlend: { value: blend }
-      }
-    });
-
-    const mesh = new Mesh(gl, { geometry, program });
-    ctn.appendChild(gl.canvas);
-
-    let isVisible = true;
-    let io: IntersectionObserver | null = null;
-    if ('IntersectionObserver' in window) {
-      io = new IntersectionObserver(
-        entries => {
-          if (entries[0]) {
-            isVisible = entries[0].isIntersecting;
-          }
-        },
-        { threshold: 0.01 }
-      );
-      io.observe(ctn);
-    }
-
+    let renderer: Renderer | null = null;
     let animateId = 0;
-    const update = (t: number) => {
-      animateId = requestAnimationFrame(update);
-      if (!isVisible || document.hidden) return;
 
-      const { time = t * 0.01, speed: curSpeed = speed } = propsRef.current;
-      program.uniforms.uTime.value = time * curSpeed * 0.1;
-      program.uniforms.uAmplitude.value = propsRef.current.amplitude ?? 1.0;
-      program.uniforms.uBlend.value = propsRef.current.blend ?? blend;
-      const stops = propsRef.current.colorStops ?? colorStops;
-      program.uniforms.uColorStops.value = stops.map(hex => {
-        const c = new Color(hex);
-        return [c.r, c.g, c.b];
+    try {
+      // Cap DPR to 1.25 for maximum performance on high-DPI and mobile screens
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
+      renderer = new Renderer({
+        dpr,
+        alpha: true,
+        premultipliedAlpha: true,
+        antialias: false
       });
-      renderer.render({ scene: mesh });
-    };
-    animateId = requestAnimationFrame(update);
+      const gl = renderer.gl;
+      gl.clearColor(0, 0, 0, 0);
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+      gl.canvas.style.backgroundColor = 'transparent';
 
-    resize();
+      let program: Program;
 
-    return () => {
-      cancelAnimationFrame(animateId);
-      ro?.disconnect();
-      if (!ro) window.removeEventListener('resize', resize);
-      io?.disconnect();
-      if (ctn && gl.canvas.parentNode === ctn) {
-        try {
-          ctn.removeChild(gl.canvas);
-        } catch {
-          // ignore cleanup errors
-        }
+      const resize = () => {
+        if (!ctn || !renderer || !program) return;
+        const width = ctn.offsetWidth || window.innerWidth;
+        const height = ctn.offsetHeight || window.innerHeight;
+        renderer.setSize(width, height);
+        program.uniforms.uResolution.value = [gl.canvas.width, gl.canvas.height];
+      };
+
+      let ro: ResizeObserver | null = null;
+      if ('ResizeObserver' in window) {
+        ro = new ResizeObserver(resize);
+        ro.observe(ctn);
+      } else {
+        window.addEventListener('resize', resize);
       }
-      gl.getExtension('WEBGL_lose_context')?.loseContext();
-    };
+
+      const geometry = new Triangle(gl);
+      if (geometry.attributes && geometry.attributes.uv) {
+        delete geometry.attributes.uv;
+      }
+
+      const colorStopsArray = colorStops.map(hex => hexToRgb01(hex));
+
+      program = new Program(gl, {
+        vertex: VERT,
+        fragment: FRAG,
+        uniforms: {
+          uTime: { value: 0 },
+          uAmplitude: { value: amplitude },
+          uColorStops: { value: colorStopsArray },
+          uResolution: { value: [ctn.offsetWidth || window.innerWidth, ctn.offsetHeight || window.innerHeight] },
+          uBlend: { value: blend }
+        }
+      });
+
+      const mesh = new Mesh(gl, { geometry, program });
+      ctn.appendChild(gl.canvas);
+
+      let isVisible = true;
+      let io: IntersectionObserver | null = null;
+      if ('IntersectionObserver' in window) {
+        io = new IntersectionObserver(
+          entries => {
+            if (entries[0]) {
+              isVisible = entries[0].isIntersecting;
+            }
+          },
+          { threshold: 0.01 }
+        );
+        io.observe(ctn);
+      }
+
+      const update = (t: number) => {
+        animateId = requestAnimationFrame(update);
+        if (!isVisible || document.hidden || !program || !renderer) return;
+
+        const { time = t * 0.01, speed: curSpeed = speed } = propsRef.current;
+        program.uniforms.uTime.value = time * curSpeed * 0.1;
+        program.uniforms.uAmplitude.value = propsRef.current.amplitude ?? 1.0;
+        program.uniforms.uBlend.value = propsRef.current.blend ?? blend;
+        const stops = propsRef.current.colorStops ?? colorStops;
+        program.uniforms.uColorStops.value = stops.map(hex => hexToRgb01(hex));
+        renderer.render({ scene: mesh });
+      };
+      animateId = requestAnimationFrame(update);
+
+      resize();
+
+      return () => {
+        cancelAnimationFrame(animateId);
+        ro?.disconnect();
+        if (!ro) window.removeEventListener('resize', resize);
+        io?.disconnect();
+        if (ctn && gl.canvas && gl.canvas.parentNode === ctn) {
+          try {
+            ctn.removeChild(gl.canvas);
+          } catch {
+            // ignore cleanup errors
+          }
+        }
+        gl.getExtension('WEBGL_lose_context')?.loseContext();
+      };
+    } catch (err) {
+      console.warn('Aurora WebGL fallback:', err);
+    }
   }, [amplitude, blend, speed]);
 
   return <div ref={ctnDom} className="aurora-container" />;
