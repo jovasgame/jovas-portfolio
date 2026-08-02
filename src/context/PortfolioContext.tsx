@@ -58,7 +58,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         return parsed.map((p) => {
           const match = initialProjects.find((ip) => ip.id === p.id);
           const hasExpiredImg = !p.imageUrl || p.imageUrl.includes('lh3.googleusercontent.com/aida-public');
-          const hasExpiredVid = !p.videoUrl || p.videoUrl.includes('commondatastorage.googleapis.com') || p.videoUrl.includes('w3schools.com');
+          const hasExpiredVid = p.videoUrl ? (p.videoUrl.includes('commondatastorage.googleapis.com') || p.videoUrl.includes('w3schools.com')) : false;
           if (hasExpiredImg || hasExpiredVid) {
             return {
               ...p,
