@@ -4,6 +4,7 @@ import { Navbar } from './components/Navbar';
 import { HeroSlider } from './components/HeroSlider';
 import { PortfolioGrid } from './components/PortfolioGrid';
 import { WorkflowSection } from './components/WorkflowSection';
+import { CoverflowGallery } from './components/CoverflowGallery';
 import { AboutSection } from './components/AboutSection';
 import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
@@ -42,10 +43,13 @@ const MainPortfolioContent: React.FC = () => {
         {/* 3. Technical Workflow & Performance Section */}
         <WorkflowSection />
 
-        {/* 4. About José Luis Vasquez */}
+        {/* 4. 3D Coverflow Gallery Previsualizer */}
+        <CoverflowGallery />
+
+        {/* 5. About José Luis Vasquez (Biography) */}
         <AboutSection />
 
-        {/* 5. Contact & Quote Generator */}
+        {/* 6. Contact & Quote Generator */}
         <ContactSection />
       </main>
 
