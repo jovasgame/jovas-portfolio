@@ -13,13 +13,12 @@ export const SAMPLE_VIDEOS = [
 ];
 
 export function getDirectHoverVideoUrl(videoUrl?: string, projectId: string = 'proj-1'): string {
-  if (videoUrl) {
+  if (videoUrl && videoUrl.trim().length > 0) {
     const trimmed = videoUrl.trim();
     
     // Check if Google Drive
     const driveParsed = parseGoogleDriveUrl(trimmed);
     if (driveParsed) {
-      // Direct Google CDN stream URL for Drive videos (works in <video> tag natively)
       return `https://lh3.googleusercontent.com/d/${driveParsed.id}`;
     }
 
@@ -28,8 +27,11 @@ export function getDirectHoverVideoUrl(videoUrl?: string, projectId: string = 'p
       trimmed.endsWith('.webm') ||
       trimmed.endsWith('.mov') ||
       trimmed.includes('commondatastorage.googleapis.com') ||
+      trimmed.includes('assets.mixkit.co') ||
       trimmed.startsWith('data:video/') ||
-      trimmed.startsWith('blob:')
+      trimmed.startsWith('blob:') ||
+      trimmed.startsWith('http://') ||
+      trimmed.startsWith('https://')
     ) {
       return trimmed;
     }

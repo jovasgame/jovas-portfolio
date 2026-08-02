@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { motion } from 'motion/react';
-import { Sparkles, Eye, Star, Plus, Film, Palette, Box, Image as ImageIcon, Flame } from 'lucide-react';
+import { Sparkles, Eye, Star, Plus, Film, Palette, Box, Image as ImageIcon, Flame, Volume2, VolumeX } from 'lucide-react';
 import { ProjectCategory, Project } from '../types';
 import { MediaViewer } from './MediaViewer';
 import { getDirectHoverVideoUrl, parseMediaUrl } from '../utils/mediaUtils';
@@ -35,22 +35,26 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
   const hoverVideoSrc = getDirectHoverVideoUrl(project.videoUrl, project.id);
 
-  // Handle play/pause reliably whenever isHovered changes
+  // Handle play/pause & audio with sound on hover, mute & static preview on leave
   useEffect(() => {
     const el = videoRef.current;
     if (!el) return;
 
-    el.muted = true;
-    el.defaultMuted = true;
-    el.volume = 0;
-
     if (isHovered) {
       el.currentTime = 0;
+      el.muted = false;
+      el.volume = 0.85;
       const playPromise = el.play();
       if (playPromise !== undefined) {
-        playPromise.catch(() => {});
+        playPromise.catch(() => {
+          // If browser restricts unmuted autoplay before user interaction, fallback to muted play
+          el.muted = true;
+          el.play().catch(() => {});
+        });
       }
     } else {
+      el.muted = true;
+      el.volume = 0;
       el.pause();
     }
   }, [isHovered]);
@@ -68,46 +72,44 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     >
       {/* Image / Video Hover Preview */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        {/* Base Poster Image */}
+        {/* Base Poster Image (Visible when NOT hovered) */}
         <img
           src={project.imageUrl}
           alt={project.title}
           className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 filter brightness-90 contrast-105"
         />
 
-        {/* Video Preview on Hover (Muted / Silent) */}
-        <div
-          className={`absolute inset-0 z-10 overflow-hidden bg-black transition-opacity duration-300 pointer-events-none ${
-            isHovered ? 'opacity-100' : 'opacity-0'
-          }`}
-        >
-          {isHovered && project.videoUrl && parseMediaUrl(project.videoUrl).type === 'iframe' ? (
-            <MediaViewer
-              src={project.videoUrl}
-              alt={project.title}
-              controls={false}
-              autoPlay={true}
-              muted={true}
-              className="w-full h-full object-cover pointer-events-none"
-            />
-          ) : (
-            <video
-              ref={videoRef}
-              src={hoverVideoSrc}
-              poster={project.imageUrl}
-              loop
-              muted
-              playsInline
-              preload="auto"
-              className="w-full h-full object-cover object-center scale-105 transition-transform duration-700 pointer-events-none"
-            />
-          )}
-          {/* Subtle Muted Preview Badge positioned cleanly below top navbar badges */}
-          <div className="absolute top-16 left-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/85 backdrop-blur-md border border-[#ff5540]/60 text-[10px] font-mono text-[#ff7563] font-bold tracking-wider shadow-xl pointer-events-none">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#ff5540] animate-ping" />
-            <span>VISTA PREVIA (SIN SONIDO)</span>
+        {/* Video Preview on Hover with Sound */}
+        {isHovered && isVideoOrAnimation && (
+          <div className="absolute inset-0 z-10 overflow-hidden bg-black transition-opacity duration-500 pointer-events-none opacity-100">
+            {project.videoUrl && parseMediaUrl(project.videoUrl).type === 'iframe' ? (
+              <MediaViewer
+                src={project.videoUrl}
+                alt={project.title}
+                controls={false}
+                autoPlay={true}
+                muted={false}
+                className="w-full h-full object-cover pointer-events-none"
+              />
+            ) : (
+              <video
+                ref={videoRef}
+                src={hoverVideoSrc}
+                poster={project.imageUrl}
+                loop
+                playsInline
+                preload="auto"
+                className="w-full h-full object-cover object-center scale-105 transition-transform duration-700 pointer-events-none"
+              />
+            )}
+            
+            {/* Live Audio Preview Badge */}
+            <div className="absolute top-16 left-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/85 backdrop-blur-md border border-[#feba39]/60 text-[10px] font-mono text-[#feba39] font-bold tracking-wider shadow-xl pointer-events-none">
+              <Volume2 className="w-3.5 h-3.5 text-[#feba39] animate-pulse" />
+              <span>REPRODUCIENDO CON SONIDO</span>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Play Badge Icon for Video or Animation Projects when NOT Hovered */}
         {!isHovered && isVideoOrAnimation && (
