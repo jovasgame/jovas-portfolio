@@ -13,7 +13,7 @@ import { Footer } from './components/Footer';
 import { ProjectModal } from './components/ProjectModal';
 import { AdminLoginModal } from './components/AdminLoginModal';
 import { AdminDashboard } from './components/AdminDashboard';
-import PrismaticBurst from './components/PrismaticBurst';
+import Aurora from './components/Aurora';
 
 const MainPortfolioContent: React.FC = () => {
   const { isAdminLoggedIn } = usePortfolio();
@@ -25,19 +25,13 @@ const MainPortfolioContent: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#0a090c] text-[#e7e1e5] relative selection:bg-[#feba39] selection:text-[#432c00]">
-      {/* Dynamic WebGL Prismatic Burst Background & Lava Lamp Orbs */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <PrismaticBurst
-          animationType="rotate3d"
-          intensity={1.8}
+      {/* Dynamic Lightweight WebGL Aurora Background & Lava Lamp Orbs */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-75">
+        <Aurora
+          colorStops={["#ff5540", "#feba39", "#ff7563"]}
+          blend={0.5}
+          amplitude={1.1}
           speed={0.4}
-          distort={0.8}
-          paused={false}
-          offset={{ x: 0, y: 0 }}
-          hoverDampness={0.25}
-          rayCount={18}
-          mixBlendMode="lighten"
-          colors={['#ff5540', '#feba39', '#ff007a', '#1e1c21']}
         />
         <div className="absolute top-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full bg-gradient-to-br from-[#ff5540]/20 to-[#feba39]/10 blur-[130px] lava-blob-1" />
         <div className="absolute top-[30%] right-[-10%] w-[600px] h-[600px] rounded-full bg-gradient-to-bl from-[#feba39]/15 to-[#ff5540]/10 blur-[150px] lava-blob-2" />
