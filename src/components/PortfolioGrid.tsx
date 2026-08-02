@@ -4,7 +4,7 @@ import { motion } from 'motion/react';
 import { Sparkles, Eye, Star, Plus, Film, Palette, Box, Image as ImageIcon, Flame, Volume2, VolumeX } from 'lucide-react';
 import { ProjectCategory, Project } from '../types';
 import { MediaViewer } from './MediaViewer';
-import { getDirectThumbnailUrl, isGoogleDriveUrl, getDriveEmbedUrl, isDirectVideoUrl } from '../utils/mediaUtils';
+import { getDirectThumbnailUrl, isGoogleDriveUrl, getDriveEmbedUrl, isDirectVideoUrl, getCategoryFallbackImage } from '../utils/mediaUtils';
 
 interface ProjectCardProps {
   project: Project;
@@ -28,7 +28,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
   // Determine media type for hover preview
   const videoUrl = project.videoUrl?.trim() || '';
-  const isDriveVideo = isGoogleDriveUrl(videoUrl);
+  const isDriveVideo = isGoogleDriveUrl(videoUrl) && (
+    project.category === 'Animación' ||
+    videoUrl.includes('/preview')
+  );
   const isDirectMp4 = isDirectVideoUrl(videoUrl);
   const hasVideoPreview = isDriveVideo || isDirectMp4;
 
@@ -40,11 +43,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   );
 
   // Poster / thumbnail image
-  // If the project has a Google Drive video, generate the thumbnail from the video itself
-  // so the card always shows actual project content, not a stock/placeholder image.
-  const posterSrc = isDriveVideo
-    ? getDirectThumbnailUrl(project.videoUrl)
-    : getDirectThumbnailUrl(project.imageUrl || project.videoUrl);
+  const posterSrc = getDirectThumbnailUrl(project.imageUrl || project.videoUrl, project.category);
 
   // Handle <video> tag play/pause with sound on hover
   useEffect(() => {
@@ -91,7 +90,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 filter brightness-90 contrast-105"
           onError={(e) => {
             e.currentTarget.onerror = null;
-            e.currentTarget.src = 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80';
+            e.currentTarget.src = getCategoryFallbackImage(project.category);
           }}
         />
 

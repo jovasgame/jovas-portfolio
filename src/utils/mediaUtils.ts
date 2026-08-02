@@ -84,16 +84,32 @@ export function isDirectVideoUrl(url?: string): boolean {
   );
 }
 
+// Category-matching fallback images so each project type retains distinct high quality cover art
+export function getCategoryFallbackImage(category?: string): string {
+  switch (category) {
+    case 'Ilustración':
+      return 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80';
+    case 'Modelado 3D':
+      return 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1200&q=80';
+    case 'Arte Conceptual':
+      return 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=1200&q=80';
+    case 'Animación':
+    default:
+      return 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80';
+  }
+}
+
 // Convert Google Drive or expired links to direct thumbnail URL
-export function getDirectThumbnailUrl(url?: string): string {
-  if (!url) return 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80';
+export function getDirectThumbnailUrl(url?: string, category?: string): string {
+  const fallback = getCategoryFallbackImage(category);
+  if (!url || !url.trim()) return fallback;
   const trimmed = url.trim();
   const driveParsed = parseGoogleDriveUrl(trimmed);
   if (driveParsed) {
     return `https://drive.google.com/thumbnail?id=${driveParsed.id}&sz=w1200`;
   }
   if (trimmed.includes('lh3.googleusercontent.com/aida-public')) {
-    return 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80';
+    return fallback;
   }
   return trimmed;
 }

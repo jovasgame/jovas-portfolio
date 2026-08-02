@@ -40,7 +40,7 @@ import {
   Share2,
   Camera
 } from 'lucide-react';
-import { getDirectThumbnailUrl, isGoogleDriveUrl, parseMediaUrl, parseGoogleDriveUrl, isDirectVideoUrl } from '../utils/mediaUtils';
+import { getDirectThumbnailUrl, isGoogleDriveUrl, parseMediaUrl, parseGoogleDriveUrl, isDirectVideoUrl, getCategoryFallbackImage } from '../utils/mediaUtils';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface AdminDashboardProps {
@@ -832,12 +832,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
                         <tr key={proj.id} className="hover:bg-white/5 transition-colors">
                           <td className="p-4 flex items-center gap-3">
                             <img
-                              src={getDirectThumbnailUrl(proj.imageUrl || proj.videoUrl)}
+                              src={getDirectThumbnailUrl(proj.imageUrl || proj.videoUrl, proj.category)}
                               alt={proj.title}
                               className="w-14 h-14 rounded-2xl object-cover border border-white/10 bg-[#191524]"
                               onError={(e) => {
                                 e.currentTarget.onerror = null;
-                                e.currentTarget.src = 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80';
+                                e.currentTarget.src = getCategoryFallbackImage(proj.category);
                               }}
                             />
                             <div>
