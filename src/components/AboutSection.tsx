@@ -7,7 +7,7 @@ export const AboutSection: React.FC = () => {
   const { profile } = usePortfolio();
 
   return (
-    <section id="sobre-mi" className="py-24 relative bg-[#141316] overflow-hidden">
+    <section id="sobre-mi" className="py-24 relative bg-[#141316]/75 backdrop-blur-sm overflow-hidden">
       {/* Background Accent */}
       <div className="absolute top-1/2 left-0 w-80 h-80 bg-[#feba39]/10 rounded-full blur-3xl pointer-events-none"></div>
 

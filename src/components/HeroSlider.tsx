@@ -49,17 +49,46 @@ export const HeroSlider: React.FC = () => {
   if (!currentProject) return null;
 
   return (
-    <section id="hero" className="relative min-h-screen pt-24 pb-16 flex flex-col justify-center overflow-hidden bg-[#0d0c0e]">
+    <section id="hero" className="relative min-h-screen pt-28 pb-16 flex flex-col justify-center overflow-hidden bg-transparent">
       {/* Background Animated Atmosphere & Grid */}
-      <div className="absolute inset-0 z-0 opacity-20 pointer-events-none diagonal-stripes"></div>
+      <div className="absolute inset-0 z-0 opacity-15 pointer-events-none diagonal-stripes"></div>
       
-      {/* Glow Orbs */}
-      <div className="absolute -top-32 -left-32 w-96 h-96 bg-[#ff5540] rounded-full blur-[140px] opacity-25 pointer-events-none animate-pulse-glow"></div>
-      <div className="absolute top-1/2 -right-32 w-96 h-96 bg-[#feba39] rounded-full blur-[160px] opacity-20 pointer-events-none"></div>
+      {/* React Bits Inspired Glow Welcome Header */}
+      <div className="text-center max-w-4xl mx-auto px-4 mb-8 space-y-4 z-10">
+        <motion.div
+          initial={{ opacity: 0, y: -15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-xs font-mono text-[#feba39] shadow-lg shadow-black/40"
+        >
+          <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-[#ff5540] to-[#feba39] text-black font-extrabold text-[10px] tracking-wider uppercase">
+            NUEVO
+          </span>
+          <span>Motion Design & 3D Showcase v2.0</span>
+        </motion.div>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.1 }}
+          className="font-syne font-black text-4xl sm:text-6xl lg:text-7xl text-white tracking-tight leading-[1.08] drop-shadow-[0_10px_35px_rgba(0,0,0,0.9)]"
+        >
+          ¡Un destello creativo para <span className="bg-gradient-to-r from-[#ff5540] via-[#feba39] to-[#ff5540] bg-clip-text text-transparent">iluminar tus proyectos</span>!
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.2 }}
+          className="text-base sm:text-lg text-[#e7e1e5]/85 max-w-2xl mx-auto font-sans leading-relaxed"
+        >
+          Explora la colección de animación digital, arte 3D e ilustración conceptual desarrollados con máxima precisión técnica y fluidez.
+        </motion.p>
+      </div>
 
       {/* 100% FULL-WIDTH MAIN INTERACTIVE SLIDER CONTAINER */}
       <div className="w-full px-2 sm:px-4 lg:px-8 z-10">
-        <div className="relative rounded-[2.5rem] overflow-hidden glass-panel border border-white/15 shadow-[0_25px_70px_-15px_rgba(0,0,0,0.9)] min-h-[560px] lg:min-h-[660px] flex flex-col justify-between group/slider hover:border-[#feba39]/40 transition-all duration-500">
+        <div className="relative rounded-[2.5rem] overflow-hidden glass-panel border border-white/20 shadow-[0_25px_70px_-15px_rgba(0,0,0,0.9)] min-h-[520px] lg:min-h-[600px] flex flex-col justify-between group/slider hover:border-[#feba39]/50 transition-all duration-500 bg-black/40 backdrop-blur-md">
           
           {/* Background Slide Image & Video Overlay */}
           <AnimatePresence mode="wait">

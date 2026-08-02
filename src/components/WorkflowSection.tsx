@@ -31,7 +31,7 @@ export const WorkflowSection: React.FC = () => {
   ];
 
   return (
-    <section id="flujo-trabajo" className="py-24 relative bg-[#18161b] overflow-hidden">
+    <section id="flujo-trabajo" className="py-24 relative bg-[#18161b]/75 backdrop-blur-sm overflow-hidden">
       {/* Subtle Background Elements */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-[#ff5540]/10 rounded-full blur-3xl pointer-events-none"></div>
 

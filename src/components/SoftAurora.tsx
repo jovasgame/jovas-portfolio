@@ -163,16 +163,16 @@ export interface SoftAuroraProps {
 }
 
 export const SoftAurora: React.FC<SoftAuroraProps> = ({
-  speed = 0.5,
+  speed = 0.6,
   scale = 1.5,
-  brightness = 0.9,
+  brightness = 1.1,
   color1 = '#ff5540',
   color2 = '#feba39',
   noiseFrequency = 2.5,
   noiseAmplitude = 1.0,
   bandHeight = 0.5,
   bandSpread = 1.0,
-  octaveDecay = 0.07,
+  octaveDecay = 0.1,
   layerOffset = 0,
   colorSpeed = 1.0,
   enableMouseInteraction = true,
@@ -205,7 +205,9 @@ export const SoftAurora: React.FC<SoftAuroraProps> = ({
 
     function resize() {
       if (!container) return;
-      renderer.setSize(container.offsetWidth, container.offsetHeight);
+      const w = container.offsetWidth || window.innerWidth;
+      const h = container.offsetHeight || window.innerHeight;
+      renderer.setSize(w, h);
       if (program) {
         program.uniforms.uResolution.value = [
           gl.canvas.width,

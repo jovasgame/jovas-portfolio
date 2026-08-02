@@ -22,20 +22,20 @@ const MainPortfolioContent: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen mesh-bg text-[#e7e1e5] relative selection:bg-[#feba39] selection:text-[#432c00]">
+    <div className="min-h-screen bg-[#0a090c] text-[#e7e1e5] relative selection:bg-[#feba39] selection:text-[#432c00]">
       {/* Dynamic WebGL Soft Aurora Background & Lava Lamp Orbs */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <SoftAurora
-          speed={0.5}
+          speed={0.6}
           scale={1.5}
-          brightness={0.85}
+          brightness={1.1}
           color1="#ff5540"
           color2="#feba39"
           noiseFrequency={2.5}
           noiseAmplitude={1.0}
           bandHeight={0.5}
           bandSpread={1.0}
-          octaveDecay={0.07}
+          octaveDecay={0.1}
           layerOffset={0}
           colorSpeed={1.0}
           enableMouseInteraction={true}
