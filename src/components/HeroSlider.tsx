@@ -50,18 +50,18 @@ export const HeroSlider: React.FC = () => {
   if (!currentProject) return null;
 
   return (
-    <section id="hero" className="relative min-h-screen pt-28 pb-16 flex flex-col justify-center overflow-hidden bg-transparent">
+    <section id="hero" className="relative min-h-screen pt-32 pb-24 flex flex-col justify-start overflow-hidden bg-transparent">
       {/* Background Animated Atmosphere & Grid */}
       <div className="absolute inset-0 z-0 opacity-15 pointer-events-none diagonal-stripes"></div>
       
-      {/* Harmonious Transparent Metallic Paint Header */}
-      <div className="text-center max-w-3xl mx-auto px-4 sm:px-6 mb-10 space-y-3 z-10 py-2 flex flex-col items-center">
+      {/* Immersive Full Screen Hero Welcome Header */}
+      <div className="text-center max-w-3xl mx-auto px-4 sm:px-6 min-h-[75vh] flex flex-col items-center justify-center space-y-4 z-10 py-8 mb-16 sm:mb-28">
         {/* Transparent Large Metallic Paint Icon */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="w-48 h-48 sm:w-64 sm:h-64 relative flex items-center justify-center pointer-events-auto cursor-pointer drop-shadow-[0_10px_40px_rgba(255,85,64,0.4)]"
+          className="w-52 h-52 sm:w-72 sm:h-72 relative flex items-center justify-center pointer-events-auto cursor-pointer drop-shadow-[0_15px_45px_rgba(255,85,64,0.45)] mb-2"
         >
           <MetallicPaint
             imageSrc={
@@ -111,8 +111,8 @@ export const HeroSlider: React.FC = () => {
         </motion.p>
       </div>
 
-      {/* 100% FULL-WIDTH MAIN INTERACTIVE SLIDER CONTAINER */}
-      <div className="w-full px-2 sm:px-4 lg:px-8 z-10">
+      {/* 100% FULL-WIDTH MAIN INTERACTIVE SLIDER CONTAINER (Pushed lower with smooth spacing) */}
+      <div className="w-full px-2 sm:px-4 lg:px-8 z-10 mt-8 sm:mt-16 pt-8">
         <div className="relative rounded-[2.5rem] overflow-hidden glass-panel border border-white/20 shadow-[0_25px_70px_-15px_rgba(0,0,0,0.9)] min-h-[520px] lg:min-h-[600px] flex flex-col justify-between group/slider hover:border-[#feba39]/50 transition-all duration-500 bg-black/40 backdrop-blur-md">
           
           {/* Background Slide Image & Video Overlay */}
