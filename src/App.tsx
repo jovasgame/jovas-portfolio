@@ -5,6 +5,7 @@ import { HeroSlider } from './components/HeroSlider';
 import { PortfolioGrid } from './components/PortfolioGrid';
 import { WorkflowSection } from './components/WorkflowSection';
 import { CoverflowGallery } from './components/CoverflowGallery';
+import { PhotoGallerySection } from './components/PhotoGallerySection';
 import { AboutSection } from './components/AboutSection';
 import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
@@ -63,7 +64,10 @@ const MainPortfolioContent: React.FC = () => {
         {/* 4. 3D Coverflow Gallery Previsualizer */}
         <CoverflowGallery />
 
-        {/* 5. About José Luis Vasquez (Biography) */}
+        {/* 5. Galería de Fotografía */}
+        <PhotoGallerySection />
+
+        {/* 6. About José Luis Vasquez (Biography) */}
         <AboutSection />
 
         {/* 6. Contact & Quote Generator */}

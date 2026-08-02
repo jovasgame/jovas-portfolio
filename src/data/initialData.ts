@@ -1,4 +1,4 @@
-import { Project, UserProfile, BrandAssets, ContactMessage, Stats } from '../types';
+import { Project, PhotoItem, UserProfile, BrandAssets, ContactMessage, Stats } from '../types';
 
 export const initialProjects: Project[] = [
   {
@@ -320,3 +320,42 @@ export const initialStats: Stats = {
   "activeProjectsCount": 8,
   "retentionRate": "76%"
 };
+
+export const initialPhotos: PhotoItem[] = [
+  {
+    id: 'photo-1',
+    title: 'Retrato Urbano & Luces Neón',
+    category: 'Retrato',
+    imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=80',
+    description: 'Fotografía nocturna capturando claroscuros y acentos neón cromáticos.',
+    cameraSpecs: 'Sony A7IV • 85mm f/1.4 • ISO 400',
+    createdAt: '2024-02-10'
+  },
+  {
+    id: 'photo-2',
+    title: 'Arquitectura Brutalista & Sombras',
+    category: 'Arquitectura',
+    imageUrl: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80',
+    description: 'Estudio de geometría estructural y contraste solar en concreto.',
+    cameraSpecs: 'Fujifilm X-T4 • 35mm f/2.0 • ISO 100',
+    createdAt: '2024-02-05'
+  },
+  {
+    id: 'photo-3',
+    title: 'Texturas Volumétricas & Niebla',
+    category: 'Conceptual',
+    imageUrl: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1200&q=80',
+    description: 'Atmósfera cinematográfica con haces de luz atravesando humo en penumbra.',
+    cameraSpecs: 'Canon EOS R5 • 50mm f/1.2 • ISO 200',
+    createdAt: '2024-01-28'
+  },
+  {
+    id: 'photo-4',
+    title: 'Composición Minimalista Ígnea',
+    category: 'Arte Conceptual',
+    imageUrl: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=1200&q=80',
+    description: 'Captura macro de destellos metálicos y refracción en alta velocidad.',
+    cameraSpecs: 'Sony A7R V • 90mm Macro f/2.8 • ISO 100',
+    createdAt: '2024-01-15'
+  }
+];

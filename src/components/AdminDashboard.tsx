@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
-import { Project, ProjectCategory, ProjectSpec, SocialLinkItem } from '../types';
+import { Project, ProjectCategory, ProjectSpec, SocialLinkItem, PhotoItem } from '../types';
 import { ImageUploader } from './ImageUploader';
 import { 
   Plus, 
@@ -37,7 +37,8 @@ import {
   Mail,
   CheckCircle2,
   AlertCircle,
-  Share2
+  Share2,
+  Camera
 } from 'lucide-react';
 import { parseMediaUrl } from '../utils/mediaUtils';
 import { motion, AnimatePresence } from 'motion/react';
@@ -53,6 +54,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
     updateProject,
     deleteProject,
     toggleFeatured,
+    photos,
+    addPhotoItem,
+    updatePhotoItem,
+    deletePhotoItem,
     messages,
     markMessageAsRead,
     deleteMessage,
@@ -66,7 +71,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
     syncToCloud
   } = usePortfolio();
 
-  const [activeTab, setActiveTab] = useState<'stats' | 'projects' | 'profile' | 'brand' | 'images' | 'messages'>('stats');
+  const [activeTab, setActiveTab] = useState<'stats' | 'projects' | 'photos' | 'profile' | 'brand' | 'images' | 'messages'>('stats');
   
   // Search & Filter in Dashboard
   const [searchTerm, setSearchTerm] = useState('');
@@ -75,6 +80,66 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
   // Edit/Create Project Modal state
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [isCreatingNew, setIsCreatingNew] = useState(false);
+
+  // Edit/Create Photo Modal state
+  const [editingPhoto, setEditingPhoto] = useState<PhotoItem | null>(null);
+  const [isCreatingPhoto, setIsCreatingPhoto] = useState(false);
+  const [photoTitle, setPhotoTitle] = useState('');
+  const [photoCategory, setPhotoCategory] = useState('Retrato');
+  const [photoImageUrl, setPhotoImageUrl] = useState('');
+  const [photoDescription, setPhotoDescription] = useState('');
+  const [photoCameraSpecs, setPhotoCameraSpecs] = useState('');
+
+  const openCreatePhotoModal = () => {
+    setEditingPhoto(null);
+    setIsCreatingPhoto(true);
+    setPhotoTitle('');
+    setPhotoCategory('Retrato');
+    setPhotoImageUrl('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=80');
+    setPhotoDescription('');
+    setPhotoCameraSpecs('Sony A7IV • 85mm f/1.4 • ISO 400');
+  };
+
+  const openEditPhotoModal = (p: PhotoItem) => {
+    setEditingPhoto(p);
+    setIsCreatingPhoto(false);
+    setPhotoTitle(p.title);
+    setPhotoCategory(p.category);
+    setPhotoImageUrl(p.imageUrl);
+    setPhotoDescription(p.description || '');
+    setPhotoCameraSpecs(p.cameraSpecs || '');
+  };
+
+  const handleSavePhoto = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!photoTitle || !photoImageUrl) return;
+
+    if (isCreatingPhoto) {
+      addPhotoItem({
+        title: photoTitle,
+        category: photoCategory,
+        imageUrl: photoImageUrl,
+        description: photoDescription || undefined,
+        cameraSpecs: photoCameraSpecs || undefined
+      });
+      showToast('¡Fotografía agregada con éxito a la galería!');
+    } else if (editingPhoto) {
+      updatePhotoItem(editingPhoto.id, {
+        title: photoTitle,
+        category: photoCategory,
+        imageUrl: photoImageUrl,
+        description: photoDescription || undefined,
+        cameraSpecs: photoCameraSpecs || undefined
+      });
+      showToast('¡Fotografía actualizada exitosamente!');
+    }
+
+    setEditingPhoto(null);
+    setIsCreatingPhoto(false);
+    setTimeout(() => {
+      syncToCloud();
+    }, 100);
+  };
 
   // Form Fields State
   const [title, setTitle] = useState('');
@@ -318,6 +383,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
   const navigationItems = [
     { id: 'stats', label: 'Vista General & Métricas', icon: BarChart3 },
     { id: 'projects', label: 'Gestión de Proyectos', icon: FolderKanban, count: projects.length },
+    { id: 'photos', label: 'Galería de Fotografía', icon: Camera, count: photos.length },
     { id: 'profile', label: 'Perfil & Biografía', icon: User },
     { id: 'brand', label: 'Identidad & Marca', icon: Sparkles },
     { id: 'images', label: 'Galería de Medios', icon: ImageIcon },
@@ -796,11 +862,100 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
                   </div>
                 )}
               </div>
-
             </div>
           )}
 
-          {/* TAB 3: EDIT PROFILE BIO */}
+          {/* TAB 3: PHOTOGRAPHY GALLERY MANAGER */}
+          {activeTab === 'photos' && (
+            <div className="space-y-6">
+              {/* Header & Controls */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-[#191524]/90 p-6 rounded-3xl border border-white/10 shadow-2xl backdrop-blur-xl">
+                <div>
+                  <h2 className="font-syne font-bold text-xl text-white flex items-center gap-2">
+                    <Camera className="w-5 h-5 text-[#feba39]" />
+                    Gestión de Galería Fotográfica
+                  </h2>
+                  <p className="text-xs text-[#a89f9e] font-mono">
+                    Agrega, edita o elimina fotografías capturadas para la sección pública del portafolio.
+                  </p>
+                </div>
+
+                <button
+                  onClick={openCreatePhotoModal}
+                  className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] font-black text-xs uppercase flex items-center gap-2 shadow-lg shadow-[#ff5540]/20 hover:scale-105 transition-all cursor-pointer shrink-0"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Agregar Fotografía</span>
+                </button>
+              </div>
+
+              {/* Photos Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {photos.map((photo) => (
+                  <div
+                    key={photo.id}
+                    className="p-4 rounded-3xl bg-[#191524]/90 border border-white/10 flex flex-col justify-between gap-4 shadow-xl backdrop-blur-xl hover:border-[#feba39]/40 transition-all group"
+                  >
+                    <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-black/40 border border-white/10">
+                      <img
+                        src={photo.imageUrl}
+                        alt={photo.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-[10px] font-mono text-[#feba39] font-bold border border-white/15 uppercase">
+                        {photo.category}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5 flex-1">
+                      <h3 className="font-syne font-bold text-base text-white">{photo.title}</h3>
+                      {photo.description && (
+                        <p className="text-xs text-[#a89f9e] line-clamp-2">{photo.description}</p>
+                      )}
+                      {photo.cameraSpecs && (
+                        <p className="text-[11px] font-mono text-[#feba39] truncate pt-1">
+                          📷 {photo.cameraSpecs}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="pt-3 border-t border-white/10 flex items-center justify-between">
+                      <span className="text-[10px] font-mono text-[#a89f9e]">{photo.createdAt}</span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => openEditPhotoModal(photo)}
+                          className="p-2 rounded-xl bg-white/5 hover:bg-white/15 text-white border border-white/10 transition-colors cursor-pointer"
+                          title="Editar Fotografía"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (confirm(`¿Eliminar la fotografía "${photo.title}"?`)) {
+                              deletePhotoItem(photo.id);
+                              showToast('Fotografía eliminada');
+                            }
+                          }}
+                          className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 transition-colors cursor-pointer"
+                          title="Eliminar Fotografía"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {photos.length === 0 && (
+                <div className="p-12 text-center text-[#a89f9e] bg-[#191524]/90 rounded-3xl border border-white/10 font-mono text-xs">
+                  No hay fotografías registradas aún en la galería. Clic en "Agregar Fotografía" para añadir una.
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TAB 4: EDIT PROFILE BIO */}
           {activeTab === 'profile' && (
             <div className="max-w-4xl space-y-6">
               <div className="p-6 sm:p-8 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl space-y-6">
@@ -1279,6 +1434,113 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
                   >
                     <Save className="w-4 h-4" />
                     Guardar Proyecto
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* PHOTO EDIT / CREATE MODAL */}
+      <AnimatePresence>
+        {(isCreatingPhoto || editingPhoto) && (
+          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xl flex items-center justify-center p-4">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-[#181522] border border-white/15 rounded-3xl p-6 sm:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl space-y-6"
+            >
+              <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                <div className="flex items-center gap-2">
+                  <Camera className="w-5 h-5 text-[#feba39]" />
+                  <h3 className="font-syne font-bold text-lg text-white">
+                    {isCreatingPhoto ? 'Agregar Nueva Fotografía' : 'Editar Fotografía'}
+                  </h3>
+                </div>
+                <button
+                  onClick={() => { setIsCreatingPhoto(false); setEditingPhoto(null); }}
+                  className="p-2 rounded-xl bg-white/5 hover:bg-white/15 text-white"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <form onSubmit={handleSavePhoto} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">Título de Fotografía *</label>
+                    <input
+                      type="text"
+                      value={photoTitle}
+                      onChange={(e) => setPhotoTitle(e.target.value)}
+                      placeholder="Ej. Retrato Urbano Nocturno"
+                      required
+                      className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-[#feba39]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">Categoría *</label>
+                    <input
+                      type="text"
+                      value={photoCategory}
+                      onChange={(e) => setPhotoCategory(e.target.value)}
+                      placeholder="Ej. Retrato, Arquitectura, Conceptual"
+                      required
+                      className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-[#feba39]"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">Imagen Fotográfica *</label>
+                  <ImageUploader
+                    value={photoImageUrl}
+                    onChange={(newUrl) => setPhotoImageUrl(newUrl)}
+                    allowVideo={false}
+                    label="Subir o Seleccionar Fotografía"
+                    helperText="Selecciona un archivo JPG/PNG/WEBP desde tu dispositivo o pega un enlace."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">Especificaciones de Cámara / Lente</label>
+                  <input
+                    type="text"
+                    value={photoCameraSpecs}
+                    onChange={(e) => setPhotoCameraSpecs(e.target.value)}
+                    placeholder="Ej. Sony A7IV • 85mm f/1.4 • ISO 400"
+                    className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-[#feba39]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-mono uppercase text-[#a89f9e] mb-2">Descripción o Historia de la Toma</label>
+                  <textarea
+                    rows={3}
+                    value={photoDescription}
+                    onChange={(e) => setPhotoDescription(e.target.value)}
+                    placeholder="Detalles del claroscuro, iluminación o concepto fotográfico..."
+                    className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-[#feba39]"
+                  />
+                </div>
+
+                <div className="pt-4 flex items-center justify-end gap-3 border-t border-white/10">
+                  <button
+                    type="button"
+                    onClick={() => { setIsCreatingPhoto(false); setEditingPhoto(null); }}
+                    className="px-5 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 text-[#a89f9e] text-xs font-bold font-mono"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] font-black text-xs uppercase shadow-lg shadow-[#ff5540]/20 hover:scale-105 transition-all cursor-pointer flex items-center gap-2"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>Guardar Fotografía</span>
                   </button>
                 </div>
               </form>

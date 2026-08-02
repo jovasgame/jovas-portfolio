@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Project, UserProfile, BrandAssets, ContactMessage, Stats } from '../types';
-import { initialProjects, initialProfile, initialBrandAssets, initialMessages, initialStats } from '../data/initialData';
+import { Project, PhotoItem, UserProfile, BrandAssets, ContactMessage, Stats } from '../types';
+import { initialProjects, initialPhotos, initialProfile, initialBrandAssets, initialMessages, initialStats } from '../data/initialData';
 import { hashPassword } from '../utils/security';
 
 interface PortfolioContextType {
   projects: Project[];
+  photos: PhotoItem[];
   profile: UserProfile;
   brandAssets: BrandAssets;
   messages: ContactMessage[];
@@ -26,6 +27,10 @@ interface PortfolioContextType {
   updateProject: (id: string, updatedFields: Partial<Project>) => void;
   deleteProject: (id: string) => void;
   toggleFeatured: (id: string) => void;
+
+  addPhotoItem: (photo: Omit<PhotoItem, 'id' | 'createdAt'>) => void;
+  updatePhotoItem: (id: string, updatedFields: Partial<PhotoItem>) => void;
+  deletePhotoItem: (id: string) => void;
   
   updateProfile: (profile: Partial<UserProfile>) => void;
   updateBrandAssets: (assets: Partial<BrandAssets>) => void;
@@ -65,6 +70,16 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     } catch (e) {
       console.warn('Failed to read projects from localStorage:', e);
       return initialProjects;
+    }
+  });
+
+  const [photos, setPhotos] = useState<PhotoItem[]>(() => {
+    try {
+      const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'photos');
+      return saved ? JSON.parse(saved) : initialPhotos;
+    } catch (e) {
+      console.warn('Failed to read photos from localStorage:', e);
+      return initialPhotos;
     }
   });
 
@@ -128,6 +143,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       .then(data => {
         if (data && data.projects && Array.isArray(data.projects) && data.projects.length > 0) {
           setProjects(data.projects);
+          if (data.photos && Array.isArray(data.photos)) setPhotos(data.photos);
           if (data.profile) setProfile(data.profile);
           if (data.brandAssets) setBrandAssets(data.brandAssets);
           if (data.stats) setStats(data.stats);
@@ -140,11 +156,12 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // Save state to Cloudflare KV storage + localStorage for global persistence
   const syncToCloud = async (): Promise<boolean> => {
-    const payload = { projects, profile, brandAssets, stats };
+    const payload = { projects, photos, profile, brandAssets, stats };
 
     // 1. Save to localStorage locally
     try {
       localStorage.setItem(LOCAL_STORAGE_PREFIX + 'projects', JSON.stringify(projects));
+      localStorage.setItem(LOCAL_STORAGE_PREFIX + 'photos', JSON.stringify(photos));
       localStorage.setItem(LOCAL_STORAGE_PREFIX + 'profile', JSON.stringify(profile));
       localStorage.setItem(LOCAL_STORAGE_PREFIX + 'brand_assets', JSON.stringify(brandAssets));
       localStorage.setItem(LOCAL_STORAGE_PREFIX + 'stats', JSON.stringify(stats));
@@ -178,6 +195,14 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   useEffect(() => {
     try {
+      localStorage.setItem(LOCAL_STORAGE_PREFIX + 'photos', JSON.stringify(photos));
+    } catch (e) {
+      console.warn('Failed to save photos to localStorage:', e);
+    }
+  }, [photos]);
+
+  useEffect(() => {
+    try {
       localStorage.setItem(LOCAL_STORAGE_PREFIX + 'profile', JSON.stringify(profile));
     } catch (e) {
       console.warn('Failed to save profile to localStorage:', e);
@@ -188,7 +213,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     try {
       localStorage.setItem(LOCAL_STORAGE_PREFIX + 'brand_assets', JSON.stringify(brandAssets));
     } catch (e) {
-      console.warn('Failed to save brand_assets to localStorage:', e);
+      console.warn('Failed to save brandAssets to localStorage:', e);
     }
   }, [brandAssets]);
 
@@ -209,23 +234,17 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }, [stats]);
 
   // Secure Auth check using SHA-256 password hash comparison
-  const loginAdmin = async (user: string, pass: string): Promise<boolean> => {
-    if (user.trim() !== ADMIN_USERNAME) return false;
+  const loginAdmin = async (usernameInput: string, passwordInput: string): Promise<boolean> => {
+    const isUserValid = usernameInput.trim() === ADMIN_USERNAME;
+    const inputHash = await hashPassword(passwordInput);
+    const isPassValid = inputHash === ADMIN_PASSWORD_HASH;
 
-    try {
-      const inputHash = await hashPassword(pass.trim());
-      if (inputHash === ADMIN_PASSWORD_HASH) {
-        setIsAdminLoggedIn(true);
-        try {
-          localStorage.setItem(LOCAL_STORAGE_PREFIX + 'admin_session', 'active');
-        } catch (e) {
-          console.warn('Failed to save admin session:', e);
-        }
-        setIsLoginModalOpen(false);
-        return true;
-      }
-    } catch (e) {
-      console.error('Password hashing failed:', e);
+    if (isUserValid && isPassValid) {
+      setIsAdminLoggedIn(true);
+      try {
+        localStorage.setItem(LOCAL_STORAGE_PREFIX + 'admin_session', 'active');
+      } catch (e) {}
+      return true;
     }
     return false;
   };
@@ -234,19 +253,17 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setIsAdminLoggedIn(false);
     try {
       localStorage.removeItem(LOCAL_STORAGE_PREFIX + 'admin_session');
-    } catch (e) {
-      console.warn('Failed to remove admin session:', e);
-    }
+    } catch (e) {}
   };
 
   // CRUD Operations (localStorage only)
-  const addProject = (newProjData: Omit<Project, 'id' | 'createdAt'>) => {
-    const newProject: Project = {
-      ...newProjData,
+  const addProject = (newProjectData: Omit<Project, 'id' | 'createdAt'>) => {
+    const newProj: Project = {
+      ...newProjectData,
       id: 'proj-' + Date.now(),
       createdAt: new Date().toISOString().split('T')[0]
     };
-    setProjects(prev => [newProject, ...prev]);
+    setProjects(prev => [newProj, ...prev]);
   };
 
   const updateProject = (id: string, updatedFields: Partial<Project>) => {
@@ -263,6 +280,23 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const toggleFeatured = (id: string) => {
     setProjects(prev => prev.map(p => (p.id === id ? { ...p, featured: !p.featured } : p)));
+  };
+
+  const addPhotoItem = (photoData: Omit<PhotoItem, 'id' | 'createdAt'>) => {
+    const newPhoto: PhotoItem = {
+      ...photoData,
+      id: 'photo-' + Date.now(),
+      createdAt: new Date().toISOString().split('T')[0]
+    };
+    setPhotos(prev => [newPhoto, ...prev]);
+  };
+
+  const updatePhotoItem = (id: string, updatedFields: Partial<PhotoItem>) => {
+    setPhotos(prev => prev.map(p => (p.id === id ? { ...p, ...updatedFields } : p)));
+  };
+
+  const deletePhotoItem = (id: string) => {
+    setPhotos(prev => prev.filter(p => p.id !== id));
   };
 
   const updateProfile = (updatedProfile: Partial<UserProfile>) => {
@@ -299,11 +333,13 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const resetToDefaults = () => {
     setProjects(initialProjects);
+    setPhotos(initialPhotos);
     setProfile(initialProfile);
     setBrandAssets(initialBrandAssets);
     setMessages(initialMessages);
     setStats(initialStats);
     localStorage.removeItem(LOCAL_STORAGE_PREFIX + 'projects');
+    localStorage.removeItem(LOCAL_STORAGE_PREFIX + 'photos');
     localStorage.removeItem(LOCAL_STORAGE_PREFIX + 'profile');
     localStorage.removeItem(LOCAL_STORAGE_PREFIX + 'brand_assets');
     localStorage.removeItem(LOCAL_STORAGE_PREFIX + 'messages');
@@ -314,6 +350,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     <PortfolioContext.Provider
       value={{
         projects,
+        photos,
         profile,
         brandAssets,
         messages,
@@ -331,6 +368,9 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         updateProject,
         deleteProject,
         toggleFeatured,
+        addPhotoItem,
+        updatePhotoItem,
+        deletePhotoItem,
         updateProfile,
         updateBrandAssets,
         addContactMessage,

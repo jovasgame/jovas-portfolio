@@ -21,6 +21,16 @@ export interface Project {
   createdAt: string;
 }
 
+export interface PhotoItem {
+  id: string;
+  title: string;
+  category: string;
+  imageUrl: string;
+  description?: string;
+  cameraSpecs?: string;
+  createdAt: string;
+}
+
 export interface ContactMessage {
   id: string;
   name: string;
