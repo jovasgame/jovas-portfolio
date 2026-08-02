@@ -138,34 +138,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         <div className="absolute inset-0 bg-gradient-to-t from-[#141316] via-[#141316]/50 to-transparent pointer-events-none z-10"></div>
       </div>
 
-      {/* Top Card Badge & Quick Actions */}
+      {/* Top Card Badge */}
       <div className="relative z-30 p-5 flex items-center justify-between pointer-events-none">
         <span className={`px-3 py-1 rounded-full text-[11px] font-bold border backdrop-blur-md shadow-sm pointer-events-auto shrink-0 whitespace-nowrap ${getCategoryBadgeColor(project.category)}`}>
           {project.category}
         </span>
-
-        <div className="flex items-center gap-2 pointer-events-auto">
-          {isAdminLoggedIn && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleFeatured(project.id);
-              }}
-              className={`p-2 rounded-full backdrop-blur-md border transition-colors ${
-                project.featured
-                  ? 'bg-[#feba39]/30 border-[#feba39] text-[#feba39]'
-                  : 'bg-black/40 border-white/10 text-white/40 hover:text-white'
-              }`}
-              title={project.featured ? "Destacado en Slider" : "Marcar como Destacado"}
-            >
-              <Star className="w-3.5 h-3.5 fill-current" />
-            </button>
-          )}
-
-          <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-[11px] font-mono text-white/80 border border-white/10">
-            {project.year}
-          </span>
-        </div>
       </div>
 
       {/* Bottom Card Content */}
