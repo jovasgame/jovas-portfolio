@@ -39,7 +39,9 @@ import {
   CheckCircle2,
   AlertCircle,
   Share2,
-  Camera
+  Camera,
+  Download,
+  UploadCloud
 } from 'lucide-react';
 import { getDirectThumbnailUrl, isGoogleDriveUrl, parseMediaUrl, parseGoogleDriveUrl, isDirectVideoUrl, getCategoryFallbackImage } from '../utils/mediaUtils';
 import { motion, AnimatePresence } from 'motion/react';
@@ -265,6 +267,54 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
       { label: 'Resolución', value: '4K Ultra HD' },
       { label: 'FPS', value: '60 FPS' }
     ]);
+  };
+
+  const handleExportBackup = () => {
+    const backupData = {
+      projects,
+      photos,
+      profile,
+      brandAssets,
+      stats,
+      exportedAt: new Date().toISOString()
+    };
+    const jsonString = JSON.stringify(backupData, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `jovas-portfolio-backup-${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    showToast('💾 ¡Copia de seguridad descargada!');
+  };
+
+  const handleImportBackup = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const data = JSON.parse(event.target?.result as string);
+        if (data && data.projects && Array.isArray(data.projects)) {
+          localStorage.setItem('jovas_portfolio_projects', JSON.stringify(data.projects));
+          if (data.photos) localStorage.setItem('jovas_portfolio_photos', JSON.stringify(data.photos));
+          if (data.profile) localStorage.setItem('jovas_portfolio_profile', JSON.stringify(data.profile));
+          if (data.brandAssets) localStorage.setItem('jovas_portfolio_brand_assets', JSON.stringify(data.brandAssets));
+          if (data.stats) localStorage.setItem('jovas_portfolio_stats', JSON.stringify(data.stats));
+          
+          showToast(`⚡ ¡Restaurados ${data.projects.length} proyectos con éxito!`);
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        } else {
+          showToast('❌ El archivo JSON no tiene un formato válido');
+        }
+      } catch (err) {
+        showToast('❌ Error al procesar el archivo JSON');
+      }
+    };
+    reader.readAsText(file);
   };
 
   const openEditModal = (p: Project) => {
@@ -599,11 +649,31 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
 
           <div className="flex items-center gap-3 flex-wrap justify-end">
             <button
+              onClick={handleExportBackup}
+              className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-white/5 hover:bg-white/15 text-white text-xs font-bold transition-all cursor-pointer border border-white/10"
+              title="Descargar copia de seguridad completa en archivo JSON"
+            >
+              <Download className="w-4 h-4 text-[#feba39]" />
+              <span>Copia Backup</span>
+            </button>
+
+            <label className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-white/5 hover:bg-white/15 text-white text-xs font-bold transition-all cursor-pointer border border-white/10" title="Restaurar proyectos desde un archivo JSON">
+              <UploadCloud className="w-4 h-4 text-emerald-400" />
+              <span>Restaurar JSON</span>
+              <input
+                type="file"
+                accept=".json"
+                onChange={handleImportBackup}
+                className="hidden"
+              />
+            </label>
+
+            <button
               onClick={async () => {
                 showToast('Sincronizando con la nube...');
                 const success = await syncToCloud();
                 if (success) {
-                  showToast('⚡ ¡Sitio actualizado globalmente en Cloudflare KV!');
+                  showToast('⚡ ¡Sitio actualizado globalmente!');
                 } else {
                   showToast('¡Datos guardados localmente!');
                 }

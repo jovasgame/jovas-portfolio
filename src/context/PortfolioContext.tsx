@@ -161,19 +161,33 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
 
-  // Sync from Cloudflare KV API on mount, fallback to localStorage / initialData
+  // Sync from Cloudflare KV API on mount, fallback to localStorage / initialData safely
   useEffect(() => {
     fetch('/api/portfolio')
       .then(res => res.json())
       .then(data => {
         if (data && data.projects && Array.isArray(data.projects) && data.projects.length > 0) {
-          const sanitized = sanitizeProjectList(data.projects);
-          setProjects(sanitized);
-          syncToCloud(sanitized);
-          if (data.photos && Array.isArray(data.photos)) setPhotos(data.photos);
-          if (data.profile) setProfile(data.profile);
-          if (data.brandAssets) setBrandAssets(data.brandAssets);
-          if (data.stats) setStats(data.stats);
+          const localSaved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'projects');
+          let localCount = 0;
+          try {
+            if (localSaved) localCount = JSON.parse(localSaved).length;
+          } catch (e) {}
+
+          // Only sync from cloud if local storage is empty OR cloud has more/equal projects
+          if (localCount === 0 || data.projects.length >= localCount) {
+            const sanitized = sanitizeProjectList(data.projects);
+            setProjects(sanitized);
+            try {
+              localStorage.setItem(LOCAL_STORAGE_PREFIX + 'projects', JSON.stringify(sanitized));
+            } catch (e) {}
+          }
+
+          if (data.photos && Array.isArray(data.photos) && !localStorage.getItem(LOCAL_STORAGE_PREFIX + 'photos')) {
+            setPhotos(data.photos);
+          }
+          if (data.profile && !localStorage.getItem(LOCAL_STORAGE_PREFIX + 'profile')) setProfile(data.profile);
+          if (data.brandAssets && !localStorage.getItem(LOCAL_STORAGE_PREFIX + 'brand_assets')) setBrandAssets(data.brandAssets);
+          if (data.stats && !localStorage.getItem(LOCAL_STORAGE_PREFIX + 'stats')) setStats(data.stats);
         }
       })
       .catch(e => {
