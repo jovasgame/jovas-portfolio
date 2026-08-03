@@ -172,13 +172,6 @@ const VideoCard: React.FC<VideoCardProps> = ({ project, index, onSelectProject }
       {/* Meta Content below video (YouTube Style) */}
       <div className="p-5 flex gap-3.5 items-start bg-gradient-to-b from-[#18161c] to-[#121115] flex-1 justify-between">
         
-        {/* Creator Channel Badge Icon */}
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#ff5540] to-[#feba39] p-[1.5px] shrink-0 mt-0.5 shadow-md">
-          <div className="w-full h-full bg-[#1e1c21] rounded-full flex items-center justify-center text-[#feba39] font-bold text-xs font-syne">
-            JM
-          </div>
-        </div>
-
         {/* Title & Info */}
         <div className="flex-1 space-y-1.5 min-w-0">
           <h3 className="font-syne font-bold text-base text-white group-hover:text-[#feba39] transition-colors line-clamp-2 leading-snug">
