@@ -91,97 +91,108 @@ const sanitizeBrandAssets = (assets?: Partial<BrandAssets> | null): BrandAssets 
   };
 };
 
+const LEGACY_DUMMY_TITLES = new Set([
+  'ignis vanguard',
+  'cyber sanctuary',
+  'santuario de la espada',
+  'precision core',
+  'ruinas al atardecer',
+  'vanguard unit'
+]);
+
+const LEGACY_DUMMY_IDS = new Set([
+  'proj-1',
+  'proj-2',
+  'proj-3',
+  'proj-4',
+  'proj-5',
+  'proj-6'
+]);
+
 const sanitizeProjectList = (projList: Project[]): Project[] => {
-  return projList.map((p) => {
-    let cleanImg = p.imageUrl ? p.imageUrl.trim() : '';
-    let cleanVid = p.videoUrl ? p.videoUrl.trim() : '';
+  if (!Array.isArray(projList)) return [];
 
-    if (!cleanImg) {
-      const match = initialProjects.find((ip) => ip.id === p.id);
-      cleanImg = match?.imageUrl || getCategoryFallbackImage(p.category);
-    }
+  return projList
+    .filter((p) => {
+      if (!p) return false;
+      const titleLower = (p.title || '').trim().toLowerCase();
+      if (LEGACY_DUMMY_TITLES.has(titleLower)) return false;
+      if (LEGACY_DUMMY_IDS.has(p.id)) return false;
+      return true;
+    })
+    .map((p) => {
+      let cleanImg = p.imageUrl ? p.imageUrl.trim() : '';
+      let cleanVid = p.videoUrl ? p.videoUrl.trim() : '';
 
-    return {
-      ...p,
-      imageUrl: cleanImg,
-      videoUrl: cleanVid || undefined
-    };
-  });
+      if (!cleanImg) {
+        const match = initialProjects.find((ip) => ip.id === p.id);
+        cleanImg = match?.imageUrl || getCategoryFallbackImage(p.category);
+      }
+
+      return {
+        ...p,
+        imageUrl: cleanImg,
+        videoUrl: cleanVid || undefined
+      };
+    });
 };
 
 const mergeProjectsPreservingUserEdits = (savedProjects?: Project[]): Project[] => {
-  if (!savedProjects || !Array.isArray(savedProjects) || savedProjects.length === 0) {
-    return initialProjects;
+  if (!savedProjects || !Array.isArray(savedProjects)) {
+    return sanitizeProjectList(initialProjects);
   }
 
-  const savedMap = new Map(savedProjects.map(p => [p.id, p]));
-  const result: Project[] = [...savedProjects];
-
-  initialProjects.forEach(ip => {
-    if (!savedMap.has(ip.id)) {
-      result.push(ip);
-    }
-  });
-
-  return sanitizeProjectList(result);
+  const sanitized = sanitizeProjectList(savedProjects);
+  return sanitized.length > 0 ? sanitized : sanitizeProjectList(initialProjects);
 };
 
 const mergePhotosPreservingUserEdits = (savedPhotos?: PhotoItem[]): PhotoItem[] => {
-  if (!savedPhotos || !Array.isArray(savedPhotos) || savedPhotos.length === 0) {
+  if (!savedPhotos || !Array.isArray(savedPhotos)) {
     return initialPhotos;
   }
-
-  const savedMap = new Map(savedPhotos.map(p => [p.id, p]));
-  const result: PhotoItem[] = [...savedPhotos];
-
-  initialPhotos.forEach(ip => {
-    if (!savedMap.has(ip.id)) {
-      result.push(ip);
-    }
-  });
-
-  return result;
+  return savedPhotos.length > 0 ? savedPhotos : initialPhotos;
 };
 
-const getSavedProjects = (): Project[] | null => {
-  const keys = [
-    LOCAL_STORAGE_PREFIX + 'projects',
+const clearLegacyLocalStorage = () => {
+  const legacyKeys = [
     'jovas_portfolio_v4_clean_projects',
     'jovas_portfolio_v3_projects',
-    'jovas_portfolio_projects'
-  ];
-  for (const key of keys) {
-    try {
-      const saved = localStorage.getItem(key);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
-        }
-      }
-    } catch (e) {}
-  }
-  return null;
-};
-
-const getSavedPhotos = (): PhotoItem[] | null => {
-  const keys = [
-    LOCAL_STORAGE_PREFIX + 'photos',
+    'jovas_portfolio_projects',
     'jovas_portfolio_v4_clean_photos',
     'jovas_portfolio_v3_photos',
     'jovas_portfolio_photos'
   ];
-  for (const key of keys) {
+  for (const key of legacyKeys) {
     try {
-      const saved = localStorage.getItem(key);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
-        }
-      }
+      localStorage.removeItem(key);
     } catch (e) {}
   }
+};
+
+const getSavedProjects = (): Project[] | null => {
+  clearLegacyLocalStorage();
+  try {
+    const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'projects');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (e) {}
+  return null;
+};
+
+const getSavedPhotos = (): PhotoItem[] | null => {
+  try {
+    const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'photos');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (e) {}
   return null;
 };
 
@@ -198,7 +209,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const [profile, setProfile] = useState<UserProfile>(() => {
     try {
-      const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'profile') || localStorage.getItem('jovas_portfolio_profile');
+      const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'profile');
       return saved ? sanitizeProfile(JSON.parse(saved)) : initialProfile;
     } catch (e) {
       return initialProfile;
@@ -207,7 +218,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const [brandAssets, setBrandAssets] = useState<BrandAssets>(() => {
     try {
-      const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'brand_assets') || localStorage.getItem('jovas_portfolio_brand_assets');
+      const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'brand_assets');
       return saved ? sanitizeBrandAssets(JSON.parse(saved)) : initialBrandAssets;
     } catch (e) {
       return initialBrandAssets;
@@ -216,7 +227,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const [messages, setMessages] = useState<ContactMessage[]>(() => {
     try {
-      const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'messages') || localStorage.getItem('jovas_portfolio_messages');
+      const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'messages');
       return saved ? JSON.parse(saved) : initialMessages;
     } catch (e) {
       return initialMessages;
@@ -225,7 +236,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const [stats, setStats] = useState<Stats>(() => {
     try {
-      const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'stats') || localStorage.getItem('jovas_portfolio_stats');
+      const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'stats');
       return saved ? JSON.parse(saved) : initialStats;
     } catch (e) {
       return initialStats;
@@ -237,7 +248,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState<boolean>(() => {
     try {
-      return localStorage.getItem(LOCAL_STORAGE_PREFIX + 'admin_session') === 'active' || localStorage.getItem('jovas_portfolio_admin_session') === 'active';
+      return localStorage.getItem(LOCAL_STORAGE_PREFIX + 'admin_session') === 'active';
     } catch (e) {
       return false;
     }
@@ -262,13 +273,16 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
       let activeProjects = projects;
       if (idbProjects && Array.isArray(idbProjects) && idbProjects.length > 0) {
-        activeProjects = mergeProjectsPreservingUserEdits(idbProjects);
-        setProjects(activeProjects);
+        const cleaned = sanitizeProjectList(idbProjects);
+        if (cleaned.length > 0) {
+          activeProjects = cleaned;
+          setProjects(activeProjects);
+        }
       }
 
       let activePhotos = photos;
       if (idbPhotos && Array.isArray(idbPhotos) && idbPhotos.length > 0) {
-        activePhotos = mergePhotosPreservingUserEdits(idbPhotos);
+        activePhotos = idbPhotos;
         setPhotos(activePhotos);
       }
 
@@ -277,7 +291,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       if (idbMessages && Array.isArray(idbMessages)) setMessages(idbMessages);
       if (idbStats) setStats(idbStats);
 
-      // 2. Fetch from Cloudflare KV API (only merge if cloud returns data)
+      // 2. Fetch from Cloudflare KV API
       try {
         const res = await fetch('/api/portfolio');
         if (!res.ok) return;
@@ -285,16 +299,16 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         if (!isMounted || !data) return;
 
         if (data.projects && Array.isArray(data.projects) && data.projects.length > 0) {
-          // Merge preserving local user projects (e.g. Espada Maestra)
-          const merged = mergeProjectsPreservingUserEdits([...activeProjects, ...data.projects]);
-          setProjects(merged);
-          idbStorage.setItem('projects', merged);
+          const cloudCleaned = sanitizeProjectList(data.projects);
+          if (cloudCleaned.length > 0) {
+            setProjects(cloudCleaned);
+            idbStorage.setItem('projects', cloudCleaned);
+          }
         }
 
         if (data.photos && Array.isArray(data.photos) && data.photos.length > 0) {
-          const merged = mergePhotosPreservingUserEdits([...activePhotos, ...data.photos]);
-          setPhotos(merged);
-          idbStorage.setItem('photos', merged);
+          setPhotos(data.photos);
+          idbStorage.setItem('photos', data.photos);
         }
 
         if (data.profile) setProfile(prev => sanitizeProfile({ ...data.profile, ...prev }));

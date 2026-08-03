@@ -49,21 +49,9 @@ interface Smooth3DSlideshowProps {
 const DEFAULT_SLIDES: Slide[] = [
   {
     image: {
-      src: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
+      src: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=1200&q=80",
     },
-    title: "Animación Digital\nPerformance Experimental",
-  },
-  {
-    image: {
-      src: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
-    },
-    title: "Ignis Vanguard\nCharacter Design",
-  },
-  {
-    image: {
-      src: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=1200&q=80",
-    },
-    title: "Cyber Sanctuary\nModelado 3D",
+    title: "Portafolio Visual\nJovas Motion Design",
   },
 ];
 

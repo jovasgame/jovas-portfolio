@@ -900,11 +900,33 @@ export const initialPhotos: PhotoItem[] = ${JSON.stringify(photos, null, 2)};
 
                 <div className="flex items-center gap-3">
                   <button
-                    onClick={resetToDefaults}
+                    onClick={() => {
+                      if (window.confirm('¿Estás seguro de restablecer los datos a la versión limpia inicial? Se borrarán las ediciones locales.')) {
+                        resetToDefaults();
+                      }
+                    }}
                     className="px-3.5 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 text-[#a89f9e] text-xs font-mono border border-white/10 flex items-center gap-2 cursor-pointer transition-colors"
+                    title="Restablecer a datos iniciales"
                   >
                     <RefreshCw className="w-3.5 h-3.5" />
                     <span>Restablecer</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(projects, null, 2));
+                      const downloadAnchor = document.createElement('a');
+                      downloadAnchor.setAttribute("href", dataStr);
+                      downloadAnchor.setAttribute("download", "initialProjects_backup.json");
+                      document.body.appendChild(downloadAnchor);
+                      downloadAnchor.click();
+                      downloadAnchor.remove();
+                    }}
+                    className="px-3.5 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 text-white text-xs font-mono border border-white/10 flex items-center gap-2 cursor-pointer transition-colors"
+                    title="Descargar copia de seguridad en JSON para el código"
+                  >
+                    <Download className="w-3.5 h-3.5 text-[#feba39]" />
+                    <span>Exportar JSON</span>
                   </button>
 
                   <button

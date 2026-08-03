@@ -91,18 +91,8 @@ const VideoCard: React.FC<VideoCardProps> = ({ project, index, onSelectProject }
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 filter brightness-95"
           />
 
-          {/* YouTube Play Icon Overlay */}
-          <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/10 transition-colors">
-            <div className="w-14 h-14 rounded-2xl bg-[#ff5540]/90 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-2xl shadow-[#ff5540]/50 group-hover:scale-110 group-hover:bg-[#ff5540] transition-all">
-              <Play className="w-7 h-7 fill-current translate-x-0.5" />
-            </div>
-          </div>
-
-          {/* Time / Spec Badge (Bottom Right) */}
-          <div className="absolute bottom-3 right-3 z-20 px-2.5 py-1 rounded-md bg-black/85 backdrop-blur-md border border-white/15 text-[11px] font-mono text-white font-bold flex items-center gap-1">
-            <Clock className="w-3 h-3 text-[#feba39]" />
-            <span>{durationSpec}</span>
-          </div>
+          {/* Clean thumbnail overlay without play icon or spec badge */}
+          <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
         </div>
 
         {/* Video Hover Preview Layer */}

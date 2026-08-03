@@ -204,16 +204,20 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenContactPag
                 </div>
 
                 {/* Direct Message Icon Button 3 */}
-                <div className="p-4 rounded-2xl bg-gradient-to-r from-[#ff5540]/10 to-[#feba39]/10 border border-[#feba39]/30 flex items-center justify-between gap-3">
+                <div 
+                  onClick={onOpenContactPage}
+                  className="p-4 rounded-2xl bg-gradient-to-r from-[#ff5540]/10 to-[#feba39]/10 border border-[#feba39]/30 flex items-center justify-between gap-3 cursor-pointer hover:border-[#ff5540]/60 transition-colors group"
+                >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#ff5540] to-[#feba39] text-[#2c1800] flex items-center justify-center shrink-0 shadow-md">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#ff5540] to-[#feba39] text-[#2c1800] flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
                       <MessageSquare className="w-5 h-5" />
                     </div>
                     <div className="min-w-0">
                       <span className="text-[10px] font-mono text-[#feba39] uppercase block font-bold">Mensaje Directo al Sistema</span>
-                      <span className="text-xs text-[#e7e1e5]">Formulario de Consulta Oficial</span>
+                      <span className="text-xs text-[#e7e1e5] group-hover:text-white transition-colors">Formulario de Consulta Oficial</span>
                     </div>
                   </div>
+                  <span className="text-xs font-bold text-[#feba39] group-hover:translate-x-1 transition-transform">&rarr;</span>
                 </div>
 
               </div>

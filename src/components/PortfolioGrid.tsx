@@ -125,15 +125,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           </div>
         )}
 
-        {/* Play Badge Icon for Video or Animation Projects when NOT Hovered */}
-        {!isHovered && isVideoOrAnimation && (
-          <div className="absolute inset-0 flex items-center justify-center opacity-80 group-hover:opacity-0 transition-opacity pointer-events-none z-10">
-            <div className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-md border border-[#ff5540]/60 flex items-center justify-center text-[#ff5540] shadow-xl group-hover:scale-110 transition-transform">
-              <Film className="w-6 h-6" />
-            </div>
-          </div>
-        )}
-
         {/* Dark Vignette Overlay - Fades out on hover for maximum image clarity */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#141316] via-[#141316]/60 to-transparent pointer-events-none z-10 transition-opacity duration-500 group-hover:opacity-0"></div>
       </div>
