@@ -65,13 +65,27 @@ const sanitizeProfile = (prof?: Partial<UserProfile> | null): UserProfile => {
 
 const sanitizeBrandAssets = (assets?: Partial<BrandAssets> | null): BrandAssets => {
   if (!assets) return initialBrandAssets;
+  let logo = assets.logoUrl ? assets.logoUrl.trim() : '';
   let metallic = assets.metallicIconUrl ? assets.metallicIconUrl.trim() : '';
+
+  if (!logo) {
+    logo = metallic || initialBrandAssets.logoUrl || initialBrandAssets.metallicIconUrl || '';
+  }
+  if (!metallic) {
+    metallic = logo || initialBrandAssets.metallicIconUrl || initialBrandAssets.logoUrl || '';
+  }
+
   if (metallic.includes('lh3.googleusercontent.com/aida-public')) {
     metallic = initialBrandAssets.metallicIconUrl || '';
   }
+  if (logo.includes('lh3.googleusercontent.com/aida-public')) {
+    logo = initialBrandAssets.logoUrl || metallic;
+  }
+
   return {
     ...initialBrandAssets,
     ...assets,
+    logoUrl: logo,
     metallicIconUrl: metallic
   };
 };

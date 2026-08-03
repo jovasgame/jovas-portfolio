@@ -85,11 +85,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenDashboardTab }) => {
           onClick={(e) => { e.preventDefault(); scrollToSection('hero'); }}
           className="flex items-center gap-3 group cursor-pointer"
         >
-          {brandAssets.logoUrl ? (
+          {(brandAssets.logoUrl || brandAssets.metallicIconUrl) ? (
             <img
-              src={brandAssets.logoUrl}
+              src={brandAssets.logoUrl || brandAssets.metallicIconUrl}
               alt={brandAssets.brandText || "Logo"}
-              className="h-9 w-auto max-w-[160px] object-contain filter drop-shadow group-hover:scale-105 transition-all cursor-pointer"
+              className="h-9 w-auto max-w-[160px] object-contain filter drop-shadow group-hover:scale-105 transition-all cursor-pointer mix-blend-screen rounded-lg"
             />
           ) : (
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#ff5540] to-[#feba39] p-[1px] shadow-lg shadow-[#ff5540]/20 group-hover:scale-105 transition-transform duration-300">

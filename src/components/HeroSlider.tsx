@@ -91,7 +91,7 @@ export const HeroSlider: React.FC = () => {
             <img
               src={brandAssets.logoUrl || brandAssets.metallicIconUrl}
               alt={brandAssets.brandText || "Logo"}
-              className="w-full h-full object-contain filter drop-shadow-[0_10px_30px_rgba(255,85,64,0.5)] relative z-10 group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-full object-contain filter drop-shadow-[0_10px_30px_rgba(255,85,64,0.5)] relative z-10 group-hover:scale-105 transition-transform duration-300 mix-blend-screen rounded-full"
             />
           ) : (
             <div className="w-full h-full rounded-3xl bg-gradient-to-br from-[#ff5540] to-[#feba39] p-[2px] shadow-2xl shadow-[#ff5540]/30 relative z-10 group-hover:scale-105 transition-transform duration-300">
