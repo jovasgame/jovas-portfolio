@@ -1,8 +1,7 @@
 name = "jovas-portfolio"
 pages_build_output_dir = "dist"
+compatibility_date = "2026-08-03"
 
-# Configuración de KV Namespaces para Cloudflare Pages Functions
-[[kv_namespaces]]
-binding = "PORTFOLIO_KV"
-# Sustituir id y preview_id por los IDs de tu namespace KV en el Dashboard de Cloudflare si es necesario
-id = "PORTFOLIO_KV"
+# NOTA PARA CLOUDFLARE PAGES:
+# El binding PORTFOLIO_KV se vincula desde el Dashboard de Cloudflare:
+# Settings > Functions > KV namespace bindings > Binding: PORTFOLIO_KV -> Tu KV Namespace.
