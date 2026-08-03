@@ -281,7 +281,7 @@ export const VideoSection: React.FC = () => {
 
         {/* Video Grid (YouTube Aesthetic Layout) */}
         {videoProjects.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {videoProjects.map((project, index) => (
               <VideoCard
                 key={project.id}

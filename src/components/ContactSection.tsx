@@ -118,7 +118,7 @@ export const ContactSection: React.FC = () => {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="Ej: Sofía Ramírez"
-                        className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-white placeholder-white/20 focus:outline-none focus:border-[#ff5540] transition-colors text-sm"
+                        className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-white placeholder-white/20 focus:outline-none focus:border-[#ff5540] transition-colors text-base sm:text-sm"
                       />
                     </div>
 
@@ -130,7 +130,7 @@ export const ContactSection: React.FC = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="sofia@estudio.com"
-                        className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-white placeholder-white/20 focus:outline-none focus:border-[#ff5540] transition-colors text-sm"
+                        className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-white placeholder-white/20 focus:outline-none focus:border-[#ff5540] transition-colors text-base sm:text-sm"
                       />
                     </div>
                   </div>
@@ -162,7 +162,7 @@ export const ContactSection: React.FC = () => {
                     <select
                       value={budget}
                       onChange={(e) => setBudget(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-white focus:outline-none focus:border-[#ff5540] transition-colors text-sm cursor-pointer"
+                      className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-white focus:outline-none focus:border-[#ff5540] transition-colors text-base sm:text-sm cursor-pointer"
                     >
                       <option value="< $2,000">&lt; $2,000 USD</option>
                       <option value="$2,000 - $5,000">$2,000 - $5,000 USD</option>
@@ -180,7 +180,7 @@ export const ContactSection: React.FC = () => {
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       placeholder="Cuéntame sobre tus objetivos, plazos y requerimientos visuales..."
-                      className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-white placeholder-white/20 focus:outline-none focus:border-[#ff5540] transition-colors text-sm resize-none"
+                      className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-white placeholder-white/20 focus:outline-none focus:border-[#ff5540] transition-colors text-base sm:text-sm resize-none"
                     ></textarea>
                   </div>
 

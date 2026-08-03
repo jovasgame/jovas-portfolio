@@ -89,23 +89,23 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenDashboardTab }) => {
             <img
               src={brandAssets.logoUrl || brandAssets.metallicIconUrl}
               alt={brandAssets.brandText || "Logo"}
-              className="h-9 w-auto max-w-[160px] object-contain filter drop-shadow group-hover:scale-105 transition-all cursor-pointer mix-blend-screen rounded-lg"
+              className="h-8 sm:h-9 w-auto max-w-[130px] sm:max-w-[160px] object-contain filter drop-shadow group-hover:scale-105 transition-all cursor-pointer mix-blend-screen rounded-lg"
             />
           ) : (
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#ff5540] to-[#feba39] p-[1px] shadow-lg shadow-[#ff5540]/20 group-hover:scale-105 transition-transform duration-300">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#ff5540] to-[#feba39] p-[1px] shadow-lg shadow-[#ff5540]/20 group-hover:scale-105 transition-transform duration-300">
               <div className="w-full h-full bg-[#1e1c21] rounded-[11px] flex items-center justify-center relative overflow-hidden">
-                <Flame className="w-5 h-5 text-[#feba39] group-hover:text-[#ff5540] transition-colors duration-300" />
+                <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-[#feba39] group-hover:text-[#ff5540] transition-colors duration-300" />
                 <div className="absolute inset-0 bg-gradient-to-tr from-[#ff5540]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
             </div>
           )}
           
           <div className="flex flex-col">
-            <span className="font-syne font-extrabold text-2xl tracking-wider text-white flex items-center gap-1 uppercase">
+            <span className="font-syne font-extrabold text-xl sm:text-2xl tracking-wider text-white flex items-center gap-1 uppercase">
               {brandAssets.brandText || 'JOVAS'}
               <span className="text-[#ff5540] inline-block w-1.5 h-1.5 rounded-full bg-[#ff5540] animate-pulse"></span>
             </span>
-            <span className="font-jetbrains text-[10px] tracking-widest text-[#a89f9e] uppercase -mt-1">
+            <span className="font-jetbrains text-[9px] sm:text-[10px] tracking-widest text-[#a89f9e] uppercase -mt-0.5 sm:-mt-1">
               {brandAssets.brandSubtext || 'Motion Design'}
             </span>
           </div>
