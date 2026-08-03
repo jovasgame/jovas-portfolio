@@ -33,7 +33,13 @@ interface PortfolioContextType {
   markMessageAsRead: (id: string) => void;
   deleteMessage: (id: string) => void;
   resetToDefaults: () => void;
-  syncToCloud: (customProjects?: Project[], customPhotos?: PhotoItem[]) => Promise<boolean>;
+  syncToCloud: (
+    customProjects?: Project[],
+    customPhotos?: PhotoItem[],
+    customProfile?: UserProfile,
+    customBrandAssets?: BrandAssets,
+    customStats?: Stats
+  ) => Promise<boolean>;
 }
 
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
@@ -231,18 +237,34 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }, []);
 
   // Save state to Cloudflare KV storage + localStorage for global persistence
-  const syncToCloud = async (customProjects?: Project[], customPhotos?: PhotoItem[]): Promise<boolean> => {
+  const syncToCloud = async (
+    customProjects?: Project[],
+    customPhotos?: PhotoItem[],
+    customProfile?: UserProfile,
+    customBrandAssets?: BrandAssets,
+    customStats?: Stats
+  ): Promise<boolean> => {
     const projectsToSync = customProjects || projects;
     const photosToSync = customPhotos || photos;
-    const payload = { projects: projectsToSync, photos: photosToSync, profile, brandAssets, stats };
+    const profileToSync = customProfile || profile;
+    const brandAssetsToSync = customBrandAssets || brandAssets;
+    const statsToSync = customStats || stats;
+
+    const payload = {
+      projects: projectsToSync,
+      photos: photosToSync,
+      profile: profileToSync,
+      brandAssets: brandAssetsToSync,
+      stats: statsToSync
+    };
 
     // 1. Save to localStorage locally
     try {
       localStorage.setItem(LOCAL_STORAGE_PREFIX + 'projects', JSON.stringify(projectsToSync));
       localStorage.setItem(LOCAL_STORAGE_PREFIX + 'photos', JSON.stringify(photosToSync));
-      localStorage.setItem(LOCAL_STORAGE_PREFIX + 'profile', JSON.stringify(profile));
-      localStorage.setItem(LOCAL_STORAGE_PREFIX + 'brand_assets', JSON.stringify(brandAssets));
-      localStorage.setItem(LOCAL_STORAGE_PREFIX + 'stats', JSON.stringify(stats));
+      localStorage.setItem(LOCAL_STORAGE_PREFIX + 'profile', JSON.stringify(profileToSync));
+      localStorage.setItem(LOCAL_STORAGE_PREFIX + 'brand_assets', JSON.stringify(brandAssetsToSync));
+      localStorage.setItem(LOCAL_STORAGE_PREFIX + 'stats', JSON.stringify(statsToSync));
     } catch (e) {
       console.warn('Failed to sync to localStorage (may be storage limit exceeded):', e);
     }
@@ -408,7 +430,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const updateProfile = (updatedProfile: Partial<UserProfile>) => {
     setProfile(prev => {
       const updated = { ...prev, ...updatedProfile };
-      syncToCloud(undefined, undefined);
+      syncToCloud(undefined, undefined, updated);
       return updated;
     });
   };
@@ -416,7 +438,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const updateBrandAssets = (updatedAssets: Partial<BrandAssets>) => {
     setBrandAssets(prev => {
       const updated = { ...prev, ...updatedAssets };
-      syncToCloud(undefined, undefined);
+      syncToCloud(undefined, undefined, undefined, updated);
       return updated;
     });
   };

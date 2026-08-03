@@ -286,6 +286,32 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
     showToast('💾 ¡Copia de seguridad descargada!');
   };
 
+  const handleExportInitialDataTS = () => {
+    const tsContent = `import { Project, PhotoItem, UserProfile, BrandAssets, ContactMessage, Stats } from '../types';
+
+export const initialProjects: Project[] = ${JSON.stringify(projects, null, 2)};
+
+export const initialProfile: UserProfile = ${JSON.stringify(profile, null, 2)};
+
+export const initialBrandAssets: BrandAssets = ${JSON.stringify(brandAssets, null, 2)};
+
+export const initialMessages: ContactMessage[] = [];
+
+export const initialStats: Stats = ${JSON.stringify(stats, null, 2)};
+
+export const initialPhotos: PhotoItem[] = ${JSON.stringify(photos, null, 2)};
+`;
+
+    const blob = new Blob([tsContent], { type: 'text/typescript' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'initialData.ts';
+    link.click();
+    URL.revokeObjectURL(url);
+    showToast('🚀 ¡Archivo initialData.ts generado! Reemplázalo en src/data/initialData.ts para sincronizar en GitHub.');
+  };
+
   const handleImportBackup = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -646,12 +672,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
 
           <div className="flex items-center gap-3 flex-wrap justify-end">
             <button
-              onClick={handleExportBackup}
-              className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-white/5 hover:bg-white/15 text-white text-xs font-bold transition-all cursor-pointer border border-white/10"
-              title="Descargar copia de seguridad completa en archivo JSON"
+              onClick={handleExportInitialDataTS}
+              className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-gradient-to-r from-[#ff5540]/20 to-[#feba39]/20 hover:from-[#ff5540]/30 hover:to-[#feba39]/30 text-[#feba39] text-xs font-bold transition-all cursor-pointer border border-[#feba39]/40"
+              title="Generar archivo initialData.ts para guardar permanentemente en el código de GitHub"
             >
-              <Download className="w-4 h-4 text-[#feba39]" />
-              <span>Copia Backup</span>
+              <Sparkles className="w-4 h-4 text-[#ff5540]" />
+              <span>Exportar initialData.ts (GitHub)</span>
             </button>
 
             <label className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-white/5 hover:bg-white/15 text-white text-xs font-bold transition-all cursor-pointer border border-white/10" title="Restaurar proyectos desde un archivo JSON">
