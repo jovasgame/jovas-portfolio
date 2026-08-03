@@ -35,7 +35,11 @@ export const AboutSection: React.FC = () => {
             >
               <div className="relative w-full h-full min-h-[420px] sm:min-h-[500px] flex flex-col justify-end">
                 <img
-                  src={profile.avatarUrl || "https://lh3.googleusercontent.com/aida-public/AB6AXuBVIY3R1_ShwuNazpxjXd6xyGf2xO6gNj7SUUo0pqzZuSqI873znEpmiFkgo35w_PAL893uLpJ058D1_ypOtVtWFIXJTYjVkKqCjJCfNkLCWddZ-XkJT2oufbwyt7djs9BoHLKWd5uzWELdKhyl4E4Upa7W_HQVPAIV8FFlbPEvXD8Iks3eYsoe5qy9jL2vF3zJBSzeM36egLzNcX75Cedo6CSDvj1T3QrCDdaSUkUJ_AvNNRoFBvbrWA"}
+                  src={
+                    profile.avatarUrl && !profile.avatarUrl.includes('lh3.googleusercontent.com/aida-public')
+                      ? profile.avatarUrl
+                      : "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=80"
+                  }
                   alt={profile.name}
                   className="absolute inset-0 w-full h-full object-cover object-top filter brightness-95 hover:scale-105 transition-transform duration-700"
                 />

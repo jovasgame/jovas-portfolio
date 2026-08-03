@@ -49,19 +49,19 @@ interface Smooth3DSlideshowProps {
 const DEFAULT_SLIDES: Slide[] = [
   {
     image: {
-      src: "https://lh3.googleusercontent.com/aida-public/AB6AXuB4bKeEYh9XdWGAQ2CFSL_4E8WmLHh3cRdkJIQx9_dZ6j0gzz5B3g7p9FBloAN57RRNvtj8H00FBq_5Mp8yPg7qLKnvkU-C2eoR9UIvrNPGiKaXC2Jo7H-iDXW9ZURk9qt51-4deAZ8LmfMGkAsgO2FEZPZtLH1Y9QcxFt9hH9M9JAIWjoAZA6RCHrYIaf8IH_rOJuzhxZeuz0UGzfHM7KyWiLIy-GcLa_V4euK8k2TzNsN7I7aA1RJVQ",
+      src: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
     },
     title: "Animación Digital\nPerformance Experimental",
   },
   {
     image: {
-      src: "https://lh3.googleusercontent.com/aida-public/AB6AXuBVIY3R1_ShwuNazpxjXd6xyGf2xO6gNj7SUUo0pqzZuSqI873znEpmiFkgo35w_PAL893uLpJ058D1_ypOtVtWFIXJTYjVkKqCjJCfNkLCWddZ-XkJT2oufbwyt7djs9BoHLKWd5uzWELdKhyl4E4Upa7W_HQVPAIV8FFlbPEvXD8Iks3eYsoe5qy9jL2vF3zJBSzeM36egLzNcX75Cedo6CSDvj1T3QrCDdaSUkUJ_AvNNRoFBvbrWA",
+      src: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
     },
     title: "Ignis Vanguard\nCharacter Design",
   },
   {
     image: {
-      src: "https://lh3.googleusercontent.com/aida-public/AB6AXuDaOYQYUw06Ny1XAHTsDwOFbOSTOo3zDdl8MjM3Yd580-WEo0Q0wlbioj3kdyrcVXGY7bKcyS7r-ZkOYXdlJd_94nRk2lEBeoFIX3F_7XHRL2rRdtlg0emtyL0TDi2kjJACUkITellHpdqtXTqrK6VJO-un3WSnHeEyA5XsJXDuWTA7oo2uDNY_CU_U1jB_vs1A1omWU_kRcLePwLpOBemevbYS63w7MH_ZGeV2MOCK1d6z9J6cVqzu6w",
+      src: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=1200&q=80",
     },
     title: "Cyber Sanctuary\nModelado 3D",
   },

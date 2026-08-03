@@ -616,7 +616,11 @@ export const initialPhotos: PhotoItem[] = ${JSON.stringify(photos, null, 2)};
         <div className="pt-6 mt-6 border-t border-white/10 space-y-3">
           <div className="p-3.5 rounded-2xl bg-[#191524] border border-white/10 flex items-center gap-3">
             <img
-              src={profile.avatarUrl || "https://lh3.googleusercontent.com/aida-public/AB6AXuBVIY3R1_ShwuNazpxjXd6xyGf2xO6gNj7SUUo0pqzZuSqI873znEpmiFkgo35w_PAL893uLpJ058D1_ypOtVtWFIXJTYjVkKqCjJCfNkLCWddZ-XkJT2oufbwyt7djs9BoHLKWd5uzWELdKhyl4E4Upa7W_HQVPAIV8FFlbPEvXD8Iks3eYsoe5qy9jL2vF3zJBSzeM36egLzNcX75Cedo6CSDvj1T3QrCDdaSUkUJ_AvNNRoFBvbrWA"}
+              src={
+                profile.avatarUrl && !profile.avatarUrl.includes('lh3.googleusercontent.com/aida-public')
+                  ? profile.avatarUrl
+                  : "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=80"
+              }
               alt="Admin Avatar"
               className="w-10 h-10 rounded-xl object-cover border border-[#feba39]/30"
             />

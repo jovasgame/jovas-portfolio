@@ -50,6 +50,32 @@ const LOCAL_STORAGE_PREFIX = 'jovas_portfolio_v5_final_';
 const ADMIN_USERNAME = 'JovasMotion';
 const ADMIN_PASSWORD_HASH = '8e84a7c15b781c94359a4d8456f5d3168e3f7fa3dcfaa7e32041f30921f49bd6';
 
+const sanitizeProfile = (prof?: Partial<UserProfile> | null): UserProfile => {
+  if (!prof) return initialProfile;
+  let avatar = prof.avatarUrl ? prof.avatarUrl.trim() : '';
+  if (!avatar || avatar.includes('lh3.googleusercontent.com/aida-public')) {
+    avatar = initialProfile.avatarUrl || '';
+  }
+  return {
+    ...initialProfile,
+    ...prof,
+    avatarUrl: avatar
+  };
+};
+
+const sanitizeBrandAssets = (assets?: Partial<BrandAssets> | null): BrandAssets => {
+  if (!assets) return initialBrandAssets;
+  let metallic = assets.metallicIconUrl ? assets.metallicIconUrl.trim() : '';
+  if (metallic.includes('lh3.googleusercontent.com/aida-public')) {
+    metallic = initialBrandAssets.metallicIconUrl || '';
+  }
+  return {
+    ...initialBrandAssets,
+    ...assets,
+    metallicIconUrl: metallic
+  };
+};
+
 const sanitizeProjectList = (projList: Project[]): Project[] => {
   return projList.map((p) => {
     let cleanImg = p.imageUrl ? p.imageUrl.trim() : '';
@@ -161,7 +187,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [profile, setProfile] = useState<UserProfile>(() => {
     try {
       const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'profile') || localStorage.getItem('jovas_portfolio_profile');
-      return saved ? JSON.parse(saved) : initialProfile;
+      return saved ? sanitizeProfile(JSON.parse(saved)) : initialProfile;
     } catch (e) {
       return initialProfile;
     }
@@ -170,7 +196,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [brandAssets, setBrandAssets] = useState<BrandAssets>(() => {
     try {
       const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'brand_assets') || localStorage.getItem('jovas_portfolio_brand_assets');
-      return saved ? JSON.parse(saved) : initialBrandAssets;
+      return saved ? sanitizeBrandAssets(JSON.parse(saved)) : initialBrandAssets;
     } catch (e) {
       return initialBrandAssets;
     }
@@ -227,8 +253,8 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             localStorage.setItem(LOCAL_STORAGE_PREFIX + 'photos', JSON.stringify(mergedPhotos));
           } catch (e) {}
         }
-        if (data.profile && !localStorage.getItem(LOCAL_STORAGE_PREFIX + 'profile')) setProfile(data.profile);
-        if (data.brandAssets && !localStorage.getItem(LOCAL_STORAGE_PREFIX + 'brand_assets')) setBrandAssets(data.brandAssets);
+        if (data.profile) setProfile(prev => sanitizeProfile({ ...prev, ...data.profile }));
+        if (data.brandAssets) setBrandAssets(prev => sanitizeBrandAssets({ ...prev, ...data.brandAssets }));
         if (data.stats && !localStorage.getItem(LOCAL_STORAGE_PREFIX + 'stats')) setStats(data.stats);
       })
       .catch(e => {

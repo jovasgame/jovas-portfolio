@@ -48,13 +48,11 @@ export const Footer: React.FC = () => {
           {/* Brand */}
           <div className="flex items-center gap-3">
             {brandAssets.logoUrl ? (
-              <div className="w-8 h-8 rounded-lg overflow-hidden bg-black/40 border border-white/10 p-1 flex items-center justify-center">
-                <img
-                  src={brandAssets.logoUrl}
-                  alt={brandAssets.brandText || "Logo"}
-                  className="w-full h-full object-contain"
-                />
-              </div>
+              <img
+                src={brandAssets.logoUrl}
+                alt={brandAssets.brandText || "Logo"}
+                className="h-8 w-auto max-w-[140px] object-contain filter drop-shadow hover:scale-105 transition-transform cursor-pointer"
+              />
             ) : (
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#ff5540] to-[#feba39] p-[1px]">
                 <div className="w-full h-full bg-[#1e1c21] rounded-[7px] flex items-center justify-center">

@@ -86,15 +86,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenDashboardTab }) => {
           className="flex items-center gap-3 group cursor-pointer"
         >
           {brandAssets.logoUrl ? (
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#ff5540]/30 to-[#feba39]/30 p-[1px] shadow-lg shadow-[#ff5540]/20 group-hover:scale-105 group-hover:border-[#feba39] transition-all">
-              <div className="w-full h-full bg-[#1e1c21] rounded-[11px] p-1.5 flex items-center justify-center overflow-hidden">
-                <img
-                  src={brandAssets.logoUrl}
-                  alt={brandAssets.brandText || "Logo"}
-                  className="w-full h-full object-contain filter drop-shadow"
-                />
-              </div>
-            </div>
+            <img
+              src={brandAssets.logoUrl}
+              alt={brandAssets.brandText || "Logo"}
+              className="h-9 w-auto max-w-[160px] object-contain filter drop-shadow group-hover:scale-105 transition-all cursor-pointer"
+            />
           ) : (
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#ff5540] to-[#feba39] p-[1px] shadow-lg shadow-[#ff5540]/20 group-hover:scale-105 transition-transform duration-300">
               <div className="w-full h-full bg-[#1e1c21] rounded-[11px] flex items-center justify-center relative overflow-hidden">
