@@ -1,215 +1,240 @@
 import React, { useState } from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { motion } from 'motion/react';
-import { Send, CheckCircle2, MessageSquare, Sparkles, Mail, User, DollarSign, Flame } from 'lucide-react';
-import { MagneticButton } from './MagneticButton';
+import { Mail, MessageSquare, Phone, QrCode, Sparkles, ExternalLink, Check, Copy, ArrowRight, Flame } from 'lucide-react';
+import { MagicBentoCard } from './MagicBento';
 
-export const ContactSection: React.FC = () => {
-  const { addContactMessage } = usePortfolio();
+interface ContactSectionProps {
+  onOpenContactPage?: () => void;
+}
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [projectType, setProjectType] = useState('Animación');
-  const [budget, setBudget] = useState('$2,000 - $5,000');
-  const [message, setMessage] = useState('');
-  const [submitted, setSubmitted] = useState(false);
+export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenContactPage }) => {
+  const { profile } = usePortfolio();
+  const [copiedEmail, setCopiedEmail] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name || !email || !message) return;
+  const primaryEmail = "jovas.motion@design.com";
+  const secondaryEmail = "jovasgame@gmail.com";
+  const whatsappNumber = "+503 7255 4916";
+  const whatsappLink = "https://wa.me/50372554916";
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(whatsappLink)}&color=ffffff&bgcolor=141316`;
 
-    addContactMessage({
-      name,
-      email,
-      projectType,
-      budget,
-      message
-    });
-
-    setSubmitted(true);
-    setName('');
-    setEmail('');
-    setMessage('');
-
-    setTimeout(() => {
-      setSubmitted(false);
-    }, 6000);
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedEmail(text);
+    setTimeout(() => setCopiedEmail(null), 3000);
   };
 
   return (
-    <section id="contacto" className="py-24 relative bg-[#18161b]/75 backdrop-blur-sm overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+    <section id="contacto" className="py-24 relative bg-[#18161b]/75 backdrop-blur-sm overflow-hidden w-full max-w-full">
+      {/* Background Accent Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] max-w-full h-[400px] bg-gradient-to-r from-[#ff5540]/10 via-[#feba39]/10 to-transparent blur-[150px] pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-12">
+        
+        {/* Section Header */}
+        <div className="text-center max-w-3xl mx-auto space-y-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#ff5540]/10 border border-[#ff5540]/30 text-[#feba39] text-xs font-mono font-bold tracking-widest uppercase">
+            <MessageSquare className="w-3.5 h-3.5 text-[#ff5540]" />
+            Canales Directos de Comunicación
+          </div>
+
+          <h2 className="font-syne font-black text-3xl sm:text-5xl text-white uppercase tracking-tight">
+            ¿TIENES UNA IDEA EN MENTE? <span className="bg-gradient-to-r from-[#ff5540] to-[#feba39] bg-clip-text text-transparent">CONÉCTATE CON JOVAS</span>
+          </h2>
+
+          <p className="text-sm sm:text-base text-[#a89f9e] leading-relaxed max-w-xl mx-auto">
+            Escanea el código QR de WhatsApp para hablar directamente o utiliza nuestros correos y formulario oficial.
+          </p>
+        </div>
+
+        {/* TWO CARDS GRID CONTAINER */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
           
-          {/* Left Column Text Info */}
+          {/* CUADRO 1: WHATSAPP QR BOX */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="lg:col-span-5 space-y-6"
+            className="flex"
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ff5540]/10 border border-[#ff5540]/30 text-[#ff5540] text-xs font-mono font-bold tracking-widest uppercase">
-              <MessageSquare className="w-3.5 h-3.5" />
-              Inicia Tu Proyecto
-            </div>
-
-            <h2 className="font-syne font-black text-3xl sm:text-5xl text-white tracking-tight">
-              ¿TIENES UNA IDEA EN MENTE?
-            </h2>
-
-            <p className="text-sm sm:text-base text-[#a89f9e] leading-relaxed">
-              Transformemos tus visiones en secuencias en movimiento inolvidables. Escríbeme directamente y te responderé en menos de 24 horas.
-            </p>
-
-            <div className="p-6 rounded-2xl bg-[#141316] border border-white/10 space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#ff5540]/20 text-[#ff5540] flex items-center justify-center">
-                  <Mail className="w-5 h-5" />
+            <MagicBentoCard
+              glowColor="37, 211, 102"
+              enableBorderGlow={true}
+              enableStars={true}
+              enableTilt={true}
+              enableMagnetism={true}
+              clickEffect={true}
+              className="p-8 sm:p-10 w-full flex flex-col justify-between items-center text-center space-y-6"
+              style={{ backgroundColor: "rgba(20, 18, 24, 0.9)" }}
+            >
+              <div className="space-y-3 w-full">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#25D366]/15 border border-[#25D366]/30 text-[#25D366] text-xs font-mono font-bold uppercase">
+                  <Phone className="w-3.5 h-3.5" />
+                  WhatsApp Instantáneo
                 </div>
-                <div>
-                  <span className="text-[10px] font-mono text-[#a89f9e] uppercase block">Correo Directo</span>
-                  <span className="text-sm font-bold text-white">jovas.motion@design.com</span>
-                </div>
+                <h3 className="font-syne font-black text-2xl sm:text-3xl text-white">
+                  WHATSAPP DIRECTO
+                </h3>
+                <p className="text-xs text-[#a89f9e] max-w-xs mx-auto">
+                  Escanea con la cámara de tu teléfono para iniciar un chat directo:
+                </p>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#feba39]/20 text-[#feba39] flex items-center justify-center">
-                  <Flame className="w-5 h-5" />
-                </div>
-                <div>
-                  <span className="text-[10px] font-mono text-[#a89f9e] uppercase block">Disponibilidad</span>
-                  <span className="text-sm font-bold text-emerald-400">Abierto para Proyectos Q3/Q4</span>
-                </div>
+              {/* QR Code Container with Glowing Frame */}
+              <div className="relative p-4 rounded-3xl bg-[#141316] border border-[#25D366]/30 shadow-[0_0_30px_rgba(37,211,102,0.15)] group hover:scale-105 transition-transform duration-300">
+                <img
+                  src={qrCodeUrl}
+                  alt="WhatsApp QR Code +503 7255 4916"
+                  className="w-48 h-48 sm:w-56 sm:h-56 object-contain rounded-2xl filter brightness-110"
+                />
+                <div className="absolute inset-0 rounded-3xl bg-gradient-to-tr from-[#25D366]/10 to-transparent pointer-events-none" />
               </div>
-            </div>
+
+              {/* Phone Number Display & Action Button */}
+              <div className="w-full space-y-3 pt-2">
+                <div className="font-mono text-base font-bold text-white tracking-widest">
+                  {whatsappNumber}
+                </div>
+
+                <a
+                  href={whatsappLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-4 px-6 rounded-2xl bg-[#25D366] hover:bg-[#20bd5a] text-[#083015] font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-[#25D366]/20 transition-all cursor-pointer"
+                >
+                  <Phone className="w-4 h-4" />
+                  <span>Abrir Chat de WhatsApp</span>
+                  <ExternalLink className="w-3.5 h-3.5 ml-1" />
+                </a>
+              </div>
+            </MagicBentoCard>
           </motion.div>
 
-          {/* Right Column Form */}
+          {/* CUADRO 2: EMAIL ICONS & DIRECT MESSAGE FORM BUTTON */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="lg:col-span-7"
+            transition={{ duration: 0.6 }}
+            className="flex"
           >
-            <div className="p-8 sm:p-10 rounded-3xl glass-card border border-[#b18780]/30 shadow-2xl relative">
-              
-              {submitted ? (
-                <div className="py-12 text-center space-y-4">
-                  <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center mx-auto">
-                    <CheckCircle2 className="w-8 h-8" />
-                  </div>
-                  <h3 className="font-syne font-bold text-2xl text-white">¡Mensaje Enviado con Éxito!</h3>
-                  <p className="text-sm text-[#a89f9e] max-w-md mx-auto">
-                    Gracias por ponerte en contacto. Tu mensaje ha sido enviado directamente al panel de Jovas Motion. Nos comunicaremos contigo en breve.
-                  </p>
+            <MagicBentoCard
+              glowColor="254, 186, 57"
+              enableBorderGlow={true}
+              enableStars={true}
+              enableTilt={true}
+              enableMagnetism={true}
+              clickEffect={true}
+              className="p-8 sm:p-10 w-full flex flex-col justify-between space-y-6"
+              style={{ backgroundColor: "rgba(20, 18, 24, 0.9)" }}
+            >
+              <div className="space-y-3">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#feba39]/15 border border-[#feba39]/30 text-[#feba39] text-xs font-mono font-bold uppercase">
+                  <Mail className="w-3.5 h-3.5" />
+                  Canales de Mensajería
                 </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  
-                  {/* Name & Email */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-xs font-mono text-[#a89f9e] uppercase block">Tu Nombre</label>
-                      <input
-                        type="text"
-                        required
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Ej: Sofía Ramírez"
-                        className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-white placeholder-white/20 focus:outline-none focus:border-[#ff5540] transition-colors text-base sm:text-sm"
-                      />
-                    </div>
+                <h3 className="font-syne font-black text-2xl sm:text-3xl text-white">
+                  CORREO & FORMULARIO
+                </h3>
+                <p className="text-xs text-[#a89f9e]">
+                  Elige el método de contacto de tu preferencia:
+                </p>
+              </div>
 
-                    <div className="space-y-2">
-                      <label className="text-xs font-mono text-[#a89f9e] uppercase block">Tu Correo Electrónico</label>
-                      <input
-                        type="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="sofia@estudio.com"
-                        className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-white placeholder-white/20 focus:outline-none focus:border-[#ff5540] transition-colors text-base sm:text-sm"
-                      />
+              {/* 2 Email Buttons & 1 Direct Message Button */}
+              <div className="space-y-4 w-full my-auto">
+                
+                {/* Email Icon Button 1 */}
+                <div className="p-4 rounded-2xl bg-[#1a181e] border border-white/10 hover:border-[#ff5540]/40 transition-colors flex items-center justify-between gap-3 group">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 rounded-xl bg-[#ff5540]/20 text-[#ff5540] flex items-center justify-center shrink-0">
+                      <Mail className="w-5 h-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-[10px] font-mono text-[#a89f9e] uppercase block">Correo Principal</span>
+                      <span className="text-xs sm:text-sm font-bold text-white truncate block">{primaryEmail}</span>
                     </div>
                   </div>
 
-                  {/* Project Type */}
-                  <div className="space-y-2">
-                    <label className="text-xs font-mono text-[#a89f9e] uppercase block">Tipo de Servicio</label>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                      {['Animación', 'Ilustración', 'Modelado 3D', 'Arte Conceptual'].map((type) => (
-                        <button
-                          key={type}
-                          type="button"
-                          onClick={() => setProjectType(type)}
-                          className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
-                            projectType === type
-                              ? 'bg-[#ff5540] text-[#2c1800] border-[#ff5540]'
-                              : 'bg-black/30 text-[#a89f9e] border-white/10 hover:border-white/30'
-                          }`}
-                        >
-                          {type}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Budget */}
-                  <div className="space-y-2">
-                    <label className="text-xs font-mono text-[#a89f9e] uppercase block">Presupuesto Estimado</label>
-                    <select
-                      value={budget}
-                      onChange={(e) => setBudget(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-white focus:outline-none focus:border-[#ff5540] transition-colors text-base sm:text-sm cursor-pointer"
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      onClick={() => copyToClipboard(primaryEmail)}
+                      className="p-2 rounded-lg bg-white/5 hover:bg-white/15 text-[#a89f9e] hover:text-white transition-colors cursor-pointer text-xs flex items-center gap-1 font-mono"
+                      title="Copiar Correo"
                     >
-                      <option value="< $2,000">&lt; $2,000 USD</option>
-                      <option value="$2,000 - $5,000">$2,000 - $5,000 USD</option>
-                      <option value="$5,000 - $10,000">$5,000 - $10,000 USD</option>
-                      <option value="$10,000+">$10,000+ USD</option>
-                    </select>
-                  </div>
-
-                  {/* Message */}
-                  <div className="space-y-2">
-                    <label className="text-xs font-mono text-[#a89f9e] uppercase block">Detalles del Proyecto</label>
-                    <textarea
-                      required
-                      rows={4}
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      placeholder="Cuéntame sobre tus objetivos, plazos y requerimientos visuales..."
-                      className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-white placeholder-white/20 focus:outline-none focus:border-[#ff5540] transition-colors text-base sm:text-sm resize-none"
-                    ></textarea>
-                  </div>
-
-                  {/* Submit Button */}
-                  <div className="pt-2">
-                    <MagneticButton
-                      type="submit"
-                      paddingX={32}
-                      paddingY={16}
-                      radius={16}
-                      magnet={10}
-                      fill="linear-gradient(135deg, #ff5540 0%, #feba39 100%)"
-                      textColor="#2c1800"
-                      sweepColor="#141316"
-                      sweepTextColor="#feba39"
-                      style={{ width: "100%" }}
+                      {copiedEmail === primaryEmail ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    </button>
+                    <a
+                      href={`mailto:${primaryEmail}`}
+                      className="px-3 py-1.5 rounded-lg bg-[#ff5540]/20 hover:bg-[#ff5540] text-[#ff7563] hover:text-[#2c1800] text-xs font-bold transition-all"
                     >
-                      <Send className="w-4 h-4" />
-                      <span>Enviar Consulta a Jovas</span>
-                    </MagneticButton>
+                      Escribir
+                    </a>
+                  </div>
+                </div>
+
+                {/* Email Icon Button 2 */}
+                <div className="p-4 rounded-2xl bg-[#1a181e] border border-white/10 hover:border-[#feba39]/40 transition-colors flex items-center justify-between gap-3 group">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 rounded-xl bg-[#feba39]/20 text-[#feba39] flex items-center justify-center shrink-0">
+                      <Mail className="w-5 h-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-[10px] font-mono text-[#a89f9e] uppercase block">Correo Secundario</span>
+                      <span className="text-xs sm:text-sm font-bold text-white truncate block">{secondaryEmail}</span>
+                    </div>
                   </div>
 
-                </form>
-              )}
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      onClick={() => copyToClipboard(secondaryEmail)}
+                      className="p-2 rounded-lg bg-white/5 hover:bg-white/15 text-[#a89f9e] hover:text-white transition-colors cursor-pointer text-xs flex items-center gap-1 font-mono"
+                      title="Copiar Correo"
+                    >
+                      {copiedEmail === secondaryEmail ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    </button>
+                    <a
+                      href={`mailto:${secondaryEmail}`}
+                      className="px-3 py-1.5 rounded-lg bg-[#feba39]/20 hover:bg-[#feba39] text-[#feba39] hover:text-[#2c1800] text-xs font-bold transition-all"
+                    >
+                      Escribir
+                    </a>
+                  </div>
+                </div>
 
-            </div>
+                {/* Direct Message Icon Button 3 */}
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-[#ff5540]/10 to-[#feba39]/10 border border-[#feba39]/30 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#ff5540] to-[#feba39] text-[#2c1800] flex items-center justify-center shrink-0 shadow-md">
+                      <MessageSquare className="w-5 h-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-[10px] font-mono text-[#feba39] uppercase block font-bold">Mensaje Directo al Sistema</span>
+                      <span className="text-xs text-[#e7e1e5]">Formulario de Consulta Oficial</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Main Button to Open Centered Contact Page */}
+              <div className="pt-2">
+                <button
+                  onClick={onOpenContactPage}
+                  className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl shadow-[#ff5540]/25 hover:scale-[1.02] active:scale-[0.98] transition-transform cursor-pointer"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span>Contáctame y Deja Tu Mensaje (Formulario)</span>
+                  <ArrowRight className="w-4 h-4 ml-1" />
+                </button>
+              </div>
+
+            </MagicBentoCard>
           </motion.div>
 
         </div>
+
       </div>
     </section>
   );

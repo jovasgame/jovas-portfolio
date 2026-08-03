@@ -9,6 +9,7 @@ import { CoverflowGallery } from './components/CoverflowGallery';
 import { PhotoGallerySection } from './components/PhotoGallerySection';
 import { AboutSection } from './components/AboutSection';
 import { ContactSection } from './components/ContactSection';
+import { ContactPage } from './components/ContactPage';
 import { Footer } from './components/Footer';
 import { ProjectModal } from './components/ProjectModal';
 import { AdminLoginModal } from './components/AdminLoginModal';
@@ -18,9 +19,14 @@ import Aurora from './components/Aurora';
 const MainPortfolioContent: React.FC = () => {
   const { isAdminLoggedIn } = usePortfolio();
   const [showDashboard, setShowDashboard] = useState(false);
+  const [showContactPage, setShowContactPage] = useState(false);
 
   if (isAdminLoggedIn && showDashboard) {
     return <AdminDashboard onCloseDashboard={() => setShowDashboard(false)} />;
+  }
+
+  if (showContactPage) {
+    return <ContactPage onBack={() => setShowContactPage(false)} />;
   }
 
   return (
@@ -65,7 +71,7 @@ const MainPortfolioContent: React.FC = () => {
         <AboutSection />
 
         {/* 6. Contact & Quote Generator */}
-        <ContactSection />
+        <ContactSection onOpenContactPage={() => setShowContactPage(true)} />
       </main>
 
       {/* Footer */}
