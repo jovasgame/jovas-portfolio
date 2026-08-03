@@ -670,7 +670,7 @@ export const initialPhotos: PhotoItem[] = ${JSON.stringify(photos, null, 2)};
               {cloudSyncStatus === 'synced' && (
                 <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-mono font-bold border border-emerald-500/30 flex items-center gap-1">
                   <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                  Cloudflare KV: Sincronizado
+                  Cloudflare D1: Sincronizado
                 </span>
               )}
               {cloudSyncStatus === 'syncing' && (
@@ -680,15 +680,15 @@ export const initialPhotos: PhotoItem[] = ${JSON.stringify(photos, null, 2)};
                 </span>
               )}
               {cloudSyncStatus === 'unbound' && (
-                <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-300 text-[10px] font-mono font-bold border border-amber-500/30 flex items-center gap-1" title="Vincula PORTFOLIO_KV en Cloudflare Pages settings">
+                <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-300 text-[10px] font-mono font-bold border border-amber-500/30 flex items-center gap-1" title="Vincula PORTFOLIO_D1 en Cloudflare Pages settings">
                   <AlertCircle className="w-3 h-3 text-amber-400" />
-                  Cloudflare KV: Pendiente Binding
+                  Cloudflare D1: Pendiente Binding
                 </span>
               )}
               {(cloudSyncStatus === 'error' || cloudSyncStatus === 'idle') && (
-                <span className="px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-300 text-[10px] font-mono font-bold border border-rose-500/30 flex items-center gap-1">
+                <span className="px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-300 text-[10px] font-mono font-bold border border-rose-500/30 flex items-center gap-1" title={cloudSyncError || ''}>
                   <AlertCircle className="w-3 h-3 text-rose-400" />
-                  Cloudflare KV: Guardado Local
+                  Cloudflare D1: Guardado Local
                 </span>
               )}
             </h1>
@@ -720,12 +720,12 @@ export const initialPhotos: PhotoItem[] = ${JSON.stringify(photos, null, 2)};
 
             <button
               onClick={async () => {
-                showToast('Sincronizando con Cloudflare KV...');
+                showToast('Sincronizando con Cloudflare D1...');
                 const success = await syncToCloud();
                 if (success) {
-                  showToast('⚡ ¡Sitio actualizado globalmente en Cloudflare KV!');
+                  showToast('⚡ ¡Sitio actualizado globalmente en Cloudflare D1!');
                 } else if (cloudSyncStatus === 'unbound') {
-                  showToast('⚠️ Datos guardados localmente. Recuerda vincular PORTFOLIO_KV en Cloudflare Pages.');
+                  showToast('⚠️ Datos guardados localmente. Recuerda vincular PORTFOLIO_D1 en Cloudflare Pages.');
                 } else {
                   showToast('¡Datos guardados de forma segura localmente!');
                 }
@@ -882,7 +882,7 @@ export const initialPhotos: PhotoItem[] = ${JSON.stringify(photos, null, 2)};
                   </div>
 
                   <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs text-[#a89f9e] font-mono">
-                    <span>Base de Datos KV:</span>
+                    <span>Base de Datos D1:</span>
                     <span className="text-emerald-400 font-bold">Cloudflare Pages</span>
                   </div>
                 </div>

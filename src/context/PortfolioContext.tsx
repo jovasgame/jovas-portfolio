@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { Project, PhotoItem, UserProfile, BrandAssets, ContactMessage, Stats } from '../types';
 import { initialProjects, initialPhotos, initialProfile, initialBrandAssets, initialMessages, initialStats } from '../data/initialData';
 import { hashPassword } from '../utils/security';
@@ -50,6 +50,30 @@ interface PortfolioContextType {
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
 
 const LOCAL_STORAGE_PREFIX = 'jovas_portfolio_v5_final_';
+const LAST_LOCAL_CHANGE_KEY = LOCAL_STORAGE_PREFIX + 'last_local_change';
+const SYNC_TOKEN_KEY = LOCAL_STORAGE_PREFIX + 'sync_token';
+
+const getSyncToken = (): string | null => {
+  try {
+    return sessionStorage.getItem(SYNC_TOKEN_KEY);
+  } catch (e) {
+    return null;
+  }
+};
+
+const getLastLocalChange = (): string => {
+  try {
+    return localStorage.getItem(LAST_LOCAL_CHANGE_KEY) || '';
+  } catch (e) {
+    return '';
+  }
+};
+
+const markLocalChange = (): void => {
+  try {
+    localStorage.setItem(LAST_LOCAL_CHANGE_KEY, new Date().toISOString());
+  } catch (e) {}
+};
 
 // Credentials SHA-256 Hash Security (No plain text password stored)
 const ADMIN_USERNAME = 'JovasMotion';
@@ -244,7 +268,12 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [cloudSyncStatus, setCloudSyncStatus] = useState<CloudSyncStatus>('idle');
   const [cloudSyncError, setCloudSyncError] = useState<string | undefined>(undefined);
 
-  // Synchronize IndexedDB & Cloudflare KV on mount
+  // Bloquea escrituras a la nube hasta que termine la carga inicial (GET).
+  // Sin esto, un CRUD disparado antes de recibir la nube podría sobrescribir
+  // datos reales con estado inicial/viejo (origen de proyectos fantasma y resets).
+  const cloudLoadFinishedRef = useRef<boolean>(false);
+
+  // Synchronize IndexedDB & Cloudflare D1 on mount
   useEffect(() => {
     let isMounted = true;
 
@@ -273,7 +302,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       if (idbMessages && Array.isArray(idbMessages)) setMessages(idbMessages);
       if (idbStats) setStats(idbStats);
 
-      // 2. Fetch from Cloudflare KV API
+      // 2. Fetch from Cloudflare D1 API (with legacy KV fallback server-side)
       try {
         const res = await fetch('/api/portfolio');
         if (!res.ok) {
@@ -285,31 +314,70 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
         if (data.bound === false || data.status === 'unbound') {
           setCloudSyncStatus('unbound');
-          setCloudSyncError('PORTFOLIO_KV no está vinculado en Cloudflare Pages settings');
+          setCloudSyncError('Base de datos no vinculada en Cloudflare Pages (PORTFOLIO_D1)');
           return;
         }
 
-        if (data.projects && Array.isArray(data.projects)) {
-          const cloudCleaned = sanitizeProjectList(data.projects);
-          setProjects(cloudCleaned);
-          idbStorage.setItem('projects', cloudCleaned);
-          setCloudSyncStatus('synced');
-        }
+        // --- Merge por timestamps: la fuente más reciente gana ---
+        const lastLocalChange = getLastLocalChange();
+        const cloudUpdatedAt = typeof data.updatedAt === 'string' ? data.updatedAt : '';
+        const cloudHasProjects = Array.isArray(data.projects) && data.projects.length > 0;
+        const cloudHasPhotos = Array.isArray(data.photos) && data.photos.length > 0;
+        const cloudHasData = cloudHasProjects || cloudHasPhotos || !!data.profile;
+        const localHasData =
+          (idbProjects && idbProjects.length > 0) || !!getSavedProjects();
+        const localIsNewer =
+          !!lastLocalChange && (!cloudUpdatedAt || lastLocalChange > cloudUpdatedAt);
 
-        if (data.photos && Array.isArray(data.photos)) {
-          setPhotos(data.photos);
-          idbStorage.setItem('photos', data.photos);
+        if (cloudHasData && !localIsNewer) {
+          // La nube es la fuente de verdad (más nueva o igual): adoptarla
+          if (cloudHasProjects) {
+            const cloudCleaned = sanitizeProjectList(data.projects);
+            setProjects(cloudCleaned);
+            idbStorage.setItem('projects', cloudCleaned);
+          }
+          if (Array.isArray(data.photos)) {
+            setPhotos(data.photos);
+            idbStorage.setItem('photos', data.photos);
+          }
+          if (data.profile) {
+            const p = sanitizeProfile(data.profile);
+            setProfile(p);
+            idbStorage.setItem('profile', p);
+          }
+          if (data.brandAssets) {
+            const b = sanitizeBrandAssets(data.brandAssets);
+            setBrandAssets(b);
+            idbStorage.setItem('brandAssets', b);
+          }
+          if (data.stats) {
+            setStats(data.stats);
+            idbStorage.setItem('stats', data.stats);
+          }
           setCloudSyncStatus('synced');
+        } else {
+          // La nube está vacía o el local es más nuevo (ediciones offline):
+          // NO pisar el estado local. Si hay sesión admin, empujar local a la
+          // nube (autocuración: también migra datos viejos de IDB/KV a D1).
+          setCloudSyncStatus('synced');
+          if (isAdminLoggedIn && localHasData) {
+            syncToCloud(
+              idbProjects || undefined,
+              idbPhotos || undefined,
+              idbProfile || undefined,
+              idbBrandAssets || undefined,
+              idbStats || undefined
+            );
+          }
         }
-
-        if (data.profile) setProfile(prev => sanitizeProfile({ ...prev, ...data.profile }));
-        if (data.brandAssets) setBrandAssets(prev => sanitizeBrandAssets({ ...prev, ...data.brandAssets }));
       } catch (e: any) {
-        console.warn('Cloudflare KV fetch notice (using IndexedDB/localStorage):', e);
+        console.warn('Cloudflare D1 fetch notice (using IndexedDB/localStorage):', e);
         if (isMounted) {
           setCloudSyncStatus('error');
           setCloudSyncError(String(e));
         }
+      } finally {
+        cloudLoadFinishedRef.current = true;
       }
     }
 
@@ -318,9 +386,10 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     return () => {
       isMounted = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Save state to Cloudflare KV storage + IndexedDB + localStorage for global persistence
+  // Save state to Cloudflare D1 storage + IndexedDB + localStorage for global persistence
   const syncToCloud = async (
     customProjects?: Project[],
     customPhotos?: PhotoItem[],
@@ -328,8 +397,16 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     customBrandAssets?: BrandAssets,
     customStats?: Stats
   ): Promise<boolean> => {
+    // Nunca escribir en la nube antes de terminar la carga inicial:
+    // evita pisar datos reales con estado inicial o desactualizado.
+    if (!cloudLoadFinishedRef.current) {
+      console.warn('Sync bloqueado: la carga inicial de la nube aún no termina.');
+      return false;
+    }
+
     setCloudSyncStatus('syncing');
     setCloudSyncError(undefined);
+    markLocalChange();
 
     const projectsToSync = customProjects || projects;
     const photosToSync = customPhotos || photos;
@@ -363,28 +440,40 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       console.warn('LocalStorage limit notice (data saved safely in IndexedDB):', e);
     }
 
-    // 3. Save live to Cloudflare KV via Functions API
+    // 3. Save live to Cloudflare D1 via Functions API
     try {
       const body = JSON.stringify(payload);
-      const MAX_KV_PAYLOAD_BYTES = 23 * 1024 * 1024;
-      if (body.length > MAX_KV_PAYLOAD_BYTES) {
-        const msg = `Cloudflare KV sync aborted: payload is ${(body.length / 1024 / 1024).toFixed(1)} MB (limit ~25 MB).`;
+      // D1 no tiene el límite de 25 MB por valor de KV, pero el request body
+      // de Pages Functions sí (~100 MB). Guarda de seguridad a 50 MB.
+      const MAX_PAYLOAD_BYTES = 50 * 1024 * 1024;
+      if (body.length > MAX_PAYLOAD_BYTES) {
+        const msg = `Sync abortado: el payload pesa ${(body.length / 1024 / 1024).toFixed(1)} MB (límite de seguridad 50 MB). Usa URLs externas para imágenes pesadas.`;
         console.error(msg);
         setCloudSyncStatus('error');
         setCloudSyncError(msg);
         return false;
       }
 
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      const token = getSyncToken();
+      if (token) headers['x-sync-key'] = token;
+
       const res = await fetch('/api/portfolio', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body
       });
       const data = await res.json();
 
+      if (res.status === 401) {
+        setCloudSyncStatus('error');
+        setCloudSyncError('Token de sincronización inválido: cierra y vuelve a iniciar sesión en el dashboard');
+        return false;
+      }
+
       if (data && (data.bound === false || data.status === 'unbound')) {
         setCloudSyncStatus('unbound');
-        setCloudSyncError('PORTFOLIO_KV no configurado en Cloudflare Pages settings');
+        setCloudSyncError('Base de datos no vinculada en Cloudflare Pages (PORTFOLIO_D1)');
         return false;
       }
 
@@ -394,10 +483,10 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       }
 
       setCloudSyncStatus('error');
-      setCloudSyncError(data?.error || 'No se pudo guardar en Cloudflare KV');
+      setCloudSyncError(data?.message || data?.error || 'No se pudo guardar en Cloudflare D1');
       return false;
     } catch (e: any) {
-      console.warn('Cloudflare KV sync notice (saved locally in IndexedDB):', e);
+      console.warn('Cloudflare D1 sync notice (saved locally in IndexedDB):', e);
       setCloudSyncStatus('error');
       setCloudSyncError(String(e));
       return false;
@@ -447,7 +536,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     } catch (e) {}
   }, [stats]);
 
-  // Secure Auth check using SHA-256 password hash comparison
+  // Secure Auth check using SHA-256 password hash comparison + server token
   const loginAdmin = async (usernameInput: string, passwordInput: string): Promise<boolean> => {
     const isUserValid = usernameInput.trim() === ADMIN_USERNAME;
     const inputHash = await hashPassword(passwordInput);
@@ -458,6 +547,25 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       try {
         localStorage.setItem(LOCAL_STORAGE_PREFIX + 'admin_session', 'active');
       } catch (e) {}
+
+      // Obtener token de escritura del servidor (/api/auth). Si el servidor
+      // no tiene auth configurada, responde configured:false y se opera en
+      // modo abierto (compatibilidad con despliegues sin SYNC_SECRET).
+      try {
+        const res = await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: usernameInput.trim(), password: passwordInput })
+        });
+        const data = await res.json();
+        if (data?.success && data?.token) {
+          sessionStorage.setItem(SYNC_TOKEN_KEY, data.token);
+        } else {
+          sessionStorage.removeItem(SYNC_TOKEN_KEY);
+        }
+      } catch (e) {
+        // Sin conexión con la API: modo local, el sync avisará si falla
+      }
       return true;
     }
     return false;
@@ -467,10 +575,11 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setIsAdminLoggedIn(false);
     try {
       localStorage.removeItem(LOCAL_STORAGE_PREFIX + 'admin_session');
+      sessionStorage.removeItem(SYNC_TOKEN_KEY);
     } catch (e) {}
   };
 
-  // CRUD Operations with instant IndexedDB & Cloudflare KV sync
+  // CRUD Operations with instant IndexedDB & Cloudflare D1 sync
   const addProject = (newProjectData: Omit<Project, 'id' | 'createdAt'>) => {
     const newProj: Project = {
       ...newProjectData,
@@ -577,7 +686,9 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     localStorage.removeItem(LOCAL_STORAGE_PREFIX + 'brand_assets');
     localStorage.removeItem(LOCAL_STORAGE_PREFIX + 'messages');
     localStorage.removeItem(LOCAL_STORAGE_PREFIX + 'stats');
-    syncToCloud(initialProjects);
+    // Enviar TODO el set inicial (no solo proyectos) para que la nube
+    // quede consistente con el reset.
+    syncToCloud(initialProjects, initialPhotos, initialProfile, initialBrandAssets, initialStats);
   };
 
   return (

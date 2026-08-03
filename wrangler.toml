@@ -2,6 +2,23 @@ name = "jovas-portfolio"
 pages_build_output_dir = "dist"
 compatibility_date = "2026-08-03"
 
-# NOTA PARA CLOUDFLARE PAGES:
-# El binding PORTFOLIO_KV se vincula desde el Dashboard de Cloudflare:
-# Settings > Functions > KV namespace bindings > Binding: PORTFOLIO_KV -> Tu KV Namespace.
+# Base de datos principal: Cloudflare D1 (una fila por proyecto/foto, updated_at por fila).
+# El esquema está en schema.sql — aplicar con:
+#   npx wrangler d1 execute jovas-portfolio-db --remote --file=schema.sql
+[[d1_databases]]
+binding = "PORTFOLIO_D1"
+database_name = "jovas-portfolio-db"
+database_id = "df6ae384-a74b-407d-bf32-ee769e05e110"
+
+# Fallback legado (opcional): si PORTFOLIO_D1 no responde, la API puede usar KV.
+# El namespace KV viejo (ea484f28dd9b4c73a232c7a5d5d73390) existe pero está VACÍO
+# (verificado 2026-08-03) — no reactivar salvo que se quiera el modo KV.
+
+# Variables de entorno a configurar en el Dashboard de Cloudflare Pages
+# (Settings > Environment variables, Production y Preview):
+#   ADMIN_USERNAME = usuario del dashboard (ej. JovasMotion)
+#   ADMIN_PASSWORD = contraseña real del dashboard (solo vive en Cloudflare)
+#   SYNC_SECRET    = cadena aleatoria larga; el cliente la recibe tras login
+#                    válido en /api/auth y la envía como header x-sync-key.
+# Sin estas variables la API opera en modo abierto (funciona, pero sin
+# protección contra escrituras externas).

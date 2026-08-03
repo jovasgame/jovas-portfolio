@@ -10,10 +10,12 @@
    git push origin main
    ```
 
-2. **Preservación de la Base de Datos de Cloudflare KV:**
+2. **Preservación de la Base de Datos de Cloudflare D1:**
    - No elimines ni sobreescribas los proyectos guardados por el usuario.
    - Utiliza deduplicación estricta por `id`.
-   - Verifica que las llamadas a `/api/portfolio` manejen correctamente el estado del binding `PORTFOLIO_KV`.
+   - Verifica que las llamadas a `/api/portfolio` manejen correctamente el binding `PORTFOLIO_D1` (fallback legado: `PORTFOLIO_KV`).
+   - Respeta las guardas anti-pérdida: bloqueo de escritura hasta terminar el GET inicial, merge por timestamps (`last_local_change` vs `updatedAt`), y rechazo de payloads vacíos en el servidor.
+   - Las escrituras al POST `/api/portfolio` requieren el header `x-sync-key` cuando `SYNC_SECRET` está configurada en las env vars de Pages.
 
 3. **Mantenimiento del Dashboard:**
    - Asegúrate de que las acciones de creación (`addProject`), actualización (`updateProject`) y eliminación (`deleteProject`) notifiquen en vivo el estado de sincronización (`cloudSyncStatus`).
