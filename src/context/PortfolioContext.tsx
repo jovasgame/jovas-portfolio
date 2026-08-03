@@ -38,7 +38,7 @@ interface PortfolioContextType {
 
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
 
-const LOCAL_STORAGE_PREFIX = 'jovas_portfolio_v3_';
+const LOCAL_STORAGE_PREFIX = 'jovas_portfolio_v4_clean_';
 
 // Credentials SHA-256 Hash Security (No plain text password stored)
 const ADMIN_USERNAME = 'JovasMotion';
@@ -83,39 +83,67 @@ const sanitizeProjectList = (projList: Project[]): Project[] => {
   });
 };
 
-const mergeProjectsWithDefaults = (savedProjects: Project[]): Project[] => {
-  const existingMap = new Map(savedProjects.map(p => [p.id, p]));
-  const merged = [...savedProjects];
+const cleanProjectsList = (savedProjects?: Project[]): Project[] => {
+  if (!savedProjects || !Array.isArray(savedProjects) || savedProjects.length === 0) {
+    return initialProjects;
+  }
+  const initialMap = new Map(initialProjects.map(ip => [ip.id, ip]));
+  
+  // Always prioritize official initialProjects definitions from code
+  const updatedList = savedProjects.map(p => initialMap.get(p.id) || p);
+  
+  // Filter out any legacy custom test items that are not part of initialProjects
+  const filtered = updatedList.filter(p => initialMap.has(p.id));
+  
+  // Ensure all 19 initial projects are present
+  const existingIds = new Set(filtered.map(p => p.id));
   initialProjects.forEach(ip => {
-    if (!existingMap.has(ip.id)) {
-      merged.push(ip);
+    if (!existingIds.has(ip.id)) {
+      filtered.push(ip);
     }
   });
-  return sanitizeProjectList(merged);
+
+  return sanitizeProjectList(filtered);
 };
 
-const mergePhotosWithDefaults = (savedPhotos: PhotoItem[]): PhotoItem[] => {
-  const existingMap = new Map(savedPhotos.map(p => [p.id, p]));
-  const merged = [...savedPhotos];
+const cleanPhotosList = (savedPhotos?: PhotoItem[]): PhotoItem[] => {
+  if (!savedPhotos || !Array.isArray(savedPhotos) || savedPhotos.length === 0) {
+    return initialPhotos;
+  }
+  const initialMap = new Map(initialPhotos.map(p => [p.id, p]));
+  const updatedList = savedPhotos.map(p => initialMap.get(p.id) || p);
+  const filtered = updatedList.filter(p => initialMap.has(p.id));
+  
+  const existingIds = new Set(filtered.map(p => p.id));
   initialPhotos.forEach(ip => {
-    if (!existingMap.has(ip.id)) {
-      merged.push(ip);
+    if (!existingIds.has(ip.id)) {
+      filtered.push(ip);
     }
   });
-  return merged;
+  return filtered;
 };
 
 export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Purge old legacy local storage keys
+  useEffect(() => {
+    try {
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('jovas_portfolio_') && !key.startsWith(LOCAL_STORAGE_PREFIX)) {
+          localStorage.removeItem(key);
+        }
+      });
+    } catch (e) {}
+  }, []);
+
   const [projects, setProjects] = useState<Project[]>(() => {
     try {
       const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'projects');
       if (saved) {
         const parsed: Project[] = JSON.parse(saved);
-        return mergeProjectsWithDefaults(parsed);
+        return cleanProjectsList(parsed);
       }
       return initialProjects;
     } catch (e) {
-      console.warn('Failed to read projects from localStorage:', e);
       return initialProjects;
     }
   });
@@ -125,11 +153,10 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'photos');
       if (saved) {
         const parsed: PhotoItem[] = JSON.parse(saved);
-        return mergePhotosWithDefaults(parsed);
+        return cleanPhotosList(parsed);
       }
       return initialPhotos;
     } catch (e) {
-      console.warn('Failed to read photos from localStorage:', e);
       return initialPhotos;
     }
   });
@@ -139,7 +166,6 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'profile');
       return saved ? JSON.parse(saved) : initialProfile;
     } catch (e) {
-      console.warn('Failed to read profile from localStorage:', e);
       return initialProfile;
     }
   });
@@ -149,7 +175,6 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'brand_assets');
       return saved ? JSON.parse(saved) : initialBrandAssets;
     } catch (e) {
-      console.warn('Failed to read brand_assets from localStorage:', e);
       return initialBrandAssets;
     }
   });
@@ -159,7 +184,6 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'messages');
       return saved ? JSON.parse(saved) : initialMessages;
     } catch (e) {
-      console.warn('Failed to read messages from localStorage:', e);
       return initialMessages;
     }
   });
@@ -169,7 +193,6 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'stats');
       return saved ? JSON.parse(saved) : initialStats;
     } catch (e) {
-      console.warn('Failed to read stats from localStorage:', e);
       return initialStats;
     }
   });
@@ -193,18 +216,18 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       .then(res => res.json())
       .then(data => {
         if (data && data.projects && Array.isArray(data.projects) && data.projects.length > 0) {
-          const mergedProjects = mergeProjectsWithDefaults(data.projects);
-          setProjects(mergedProjects);
+          const cleanedProjects = cleanProjectsList(data.projects);
+          setProjects(cleanedProjects);
           try {
-            localStorage.setItem(LOCAL_STORAGE_PREFIX + 'projects', JSON.stringify(mergedProjects));
+            localStorage.setItem(LOCAL_STORAGE_PREFIX + 'projects', JSON.stringify(cleanedProjects));
           } catch (e) {}
         }
 
         if (data && data.photos && Array.isArray(data.photos) && data.photos.length > 0) {
-          const mergedPhotos = mergePhotosWithDefaults(data.photos);
-          setPhotos(mergedPhotos);
+          const cleanedPhotos = cleanPhotosList(data.photos);
+          setPhotos(cleanedPhotos);
           try {
-            localStorage.setItem(LOCAL_STORAGE_PREFIX + 'photos', JSON.stringify(mergedPhotos));
+            localStorage.setItem(LOCAL_STORAGE_PREFIX + 'photos', JSON.stringify(cleanedPhotos));
           } catch (e) {}
         }
         if (data.profile && !localStorage.getItem(LOCAL_STORAGE_PREFIX + 'profile')) setProfile(data.profile);
