@@ -71,7 +71,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
     stats,
     logoutAdmin,
     resetToDefaults,
-    syncToCloud
+    syncToCloud,
+    cloudSyncStatus,
+    cloudSyncError
   } = usePortfolio();
 
   const [activeTab, setActiveTab] = useState<'stats' | 'projects' | 'photos' | 'profile' | 'brand' | 'images' | 'messages'>('stats');
@@ -663,11 +665,32 @@ export const initialPhotos: PhotoItem[] = ${JSON.stringify(photos, null, 2)};
         {/* Top Header Workspace Bar */}
         <header className="sticky top-0 z-30 bg-[#120f1a]/85 backdrop-blur-xl border-b border-white/10 px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="font-syne font-black text-xl sm:text-2xl text-white tracking-tight flex items-center gap-2">
+            <h1 className="font-syne font-black text-xl sm:text-2xl text-white tracking-tight flex items-center gap-2 flex-wrap">
               Panel de Control Corporativo
-              <span className="px-2.5 py-0.5 rounded-full bg-[#feba39]/10 text-[#feba39] text-[10px] font-mono font-bold border border-[#feba39]/30">
-                Cloud Sync Enabled
-              </span>
+              {cloudSyncStatus === 'synced' && (
+                <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-mono font-bold border border-emerald-500/30 flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                  Cloudflare KV: Sincronizado
+                </span>
+              )}
+              {cloudSyncStatus === 'syncing' && (
+                <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 text-[10px] font-mono font-bold border border-amber-500/30 flex items-center gap-1">
+                  <RefreshCw className="w-3 h-3 text-amber-400 animate-spin" />
+                  Sincronizando...
+                </span>
+              )}
+              {cloudSyncStatus === 'unbound' && (
+                <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-300 text-[10px] font-mono font-bold border border-amber-500/30 flex items-center gap-1" title="Vincula PORTFOLIO_KV en Cloudflare Pages settings">
+                  <AlertCircle className="w-3 h-3 text-amber-400" />
+                  Cloudflare KV: Pendiente Binding
+                </span>
+              )}
+              {(cloudSyncStatus === 'error' || cloudSyncStatus === 'idle') && (
+                <span className="px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-300 text-[10px] font-mono font-bold border border-rose-500/30 flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3 text-rose-400" />
+                  Cloudflare KV: Guardado Local
+                </span>
+              )}
             </h1>
             <p className="text-xs font-mono text-[#a89f9e] mt-0.5">
               Administración integral en tiempo real &bull; Motion Design & Arte 3D
@@ -697,17 +720,19 @@ export const initialPhotos: PhotoItem[] = ${JSON.stringify(photos, null, 2)};
 
             <button
               onClick={async () => {
-                showToast('Sincronizando con la nube...');
+                showToast('Sincronizando con Cloudflare KV...');
                 const success = await syncToCloud();
                 if (success) {
-                  showToast('⚡ ¡Sitio actualizado globalmente!');
+                  showToast('⚡ ¡Sitio actualizado globalmente en Cloudflare KV!');
+                } else if (cloudSyncStatus === 'unbound') {
+                  showToast('⚠️ Datos guardados localmente. Recuerda vincular PORTFOLIO_KV en Cloudflare Pages.');
                 } else {
-                  showToast('¡Datos guardados localmente!');
+                  showToast('¡Datos guardados de forma segura localmente!');
                 }
               }}
               className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold transition-all cursor-pointer shadow-lg shadow-emerald-900/30 border border-emerald-400/40"
             >
-              <Globe className="w-4 h-4 text-emerald-200 animate-spin-slow" />
+              <Globe className={`w-4 h-4 text-emerald-200 ${cloudSyncStatus === 'syncing' ? 'animate-spin' : 'animate-spin-slow'}`} />
               <span>Publicar a Todo el Mundo</span>
             </button>
 

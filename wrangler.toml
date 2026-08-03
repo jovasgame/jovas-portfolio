@@ -1,0 +1,8 @@
+name = "jovas-portfolio"
+pages_build_output_dir = "dist"
+
+# Configuración de KV Namespaces para Cloudflare Pages Functions
+[[kv_namespaces]]
+binding = "PORTFOLIO_KV"
+# Sustituir id y preview_id por los IDs de tu namespace KV en el Dashboard de Cloudflare si es necesario
+id = "PORTFOLIO_KV"

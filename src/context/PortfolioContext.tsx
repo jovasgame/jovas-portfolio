@@ -5,6 +5,8 @@ import { hashPassword } from '../utils/security';
 import { parseGoogleDriveUrl, getCategoryFallbackImage } from '../utils/mediaUtils';
 import { idbStorage } from '../utils/idbStorage';
 
+export type CloudSyncStatus = 'idle' | 'syncing' | 'synced' | 'error' | 'unbound';
+
 interface PortfolioContextType {
   projects: Project[];
   photos: PhotoItem[];
@@ -21,6 +23,8 @@ interface PortfolioContextType {
   logoutAdmin: () => void;
   isLoginModalOpen: boolean;
   setIsLoginModalOpen: (open: boolean) => void;
+  cloudSyncStatus: CloudSyncStatus;
+  cloudSyncError?: string;
   addProject: (p: Omit<Project, 'id' | 'createdAt'>) => void;
   updateProject: (id: string, p: Partial<Project>) => void;
   deleteProject: (id: string) => void;
@@ -91,66 +95,48 @@ const sanitizeBrandAssets = (assets?: Partial<BrandAssets> | null): BrandAssets 
   };
 };
 
-const LEGACY_DUMMY_TITLES = new Set([
-  'ignis vanguard',
-  'cyber sanctuary',
-  'santuario de la espada',
-  'precision core',
-  'ruinas al atardecer',
-  'vanguard unit'
-]);
-
-const LEGACY_DUMMY_IDS = new Set([
-  'proj-1',
-  'proj-2',
-  'proj-3',
-  'proj-4',
-  'proj-5',
-  'proj-6'
-]);
-
+// Deduplicate and clean project list without deleting valid user items
 const sanitizeProjectList = (projList: Project[]): Project[] => {
   if (!Array.isArray(projList)) return [];
 
-  return projList
-    .filter((p) => {
-      if (!p) return false;
-      const titleLower = (p.title || '').trim().toLowerCase();
-      if (LEGACY_DUMMY_TITLES.has(titleLower)) return false;
-      if (LEGACY_DUMMY_IDS.has(p.id)) return false;
-      return true;
-    })
-    .map((p) => {
-      let cleanImg = p.imageUrl ? p.imageUrl.trim() : '';
-      let cleanVid = p.videoUrl ? p.videoUrl.trim() : '';
+  const seenIds = new Set<string>();
+  const result: Project[] = [];
 
-      if (!cleanImg) {
-        const match = initialProjects.find((ip) => ip.id === p.id);
-        cleanImg = match?.imageUrl || getCategoryFallbackImage(p.category);
-      }
+  for (const p of projList) {
+    if (!p || !p.id || seenIds.has(p.id)) continue;
+    seenIds.add(p.id);
 
-      return {
-        ...p,
-        imageUrl: cleanImg,
-        videoUrl: cleanVid || undefined
-      };
+    let cleanImg = p.imageUrl ? p.imageUrl.trim() : '';
+    let cleanVid = p.videoUrl ? p.videoUrl.trim() : '';
+
+    if (!cleanImg) {
+      const match = initialProjects.find((ip) => ip.id === p.id);
+      cleanImg = match?.imageUrl || getCategoryFallbackImage(p.category);
+    }
+
+    result.push({
+      ...p,
+      imageUrl: cleanImg,
+      videoUrl: cleanVid || undefined
     });
+  }
+
+  return result;
 };
 
 const mergeProjectsPreservingUserEdits = (savedProjects?: Project[]): Project[] => {
   if (!savedProjects || !Array.isArray(savedProjects)) {
     return sanitizeProjectList(initialProjects);
   }
-
   const sanitized = sanitizeProjectList(savedProjects);
-  return sanitized.length > 0 ? sanitized : sanitizeProjectList(initialProjects);
+  return sanitized;
 };
 
 const mergePhotosPreservingUserEdits = (savedPhotos?: PhotoItem[]): PhotoItem[] => {
   if (!savedPhotos || !Array.isArray(savedPhotos)) {
     return initialPhotos;
   }
-  return savedPhotos.length > 0 ? savedPhotos : initialPhotos;
+  return savedPhotos;
 };
 
 const clearLegacyLocalStorage = () => {
@@ -175,7 +161,7 @@ const getSavedProjects = (): Project[] | null => {
     const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'projects');
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         return parsed;
       }
     }
@@ -188,7 +174,7 @@ const getSavedPhotos = (): PhotoItem[] | null => {
     const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'photos');
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         return parsed;
       }
     }
@@ -253,10 +239,12 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       return false;
     }
   });
-  
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
 
-  // Synchronize IndexedDB (large storage) & Cloudflare KV on mount
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
+  const [cloudSyncStatus, setCloudSyncStatus] = useState<CloudSyncStatus>('idle');
+  const [cloudSyncError, setCloudSyncError] = useState<string | undefined>(undefined);
+
+  // Synchronize IndexedDB & Cloudflare KV on mount
   useEffect(() => {
     let isMounted = true;
 
@@ -271,19 +259,13 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
       if (!isMounted) return;
 
-      let activeProjects = projects;
-      if (idbProjects && Array.isArray(idbProjects) && idbProjects.length > 0) {
+      if (idbProjects && Array.isArray(idbProjects)) {
         const cleaned = sanitizeProjectList(idbProjects);
-        if (cleaned.length > 0) {
-          activeProjects = cleaned;
-          setProjects(activeProjects);
-        }
+        setProjects(cleaned);
       }
 
-      let activePhotos = photos;
-      if (idbPhotos && Array.isArray(idbPhotos) && idbPhotos.length > 0) {
-        activePhotos = idbPhotos;
-        setPhotos(activePhotos);
+      if (idbPhotos && Array.isArray(idbPhotos)) {
+        setPhotos(idbPhotos);
       }
 
       if (idbProfile) setProfile(sanitizeProfile(idbProfile));
@@ -294,27 +276,40 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       // 2. Fetch from Cloudflare KV API
       try {
         const res = await fetch('/api/portfolio');
-        if (!res.ok) return;
+        if (!res.ok) {
+          if (isMounted) setCloudSyncStatus('error');
+          return;
+        }
         const data = await res.json();
         if (!isMounted || !data) return;
 
-        if (data.projects && Array.isArray(data.projects) && data.projects.length > 0) {
-          const cloudCleaned = sanitizeProjectList(data.projects);
-          if (cloudCleaned.length > 0) {
-            setProjects(cloudCleaned);
-            idbStorage.setItem('projects', cloudCleaned);
-          }
+        if (data.bound === false || data.status === 'unbound') {
+          setCloudSyncStatus('unbound');
+          setCloudSyncError('PORTFOLIO_KV no está vinculado en Cloudflare Pages settings');
+          return;
         }
 
-        if (data.photos && Array.isArray(data.photos) && data.photos.length > 0) {
+        if (data.projects && Array.isArray(data.projects)) {
+          const cloudCleaned = sanitizeProjectList(data.projects);
+          setProjects(cloudCleaned);
+          idbStorage.setItem('projects', cloudCleaned);
+          setCloudSyncStatus('synced');
+        }
+
+        if (data.photos && Array.isArray(data.photos)) {
           setPhotos(data.photos);
           idbStorage.setItem('photos', data.photos);
+          setCloudSyncStatus('synced');
         }
 
-        if (data.profile) setProfile(prev => sanitizeProfile({ ...data.profile, ...prev }));
-        if (data.brandAssets) setBrandAssets(prev => sanitizeBrandAssets({ ...data.brandAssets, ...prev }));
-      } catch (e) {
+        if (data.profile) setProfile(prev => sanitizeProfile({ ...prev, ...data.profile }));
+        if (data.brandAssets) setBrandAssets(prev => sanitizeBrandAssets({ ...prev, ...data.brandAssets }));
+      } catch (e: any) {
         console.warn('Cloudflare KV fetch notice (using IndexedDB/localStorage):', e);
+        if (isMounted) {
+          setCloudSyncStatus('error');
+          setCloudSyncError(String(e));
+        }
       }
     }
 
@@ -333,6 +328,9 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     customBrandAssets?: BrandAssets,
     customStats?: Stats
   ): Promise<boolean> => {
+    setCloudSyncStatus('syncing');
+    setCloudSyncError(undefined);
+
     const projectsToSync = customProjects || projects;
     const photosToSync = customPhotos || photos;
     const profileToSync = customProfile || profile;
@@ -368,27 +366,41 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     // 3. Save live to Cloudflare KV via Functions API
     try {
       const body = JSON.stringify(payload);
-      // Cloudflare KV hard limit: 25 MB per value. Abort early with a clear
-      // warning instead of failing silently on the server.
       const MAX_KV_PAYLOAD_BYTES = 23 * 1024 * 1024;
       if (body.length > MAX_KV_PAYLOAD_BYTES) {
-        console.error(
-          `Cloudflare KV sync aborted: payload is ${(body.length / 1024 / 1024).toFixed(1)} MB ` +
-          `(limit ~25 MB). Use external image URLs (Drive/YouTube) instead of uploaded ` +
-          `base64 files to reduce size. Data remains saved locally in IndexedDB.`
-        );
+        const msg = `Cloudflare KV sync aborted: payload is ${(body.length / 1024 / 1024).toFixed(1)} MB (limit ~25 MB).`;
+        console.error(msg);
+        setCloudSyncStatus('error');
+        setCloudSyncError(msg);
         return false;
       }
+
       const res = await fetch('/api/portfolio', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body
       });
       const data = await res.json();
-      return Boolean(data && (data.success || data.projects));
-    } catch (e) {
+
+      if (data && (data.bound === false || data.status === 'unbound')) {
+        setCloudSyncStatus('unbound');
+        setCloudSyncError('PORTFOLIO_KV no configurado en Cloudflare Pages settings');
+        return false;
+      }
+
+      if (data && data.success) {
+        setCloudSyncStatus('synced');
+        return true;
+      }
+
+      setCloudSyncStatus('error');
+      setCloudSyncError(data?.error || 'No se pudo guardar en Cloudflare KV');
+      return false;
+    } catch (e: any) {
       console.warn('Cloudflare KV sync notice (saved locally in IndexedDB):', e);
-      return true; // Graceful fallback
+      setCloudSyncStatus('error');
+      setCloudSyncError(String(e));
+      return false;
     }
   };
 
@@ -586,6 +598,8 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         logoutAdmin,
         isLoginModalOpen,
         setIsLoginModalOpen,
+        cloudSyncStatus,
+        cloudSyncError,
         addProject,
         updateProject,
         deleteProject,
@@ -614,3 +628,4 @@ export const usePortfolio = () => {
   }
   return context;
 };
+
