@@ -24,9 +24,9 @@ const MainPortfolioContent: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a090c] text-[#e7e1e5] relative selection:bg-[#feba39] selection:text-[#432c00]">
+    <div className="min-h-screen bg-[#0a090c] text-[#e7e1e5] relative selection:bg-[#feba39] selection:text-[#432c00] overflow-x-hidden w-full max-w-full">
       {/* Dynamic Lightweight WebGL Aurora Background & Lava Lamp Orbs */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-80">
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-80 max-w-full">
         <Aurora
           colorStops={["#ff5540", "#feba39", "#ff7563"]}
           blend={0.5}
@@ -42,7 +42,7 @@ const MainPortfolioContent: React.FC = () => {
       <Navbar onOpenDashboardTab={() => setShowDashboard(true)} />
 
       {/* Main Sections (Scroll-Triggered) */}
-      <main>
+      <main className="overflow-x-hidden w-full max-w-full">
         {/* 1. Interactive Eye-Catching Slider */}
         <HeroSlider />
 

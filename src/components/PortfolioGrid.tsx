@@ -243,7 +243,7 @@ export const PortfolioGrid: React.FC = () => {
   };
 
   return (
-    <section id="portfolio-grid" className="py-20 relative bg-[#141316]/75 backdrop-blur-sm">
+    <section id="portfolio-grid" className="py-20 relative bg-[#141316]/75 backdrop-blur-sm overflow-hidden w-full max-w-full">
       {/* Background Decor */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         

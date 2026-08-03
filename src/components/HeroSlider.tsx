@@ -71,7 +71,7 @@ export const HeroSlider: React.FC = () => {
   if (!currentProject) return null;
 
   return (
-    <section id="hero" className="relative min-h-screen pt-24 sm:pt-32 pb-16 sm:pb-24 flex flex-col justify-start overflow-hidden bg-transparent">
+    <section id="hero" className="relative min-h-screen pt-24 sm:pt-32 pb-16 sm:pb-24 flex flex-col justify-start overflow-hidden w-full max-w-full bg-transparent">
       {/* Background Animated Atmosphere & Grid */}
       <div className="absolute inset-0 z-0 opacity-15 pointer-events-none diagonal-stripes"></div>
       

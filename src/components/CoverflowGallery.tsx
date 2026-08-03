@@ -462,9 +462,9 @@ export const CoverflowGallery: React.FC = () => {
   };
 
   return (
-    <section id="galeria-3d" className="py-20 relative bg-[#121114]/75 backdrop-blur-sm border-t border-b border-white/5 overflow-hidden">
+    <section id="galeria-3d" className="py-20 relative bg-[#121114]/75 backdrop-blur-sm border-t border-b border-white/5 overflow-hidden w-full max-w-full">
       {/* Background Orbs */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-gradient-to-r from-[#ff5540]/15 to-[#feba39]/15 rounded-full blur-[140px] pointer-events-none"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] max-w-full h-[300px] bg-gradient-to-r from-[#ff5540]/15 to-[#feba39]/15 rounded-full blur-[140px] pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}

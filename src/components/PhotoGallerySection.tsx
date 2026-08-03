@@ -31,9 +31,9 @@ export const PhotoGallerySection: React.FC = () => {
   };
 
   return (
-    <section id="galeria-fotografia" className="py-24 relative overflow-hidden bg-[#0c0b0e] border-t border-white/5">
+    <section id="galeria-fotografia" className="py-24 relative overflow-hidden w-full max-w-full bg-[#0c0b0e] border-t border-white/5">
       {/* Background Glow */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-[#ff5540]/10 via-[#feba39]/10 to-transparent blur-[120px] pointer-events-none rounded-full" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] max-w-full h-[350px] bg-gradient-to-tr from-[#ff5540]/10 via-[#feba39]/10 to-transparent blur-[120px] pointer-events-none rounded-full" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-12">
         
