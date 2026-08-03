@@ -38,7 +38,7 @@ interface PortfolioContextType {
 
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
 
-const LOCAL_STORAGE_PREFIX = 'jovas_portfolio_v4_clean_';
+const LOCAL_STORAGE_PREFIX = 'jovas_portfolio_v5_final_';
 
 // Credentials SHA-256 Hash Security (No plain text password stored)
 const ADMIN_USERNAME = 'JovasMotion';
@@ -46,32 +46,12 @@ const ADMIN_PASSWORD_HASH = '8e84a7c15b781c94359a4d8456f5d3168e3f7fa3dcfaa7e3204
 
 const sanitizeProjectList = (projList: Project[]): Project[] => {
   return projList.map((p) => {
-    const match = initialProjects.find((ip) => ip.id === p.id);
+    let cleanImg = p.imageUrl ? p.imageUrl.trim() : '';
+    let cleanVid = p.videoUrl ? p.videoUrl.trim() : '';
 
-    let cleanImg = p.imageUrl || '';
-    let cleanVid = p.videoUrl || '';
-
-    // Check if videoUrl is a corrupted Google Drive URL
-    if (cleanVid) {
-      if (cleanVid.includes('drive.google.com')) {
-        const driveParsed = parseGoogleDriveUrl(cleanVid);
-        if (!driveParsed) {
-          cleanVid = match?.videoUrl || '';
-        }
-      }
-    }
-
-    // Check if imageUrl is a corrupted Google Drive thumbnail or broken link
-    if (cleanImg) {
-      if (cleanImg.includes('drive.google.com')) {
-        const driveParsed = parseGoogleDriveUrl(cleanImg);
-        if (!driveParsed) {
-          cleanImg = match?.imageUrl || getCategoryFallbackImage(p.category);
-        }
-      } else if (cleanImg.includes('lh3.googleusercontent.com/aida-public')) {
-        cleanImg = match?.imageUrl || getCategoryFallbackImage(p.category);
-      }
-    } else {
+    // If imageUrl is completely empty, fallback to initial match or category fallback
+    if (!cleanImg) {
+      const match = initialProjects.find((ip) => ip.id === p.id);
       cleanImg = match?.imageUrl || getCategoryFallbackImage(p.category);
     }
 
@@ -83,87 +63,98 @@ const sanitizeProjectList = (projList: Project[]): Project[] => {
   });
 };
 
-const cleanProjectsList = (savedProjects?: Project[]): Project[] => {
+const mergeProjectsPreservingUserEdits = (savedProjects?: Project[]): Project[] => {
   if (!savedProjects || !Array.isArray(savedProjects) || savedProjects.length === 0) {
     return initialProjects;
   }
-  const initialMap = new Map(initialProjects.map(ip => [ip.id, ip]));
-  
-  // Always prioritize official initialProjects definitions from code
-  const updatedList = savedProjects.map(p => initialMap.get(p.id) || p);
-  
-  // Filter out any legacy custom test items that are not part of initialProjects
-  const filtered = updatedList.filter(p => initialMap.has(p.id));
-  
-  // Ensure all 19 initial projects are present
-  const existingIds = new Set(filtered.map(p => p.id));
+
+  // Keep user's custom edited projects intact
+  const savedMap = new Map(savedProjects.map(p => [p.id, p]));
+  const result: Project[] = [...savedProjects];
+
+  // Append any missing initial projects
   initialProjects.forEach(ip => {
-    if (!existingIds.has(ip.id)) {
-      filtered.push(ip);
+    if (!savedMap.has(ip.id)) {
+      result.push(ip);
     }
   });
 
-  return sanitizeProjectList(filtered);
+  return sanitizeProjectList(result);
 };
 
-const cleanPhotosList = (savedPhotos?: PhotoItem[]): PhotoItem[] => {
+const mergePhotosPreservingUserEdits = (savedPhotos?: PhotoItem[]): PhotoItem[] => {
   if (!savedPhotos || !Array.isArray(savedPhotos) || savedPhotos.length === 0) {
     return initialPhotos;
   }
-  const initialMap = new Map(initialPhotos.map(p => [p.id, p]));
-  const updatedList = savedPhotos.map(p => initialMap.get(p.id) || p);
-  const filtered = updatedList.filter(p => initialMap.has(p.id));
-  
-  const existingIds = new Set(filtered.map(p => p.id));
+
+  const savedMap = new Map(savedPhotos.map(p => [p.id, p]));
+  const result: PhotoItem[] = [...savedPhotos];
+
   initialPhotos.forEach(ip => {
-    if (!existingIds.has(ip.id)) {
-      filtered.push(ip);
+    if (!savedMap.has(ip.id)) {
+      result.push(ip);
     }
   });
-  return filtered;
+
+  return result;
+};
+
+const getSavedProjects = (): Project[] | null => {
+  const keys = [
+    LOCAL_STORAGE_PREFIX + 'projects',
+    'jovas_portfolio_v4_clean_projects',
+    'jovas_portfolio_v3_projects',
+    'jovas_portfolio_projects'
+  ];
+  for (const key of keys) {
+    try {
+      const saved = localStorage.getItem(key);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch (e) {}
+  }
+  return null;
+};
+
+const getSavedPhotos = (): PhotoItem[] | null => {
+  const keys = [
+    LOCAL_STORAGE_PREFIX + 'photos',
+    'jovas_portfolio_v4_clean_photos',
+    'jovas_portfolio_v3_photos',
+    'jovas_portfolio_photos'
+  ];
+  for (const key of keys) {
+    try {
+      const saved = localStorage.getItem(key);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch (e) {}
+  }
+  return null;
 };
 
 export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Purge old legacy local storage keys
-  useEffect(() => {
-    try {
-      Object.keys(localStorage).forEach(key => {
-        if (key.startsWith('jovas_portfolio_') && !key.startsWith(LOCAL_STORAGE_PREFIX)) {
-          localStorage.removeItem(key);
-        }
-      });
-    } catch (e) {}
-  }, []);
-
   const [projects, setProjects] = useState<Project[]>(() => {
-    try {
-      const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'projects');
-      if (saved) {
-        const parsed: Project[] = JSON.parse(saved);
-        return cleanProjectsList(parsed);
-      }
-      return initialProjects;
-    } catch (e) {
-      return initialProjects;
-    }
+    const saved = getSavedProjects();
+    return mergeProjectsPreservingUserEdits(saved || undefined);
   });
 
   const [photos, setPhotos] = useState<PhotoItem[]>(() => {
-    try {
-      const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'photos');
-      if (saved) {
-        const parsed: PhotoItem[] = JSON.parse(saved);
-        return cleanPhotosList(parsed);
-      }
-      return initialPhotos;
-    } catch (e) {
-      return initialPhotos;
-    }
+    const saved = getSavedPhotos();
+    return mergePhotosPreservingUserEdits(saved || undefined);
   });
 
   const [profile, setProfile] = useState<UserProfile>(() => {
     try {
-      const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'profile');
+      const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'profile') || localStorage.getItem('jovas_portfolio_profile');
       return saved ? JSON.parse(saved) : initialProfile;
     } catch (e) {
       return initialProfile;
@@ -172,7 +163,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const [brandAssets, setBrandAssets] = useState<BrandAssets>(() => {
     try {
-      const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'brand_assets');
+      const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'brand_assets') || localStorage.getItem('jovas_portfolio_brand_assets');
       return saved ? JSON.parse(saved) : initialBrandAssets;
     } catch (e) {
       return initialBrandAssets;
@@ -181,7 +172,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const [messages, setMessages] = useState<ContactMessage[]>(() => {
     try {
-      const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'messages');
+      const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'messages') || localStorage.getItem('jovas_portfolio_messages');
       return saved ? JSON.parse(saved) : initialMessages;
     } catch (e) {
       return initialMessages;
@@ -190,7 +181,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const [stats, setStats] = useState<Stats>(() => {
     try {
-      const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'stats');
+      const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'stats') || localStorage.getItem('jovas_portfolio_stats');
       return saved ? JSON.parse(saved) : initialStats;
     } catch (e) {
       return initialStats;
@@ -202,7 +193,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState<boolean>(() => {
     try {
-      return localStorage.getItem(LOCAL_STORAGE_PREFIX + 'admin_session') === 'active';
+      return localStorage.getItem(LOCAL_STORAGE_PREFIX + 'admin_session') === 'active' || localStorage.getItem('jovas_portfolio_admin_session') === 'active';
     } catch (e) {
       return false;
     }
@@ -216,18 +207,18 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       .then(res => res.json())
       .then(data => {
         if (data && data.projects && Array.isArray(data.projects) && data.projects.length > 0) {
-          const cleanedProjects = cleanProjectsList(data.projects);
-          setProjects(cleanedProjects);
+          const mergedProjects = mergeProjectsPreservingUserEdits(data.projects);
+          setProjects(mergedProjects);
           try {
-            localStorage.setItem(LOCAL_STORAGE_PREFIX + 'projects', JSON.stringify(cleanedProjects));
+            localStorage.setItem(LOCAL_STORAGE_PREFIX + 'projects', JSON.stringify(mergedProjects));
           } catch (e) {}
         }
 
         if (data && data.photos && Array.isArray(data.photos) && data.photos.length > 0) {
-          const cleanedPhotos = cleanPhotosList(data.photos);
-          setPhotos(cleanedPhotos);
+          const mergedPhotos = mergePhotosPreservingUserEdits(data.photos);
+          setPhotos(mergedPhotos);
           try {
-            localStorage.setItem(LOCAL_STORAGE_PREFIX + 'photos', JSON.stringify(cleanedPhotos));
+            localStorage.setItem(LOCAL_STORAGE_PREFIX + 'photos', JSON.stringify(mergedPhotos));
           } catch (e) {}
         }
         if (data.profile && !localStorage.getItem(LOCAL_STORAGE_PREFIX + 'profile')) setProfile(data.profile);
