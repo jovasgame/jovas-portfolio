@@ -39,7 +39,7 @@ export const ProjectModal: React.FC = () => {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.96 }}
           transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="relative w-full max-w-6xl bg-[#121115] border border-white/15 rounded-2xl sm:rounded-3xl shadow-[0_30px_90px_rgba(0,0,0,0.95)] overflow-hidden z-10 my-auto max-h-[96vh] flex flex-col"
+          className="relative w-full max-w-7xl bg-[#121115] border border-white/15 rounded-2xl sm:rounded-3xl shadow-[0_30px_90px_rgba(0,0,0,0.95)] overflow-hidden z-10 my-auto max-h-[96vh] flex flex-col"
         >
           {/* Top Header Bar */}
           <div className="flex items-center justify-between px-4 py-3 sm:px-6 border-b border-white/10 bg-[#121115]/90 backdrop-blur-md shrink-0">
