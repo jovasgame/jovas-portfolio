@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { motion } from 'motion/react';
-import { Film, Play, Volume2, VolumeX, Eye, Flame, Sparkles, Tv, CheckCircle2, Clock } from 'lucide-react';
+import { Film, Play, Volume2, VolumeX, Eye, Flame, Sparkles, CheckCircle2, Clock } from 'lucide-react';
 import { Project } from '../types';
 import { ProjectThumbnail } from './ProjectThumbnail';
 import { 
@@ -32,9 +32,8 @@ const VideoCard: React.FC<VideoCardProps> = ({ project, index, onSelectProject }
   const posterSrc = project.thumbnailUrl?.trim() 
     || getDirectThumbnailUrl(project.imageUrl || project.videoUrl, project.category);
 
-  // Duration or resolution badge from specs
+  // Duration or spec badge
   const durationSpec = project.specs?.find(s => s.label.toLowerCase().includes('durac') || s.label.toLowerCase().includes('fps'))?.value || '4K • 60 FPS';
-  const resolutionSpec = project.specs?.find(s => s.label.toLowerCase().includes('resoluc') || s.label.toLowerCase().includes('render'))?.value;
 
   // Handle native MP4 playback on hover
   useEffect(() => {
@@ -196,11 +195,6 @@ const VideoCard: React.FC<VideoCardProps> = ({ project, index, onSelectProject }
             <span className="px-2 py-0.5 rounded bg-[#ff5540]/15 text-[#ff7563] text-[10px] font-mono font-bold border border-[#ff5540]/30">
               {project.category}
             </span>
-            {resolutionSpec && (
-              <span className="px-2 py-0.5 rounded bg-white/5 text-[#e7e1e5] text-[10px] font-mono border border-white/10">
-                {resolutionSpec}
-              </span>
-            )}
             {project.tags.slice(0, 2).map((t, idx) => (
               <span key={idx} className="px-2 py-0.5 rounded bg-white/5 text-[10px] font-mono text-[#a89f9e]">
                 #{t}
@@ -262,13 +256,6 @@ export const VideoSection: React.FC = () => {
             <p className="text-sm text-[#a89f9e] max-w-2xl mt-2">
               Pasa el ratón sobre cualquier vídeo para activar la previsualización en directo con sonido.
             </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1e1c21] border border-white/10 text-xs text-[#e7e1e5] font-mono">
-              <Tv className="w-4 h-4 text-[#feba39]" />
-              <span>Plataforma 4K Studio</span>
-            </div>
           </div>
         </motion.div>
 
