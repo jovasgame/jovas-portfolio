@@ -139,9 +139,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
 
     setEditingPhoto(null);
     setIsCreatingPhoto(false);
-    setTimeout(() => {
-      syncToCloud();
-    }, 100);
   };
 
   // Form Fields State

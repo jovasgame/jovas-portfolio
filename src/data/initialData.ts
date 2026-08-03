@@ -273,6 +273,291 @@ export const initialProjects: Project[] = [
       }
     ],
     "createdAt": "2024-01-25"
+  },
+  {
+    "id": "proj-10",
+    "title": "Chrono Engine 3D",
+    "category": "Modelado 3D",
+    "year": "2024",
+    "description": "Mecanismo de reloj cibernético con engranes flotantes e iluminación holográfica.",
+    "fullDescription": "Demostración técnica de animación mecánica compleja. Más de 100 piezas articuladas con simulación de engranajes sincronizados y materiales metálicos pulidos.",
+    "imageUrl": "https://images.unsplash.com/photo-1508057198894-247b23fe5ade?auto=format&fit=crop&w=1200&q=80",
+    "videoUrl": "https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-99648-large.mp4",
+    "tags": [
+      "Cinema 4D",
+      "Redshift",
+      "Hard Surface",
+      "Mechanical"
+    ],
+    "featured": true,
+    "client": "Chrono Clockworks",
+    "specs": [
+      {
+        "label": "Piezas 3D",
+        "value": "120+ Rigged Parts"
+      },
+      {
+        "label": "Render",
+        "value": "Redshift GPU"
+      }
+    ],
+    "createdAt": "2024-04-10"
+  },
+  {
+    "id": "proj-11",
+    "title": "Neon Odyssey Reel",
+    "category": "Animación",
+    "year": "2024",
+    "description": "Reel promocional con tipografía 3D cinética y transiciones de luz en neón magenta y dorado.",
+    "fullDescription": "Secuencia tipográfica en movimiento de alto ritmo diseñada para eventos de música electrónica y festivales digitales de vanguardia.",
+    "imageUrl": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&q=80",
+    "videoUrl": "https://assets.mixkit.co/videos/preview/mixkit-glowing-lines-and-particles-background-41567-large.mp4",
+    "tags": [
+      "After Effects",
+      "Kinetic Type",
+      "Motion Graphics"
+    ],
+    "featured": true,
+    "client": "Odyssey Nightlife",
+    "specs": [
+      {
+        "label": "FPS",
+        "value": "60 FPS"
+      },
+      {
+        "label": "Estilo",
+        "value": "Cyberpunk Neon"
+      }
+    ],
+    "createdAt": "2024-04-05"
+  },
+  {
+    "id": "proj-12",
+    "title": "Titan Protocol",
+    "category": "Arte Conceptual",
+    "year": "2024",
+    "description": "Diseño de mech gigante patrullando una metrópolis lluviosa en estética cyberpunk.",
+    "fullDescription": "Concept art de escenario nocturno con niebla volumétrica, reflejos de neón en pavimento mojado y presencia imponente de unidades cibernéticas.",
+    "imageUrl": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80",
+    "videoUrl": "https://assets.mixkit.co/videos/preview/mixkit-futuristic-robotic-character-40615-large.mp4",
+    "tags": [
+      "Photoshop",
+      "Matte Painting",
+      "Cyberpunk",
+      "Concept Art"
+    ],
+    "featured": true,
+    "client": "NeoCity Studios",
+    "specs": [
+      {
+        "label": "Resolución",
+        "value": "8K Keyframe"
+      },
+      {
+        "label": "Técnica",
+        "value": "2D/3D Hybrid"
+      }
+    ],
+    "createdAt": "2024-03-28"
+  },
+  {
+    "id": "proj-13",
+    "title": "Aetheria Nexus",
+    "category": "Ilustración",
+    "year": "2024",
+    "description": "Ilustración conceptual de portal dimensional canalizando energía de plasma y destellos ígneos.",
+    "fullDescription": "Pintura digital envolvente con alto grado de detalle en partículas glowing, vórtice de luz de plasma y atmósfera cósmica.",
+    "imageUrl": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80",
+    "videoUrl": "https://assets.mixkit.co/videos/preview/mixkit-abstract-laser-lights-background-41566-large.mp4",
+    "tags": [
+      "Ilustración",
+      "Digital Painting",
+      "Sci-Fi Art"
+    ],
+    "featured": false,
+    "client": "Nexus Comics",
+    "specs": [
+      {
+        "label": "DPI",
+        "value": "300 DPI"
+      },
+      {
+        "label": "Canvas",
+        "value": "Ultra Wide"
+      }
+    ],
+    "createdAt": "2024-03-20"
+  },
+  {
+    "id": "proj-14",
+    "title": "Hyperdrive Interface",
+    "category": "Animación",
+    "year": "2024",
+    "description": "Animación FUI (Futuristic User Interface) para HUD holográfico cinemático de naves espaciales.",
+    "fullDescription": "Diseño de interfaz gráfica holográfica en movimiento con diales vectoriales reactivos, lecturas telemétricas y animación fluida a 60 FPS.",
+    "imageUrl": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80",
+    "videoUrl": "https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-99648-large.mp4",
+    "tags": [
+      "After Effects",
+      "FUI",
+      "HUD Design",
+      "Sci-Fi UI"
+    ],
+    "featured": false,
+    "client": "Orbital Aerospace",
+    "specs": [
+      {
+        "label": "Estilo",
+        "value": "Vectorial Holográfico"
+      },
+      {
+        "label": "Duración",
+        "value": "Loop Continuo"
+      }
+    ],
+    "createdAt": "2024-03-12"
+  },
+  {
+    "id": "proj-15",
+    "title": "Voxel Vanguard",
+    "category": "Modelado 3D",
+    "year": "2024",
+    "description": "Escultura de cristal procedural con refracción caústica y dispersión de luz prismática.",
+    "fullDescription": "Estudio de materiales refractivos avanzados utilizando trazado de rayos en Octane Render. Dispersión cromática y refracción caústica hiperrealista.",
+    "imageUrl": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
+    "videoUrl": "https://assets.mixkit.co/videos/preview/mixkit-abstract-laser-lights-background-41566-large.mp4",
+    "tags": [
+      "Cinema 4D",
+      "Octane Render",
+      "Procedural Glass"
+    ],
+    "featured": false,
+    "client": "Prism Gallery",
+    "specs": [
+      {
+        "label": "Caustics",
+        "value": "Path Tracing 4K"
+      },
+      {
+        "label": "Material",
+        "value": "Dispersive Crystal"
+      }
+    ],
+    "createdAt": "2024-03-05"
+  },
+  {
+    "id": "proj-16",
+    "title": "Cinder Blade",
+    "category": "Ilustración",
+    "year": "2024",
+    "description": "Arte conceptual de arma ancestral imbuida en llamas mágicas y runas incandescentes.",
+    "fullDescription": "Desarrollo de prop de alta calidad para videojuego RPG de acción. Enfoque en materiales metálicos forjados al fuego y efectos de plasma incandescente.",
+    "imageUrl": "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=1200&q=80",
+    "videoUrl": "https://assets.mixkit.co/videos/preview/mixkit-glowing-lines-and-particles-background-41567-large.mp4",
+    "tags": [
+      "Prop Design",
+      "Concept Art",
+      "Digital Painting"
+    ],
+    "featured": false,
+    "client": "Ember Games Studio",
+    "specs": [
+      {
+        "label": "Uso",
+        "value": "Prop Design"
+      },
+      {
+        "label": "Estilo",
+        "value": "Dark Fantasy"
+      }
+    ],
+    "createdAt": "2024-02-28"
+  },
+  {
+    "id": "proj-17",
+    "title": "Quantum Simulation",
+    "category": "Animación",
+    "year": "2024",
+    "description": "Simulación de campos magnéticos y partículas de luz en Houdini y After Effects.",
+    "fullDescription": "Secuencia de motion graphics procedural que representa colisión de campos cuánticos y ondas de choque electromagnéticas.",
+    "imageUrl": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1200&q=80",
+    "videoUrl": "https://assets.mixkit.co/videos/preview/mixkit-glowing-lines-and-particles-background-41567-large.mp4",
+    "tags": [
+      "Houdini",
+      "Particle FX",
+      "VFX",
+      "After Effects"
+    ],
+    "featured": false,
+    "client": "Quantum Energy Lab",
+    "specs": [
+      {
+        "label": "Físicas",
+        "value": "POP Solver Houdini"
+      },
+      {
+        "label": "Res",
+        "value": "4K Ultra HD"
+      }
+    ],
+    "createdAt": "2024-02-15"
+  },
+  {
+    "id": "proj-18",
+    "title": "Apex Exoskeleton",
+    "category": "Modelado 3D",
+    "year": "2024",
+    "description": "Modelado de armadura militar táctica futurista con detalles de superficie dura.",
+    "fullDescription": "Traje exoesquelético completo con articulaciones hidráulicas, placas de blindaje de titanio y fibra de carbono teñida en rojo pasión.",
+    "imageUrl": "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=1200&q=80",
+    "videoUrl": "https://assets.mixkit.co/videos/preview/mixkit-futuristic-robotic-character-40615-large.mp4",
+    "tags": [
+      "ZBrush",
+      "Substance Painter",
+      "Hard Surface",
+      "Character Rig"
+    ],
+    "featured": false,
+    "client": "Aethelgard Game Studio",
+    "specs": [
+      {
+        "label": "Malla",
+        "value": "High Poly Scult"
+      },
+      {
+        "label": "Texturas",
+        "value": "PBR Metallic Roughness"
+      }
+    ],
+    "createdAt": "2024-02-01"
+  },
+  {
+    "id": "proj-19",
+    "title": "Eclipse Protocol",
+    "category": "Arte Conceptual",
+    "year": "2024",
+    "description": "Keyframe conceptual para cinemática de apertura de ciencia ficción épica.",
+    "fullDescription": "Composición de gran formato que muestra un eclipse solar sobre ruinas futuristas con iluminación cenital dramática y bruma incandescente.",
+    "imageUrl": "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1200&q=80",
+    "videoUrl": "https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-99648-large.mp4",
+    "tags": [
+      "Keyframe Concept",
+      "Matte Painting",
+      "Cinematic Lighting"
+    ],
+    "featured": false,
+    "client": "Eclipse Cinematic Universe",
+    "specs": [
+      {
+        "label": "Resolución",
+        "value": "8K Cinema"
+      },
+      {
+        "label": "Mood",
+        "value": "Dramatic Eclipse"
+      }
+    ],
+    "createdAt": "2024-01-18"
   }
 ];
 

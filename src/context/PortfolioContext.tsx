@@ -33,7 +33,7 @@ interface PortfolioContextType {
   markMessageAsRead: (id: string) => void;
   deleteMessage: (id: string) => void;
   resetToDefaults: () => void;
-  syncToCloud: (customProjects?: Project[]) => Promise<boolean>;
+  syncToCloud: (customProjects?: Project[], customPhotos?: PhotoItem[]) => Promise<boolean>;
 }
 
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
@@ -182,8 +182,18 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             } catch (e) {}
           }
 
-          if (data.photos && Array.isArray(data.photos) && !localStorage.getItem(LOCAL_STORAGE_PREFIX + 'photos')) {
-            setPhotos(data.photos);
+          if (data.photos && Array.isArray(data.photos) && data.photos.length > 0) {
+            const localPhotosSaved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'photos');
+            let localPhotosCount = 0;
+            try {
+              if (localPhotosSaved) localPhotosCount = JSON.parse(localPhotosSaved).length;
+            } catch (e) {}
+            if (localPhotosCount === 0 || data.photos.length >= localPhotosCount) {
+              setPhotos(data.photos);
+              try {
+                localStorage.setItem(LOCAL_STORAGE_PREFIX + 'photos', JSON.stringify(data.photos));
+              } catch (e) {}
+            }
           }
           if (data.profile && !localStorage.getItem(LOCAL_STORAGE_PREFIX + 'profile')) setProfile(data.profile);
           if (data.brandAssets && !localStorage.getItem(LOCAL_STORAGE_PREFIX + 'brand_assets')) setBrandAssets(data.brandAssets);
@@ -196,19 +206,20 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }, []);
 
   // Save state to Cloudflare KV storage + localStorage for global persistence
-  const syncToCloud = async (customProjects?: Project[]): Promise<boolean> => {
+  const syncToCloud = async (customProjects?: Project[], customPhotos?: PhotoItem[]): Promise<boolean> => {
     const projectsToSync = customProjects || projects;
-    const payload = { projects: projectsToSync, photos, profile, brandAssets, stats };
+    const photosToSync = customPhotos || photos;
+    const payload = { projects: projectsToSync, photos: photosToSync, profile, brandAssets, stats };
 
     // 1. Save to localStorage locally
     try {
       localStorage.setItem(LOCAL_STORAGE_PREFIX + 'projects', JSON.stringify(projectsToSync));
-      localStorage.setItem(LOCAL_STORAGE_PREFIX + 'photos', JSON.stringify(photos));
+      localStorage.setItem(LOCAL_STORAGE_PREFIX + 'photos', JSON.stringify(photosToSync));
       localStorage.setItem(LOCAL_STORAGE_PREFIX + 'profile', JSON.stringify(profile));
       localStorage.setItem(LOCAL_STORAGE_PREFIX + 'brand_assets', JSON.stringify(brandAssets));
       localStorage.setItem(LOCAL_STORAGE_PREFIX + 'stats', JSON.stringify(stats));
     } catch (e) {
-      console.warn('Failed to sync to localStorage:', e);
+      console.warn('Failed to sync to localStorage (may be storage limit exceeded):', e);
     }
 
     // 2. Save live to Cloudflare KV via Functions API
@@ -346,23 +357,43 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       id: 'photo-' + Date.now(),
       createdAt: new Date().toISOString().split('T')[0]
     };
-    setPhotos(prev => [newPhoto, ...prev]);
+    setPhotos(prev => {
+      const updated = [newPhoto, ...prev];
+      syncToCloud(undefined, updated);
+      return updated;
+    });
   };
 
   const updatePhotoItem = (id: string, updatedFields: Partial<PhotoItem>) => {
-    setPhotos(prev => prev.map(p => (p.id === id ? { ...p, ...updatedFields } : p)));
+    setPhotos(prev => {
+      const updated = prev.map(p => (p.id === id ? { ...p, ...updatedFields } : p));
+      syncToCloud(undefined, updated);
+      return updated;
+    });
   };
 
   const deletePhotoItem = (id: string) => {
-    setPhotos(prev => prev.filter(p => p.id !== id));
+    setPhotos(prev => {
+      const updated = prev.filter(p => p.id !== id);
+      syncToCloud(undefined, updated);
+      return updated;
+    });
   };
 
   const updateProfile = (updatedProfile: Partial<UserProfile>) => {
-    setProfile(prev => ({ ...prev, ...updatedProfile }));
+    setProfile(prev => {
+      const updated = { ...prev, ...updatedProfile };
+      syncToCloud(undefined, undefined);
+      return updated;
+    });
   };
 
   const updateBrandAssets = (updatedAssets: Partial<BrandAssets>) => {
-    setBrandAssets(prev => ({ ...prev, ...updatedAssets }));
+    setBrandAssets(prev => {
+      const updated = { ...prev, ...updatedAssets };
+      syncToCloud(undefined, undefined);
+      return updated;
+    });
   };
 
   const addContactMessage = (msg: Omit<ContactMessage, 'id' | 'date' | 'read'>) => {

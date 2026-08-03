@@ -178,7 +178,7 @@ export const Aurora: React.FC<AuroraProps> = (props) => {
         ro = new ResizeObserver(resize);
         ro.observe(ctn);
       } else {
-        window.addEventListener('resize', resize);
+        (window as any).addEventListener('resize', resize);
       }
 
       const geometry = new Triangle(gl);
@@ -208,9 +208,7 @@ export const Aurora: React.FC<AuroraProps> = (props) => {
       if ('IntersectionObserver' in window) {
         io = new IntersectionObserver(
           entries => {
-            if (entries[0]) {
-              isVisible = entries[0].isIntersecting;
-            }
+            isVisible = entries[0]?.isIntersecting ?? true;
           },
           { threshold: 0.01 }
         );
@@ -221,8 +219,9 @@ export const Aurora: React.FC<AuroraProps> = (props) => {
         animateId = requestAnimationFrame(update);
         if (!isVisible || document.hidden || !program || !renderer) return;
 
-        const { time = t * 0.01, speed: curSpeed = speed } = propsRef.current;
-        program.uniforms.uTime.value = time * curSpeed * 0.1;
+        const { speed: curSpeed = speed } = propsRef.current;
+        const curTime = t * 0.01;
+        program.uniforms.uTime.value = curTime * curSpeed * 0.1;
         program.uniforms.uAmplitude.value = propsRef.current.amplitude ?? 1.0;
         program.uniforms.uBlend.value = propsRef.current.blend ?? blend;
         const stops = propsRef.current.colorStops ?? colorStops;
