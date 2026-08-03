@@ -38,7 +38,7 @@ interface PortfolioContextType {
 
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
 
-const LOCAL_STORAGE_PREFIX = 'jovas_portfolio_';
+const LOCAL_STORAGE_PREFIX = 'jovas_portfolio_v3_';
 
 // Credentials SHA-256 Hash Security (No plain text password stored)
 const ADMIN_USERNAME = 'JovasMotion';
@@ -83,13 +83,35 @@ const sanitizeProjectList = (projList: Project[]): Project[] => {
   });
 };
 
+const mergeProjectsWithDefaults = (savedProjects: Project[]): Project[] => {
+  const existingMap = new Map(savedProjects.map(p => [p.id, p]));
+  const merged = [...savedProjects];
+  initialProjects.forEach(ip => {
+    if (!existingMap.has(ip.id)) {
+      merged.push(ip);
+    }
+  });
+  return sanitizeProjectList(merged);
+};
+
+const mergePhotosWithDefaults = (savedPhotos: PhotoItem[]): PhotoItem[] => {
+  const existingMap = new Map(savedPhotos.map(p => [p.id, p]));
+  const merged = [...savedPhotos];
+  initialPhotos.forEach(ip => {
+    if (!existingMap.has(ip.id)) {
+      merged.push(ip);
+    }
+  });
+  return merged;
+};
+
 export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [projects, setProjects] = useState<Project[]>(() => {
     try {
       const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'projects');
       if (saved) {
         const parsed: Project[] = JSON.parse(saved);
-        return sanitizeProjectList(parsed);
+        return mergeProjectsWithDefaults(parsed);
       }
       return initialProjects;
     } catch (e) {
@@ -101,7 +123,11 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [photos, setPhotos] = useState<PhotoItem[]>(() => {
     try {
       const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'photos');
-      return saved ? JSON.parse(saved) : initialPhotos;
+      if (saved) {
+        const parsed: PhotoItem[] = JSON.parse(saved);
+        return mergePhotosWithDefaults(parsed);
+      }
+      return initialPhotos;
     } catch (e) {
       console.warn('Failed to read photos from localStorage:', e);
       return initialPhotos;
@@ -167,38 +193,23 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       .then(res => res.json())
       .then(data => {
         if (data && data.projects && Array.isArray(data.projects) && data.projects.length > 0) {
-          const localSaved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'projects');
-          let localCount = 0;
+          const mergedProjects = mergeProjectsWithDefaults(data.projects);
+          setProjects(mergedProjects);
           try {
-            if (localSaved) localCount = JSON.parse(localSaved).length;
+            localStorage.setItem(LOCAL_STORAGE_PREFIX + 'projects', JSON.stringify(mergedProjects));
           } catch (e) {}
-
-          // Only sync from cloud if local storage is empty OR cloud has more/equal projects
-          if (localCount === 0 || data.projects.length >= localCount) {
-            const sanitized = sanitizeProjectList(data.projects);
-            setProjects(sanitized);
-            try {
-              localStorage.setItem(LOCAL_STORAGE_PREFIX + 'projects', JSON.stringify(sanitized));
-            } catch (e) {}
-          }
-
-          if (data.photos && Array.isArray(data.photos) && data.photos.length > 0) {
-            const localPhotosSaved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'photos');
-            let localPhotosCount = 0;
-            try {
-              if (localPhotosSaved) localPhotosCount = JSON.parse(localPhotosSaved).length;
-            } catch (e) {}
-            if (localPhotosCount === 0 || data.photos.length >= localPhotosCount) {
-              setPhotos(data.photos);
-              try {
-                localStorage.setItem(LOCAL_STORAGE_PREFIX + 'photos', JSON.stringify(data.photos));
-              } catch (e) {}
-            }
-          }
-          if (data.profile && !localStorage.getItem(LOCAL_STORAGE_PREFIX + 'profile')) setProfile(data.profile);
-          if (data.brandAssets && !localStorage.getItem(LOCAL_STORAGE_PREFIX + 'brand_assets')) setBrandAssets(data.brandAssets);
-          if (data.stats && !localStorage.getItem(LOCAL_STORAGE_PREFIX + 'stats')) setStats(data.stats);
         }
+
+        if (data && data.photos && Array.isArray(data.photos) && data.photos.length > 0) {
+          const mergedPhotos = mergePhotosWithDefaults(data.photos);
+          setPhotos(mergedPhotos);
+          try {
+            localStorage.setItem(LOCAL_STORAGE_PREFIX + 'photos', JSON.stringify(mergedPhotos));
+          } catch (e) {}
+        }
+        if (data.profile && !localStorage.getItem(LOCAL_STORAGE_PREFIX + 'profile')) setProfile(data.profile);
+        if (data.brandAssets && !localStorage.getItem(LOCAL_STORAGE_PREFIX + 'brand_assets')) setBrandAssets(data.brandAssets);
+        if (data.stats && !localStorage.getItem(LOCAL_STORAGE_PREFIX + 'stats')) setStats(data.stats);
       })
       .catch(e => {
         console.warn('Cloudflare KV fetch notice (using defaults/localStorage):', e);

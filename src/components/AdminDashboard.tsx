@@ -294,11 +294,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
       try {
         const data = JSON.parse(event.target?.result as string);
         if (data && data.projects && Array.isArray(data.projects)) {
-          localStorage.setItem('jovas_portfolio_projects', JSON.stringify(data.projects));
-          if (data.photos) localStorage.setItem('jovas_portfolio_photos', JSON.stringify(data.photos));
-          if (data.profile) localStorage.setItem('jovas_portfolio_profile', JSON.stringify(data.profile));
-          if (data.brandAssets) localStorage.setItem('jovas_portfolio_brand_assets', JSON.stringify(data.brandAssets));
-          if (data.stats) localStorage.setItem('jovas_portfolio_stats', JSON.stringify(data.stats));
+          localStorage.setItem('jovas_portfolio_v3_projects', JSON.stringify(data.projects));
+          if (data.photos) localStorage.setItem('jovas_portfolio_v3_photos', JSON.stringify(data.photos));
+          if (data.profile) localStorage.setItem('jovas_portfolio_v3_profile', JSON.stringify(data.profile));
+          if (data.brandAssets) localStorage.setItem('jovas_portfolio_v3_brand_assets', JSON.stringify(data.brandAssets));
+          if (data.stats) localStorage.setItem('jovas_portfolio_v3_stats', JSON.stringify(data.stats));
           
           showToast(`⚡ ¡Restaurados ${data.projects.length} proyectos con éxito!`);
           setTimeout(() => {
