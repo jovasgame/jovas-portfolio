@@ -185,11 +185,11 @@ export const onRequestPost = async (context: { env: Env; request: Request }) => 
       }
 
       const stmts: D1PreparedStatement[] = [];
-      const upsert = (table: string, id: string, data: unknown) =>
+      const upsert = (table: string, idCol: string, id: string, data: unknown) =>
         db
           .prepare(
-            `INSERT INTO ${table} (id, data, updated_at) VALUES (?, ?, ?)
-             ON CONFLICT(id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at`
+            `INSERT INTO ${table} (${idCol}, data, updated_at) VALUES (?, ?, ?)
+             ON CONFLICT(${idCol}) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at`
           )
           .bind(id, JSON.stringify(data), now);
 
@@ -198,7 +198,7 @@ export const onRequestPost = async (context: { env: Env; request: Request }) => 
       for (const p of projects) {
         if (!p || !p.id) continue;
         projectIds.push(String(p.id));
-        stmts.push(upsert('portfolio_projects', String(p.id), p));
+        stmts.push(upsert('portfolio_projects', 'id', String(p.id), p));
       }
       if (projectIds.length > 0) {
         const placeholders = projectIds.map(() => '?').join(',');
@@ -216,7 +216,7 @@ export const onRequestPost = async (context: { env: Env; request: Request }) => 
       for (const ph of photos) {
         if (!ph || !ph.id) continue;
         photoIds.push(String(ph.id));
-        stmts.push(upsert('portfolio_photos', String(ph.id), ph));
+        stmts.push(upsert('portfolio_photos', 'id', String(ph.id), ph));
       }
       if (photoIds.length > 0) {
         const placeholders = photoIds.map(() => '?').join(',');
@@ -232,7 +232,7 @@ export const onRequestPost = async (context: { env: Env; request: Request }) => 
       // Ajustes (perfil, marca, stats)
       for (const key of ['profile', 'brandAssets', 'stats'] as const) {
         if (body?.[key] && typeof body[key] === 'object') {
-          stmts.push(upsert('portfolio_settings', key, body[key]));
+          stmts.push(upsert('portfolio_settings', 'key', key, body[key]));
         }
       }
 
