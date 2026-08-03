@@ -367,10 +367,22 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
     // 3. Save live to Cloudflare KV via Functions API
     try {
+      const body = JSON.stringify(payload);
+      // Cloudflare KV hard limit: 25 MB per value. Abort early with a clear
+      // warning instead of failing silently on the server.
+      const MAX_KV_PAYLOAD_BYTES = 23 * 1024 * 1024;
+      if (body.length > MAX_KV_PAYLOAD_BYTES) {
+        console.error(
+          `Cloudflare KV sync aborted: payload is ${(body.length / 1024 / 1024).toFixed(1)} MB ` +
+          `(limit ~25 MB). Use external image URLs (Drive/YouTube) instead of uploaded ` +
+          `base64 files to reduce size. Data remains saved locally in IndexedDB.`
+        );
+        return false;
+      }
       const res = await fetch('/api/portfolio', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body
       });
       const data = await res.json();
       return Boolean(data && (data.success || data.projects));
