@@ -2,17 +2,15 @@ import { Project, PhotoItem, UserProfile, BrandAssets, ContactMessage, Stats } f
 
 export const initialProjects: Project[] = [
   {
-    "title": "Espada Maestra 3D & Animación",
-    "category": "Modelado 3D",
-    "year": "2025",
-    "description": "Modelado 3D, texturizado PBR y animación cinematográfica de la Espada Maestra.",
-    "fullDescription": "Proyecto conceptual y renderizado 3D de la legendaria Espada Maestra. Creación de materiales fidedignos PBR, iluminación volumétrica y animación de partículas ígneas.",
-    "imageUrl": "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=1200&q=80",
+    "title": "Robot Atardecer ",
+    "category": "Arte Conceptual",
+    "year": "2022",
+    "description": "",
+    "fullDescription": "",
+    "imageUrl": "/images/extracted-01.jpg",
     "tags": [
-      "Modelado 3D",
-      "Texturizado PBR",
       "Blender",
-      "Render"
+      "Photoshop"
     ],
     "featured": true,
     "specs": [
@@ -21,11 +19,36 @@ export const initialProjects: Project[] = [
         "value": "4K Ultra HD"
       },
       {
-        "label": "Motor",
-        "value": "Redshift / Cycles"
+        "label": "FPS",
+        "value": "60 FPS"
       }
     ],
-    "id": "proj-espada-maestra-3d",
+    "id": "proj-1785747374534",
+    "createdAt": "2026-08-03"
+  },
+  {
+    "title": "ESPADA MAESTRA ",
+    "category": "Arte Conceptual",
+    "year": "2022",
+    "description": "CONCEPT ESPADA MAESTRA ILUSTRACION Y 3D",
+    "fullDescription": "CONCEPT ESPADA MAESTRA ILUSTRACION Y 3D",
+    "imageUrl": "/images/extracted-02.jpg",
+    "tags": [
+      "3D Render",
+      "ILUSTRACIÓN"
+    ],
+    "featured": true,
+    "specs": [
+      {
+        "label": "Resolución",
+        "value": "4K Ultra HD"
+      },
+      {
+        "label": "FPS",
+        "value": "60 FPS"
+      }
+    ],
+    "id": "proj-1785742832664",
     "createdAt": "2026-08-03"
   },
   {
@@ -421,7 +444,7 @@ export const initialProjects: Project[] = [
     "year": "2022",
     "description": "RECUERDO DE HERRAMIENTAS EN MI VIDA ",
     "fullDescription": "RECUERDO DE HERRAMIENTAS EN MI VIDA ",
-    "imageUrl": "/images/default-project-tools.jpg",
+    "imageUrl": "/images/extracted-03.jpg",
     "tags": [
       "Motion Graphics",
       "3D Render"
@@ -446,7 +469,7 @@ export const initialProjects: Project[] = [
     "year": "2022",
     "description": "Ilustración vectorial ,Dark Vader ",
     "fullDescription": "Ilustración vectorial ,Dark Vader ",
-    "imageUrl": "/images/default-project-vader.jpg",
+    "imageUrl": "/images/extracted-04.jpg",
     "tags": [
       "Ilustrador",
       "vector"
@@ -490,24 +513,6 @@ export const initialProjects: Project[] = [
     ],
     "id": "proj-1785644799339",
     "createdAt": "2026-08-02"
-  },
-  {
-    "id": "proj-1",
-    "title": "INTRO ARTEMISA",
-    "category": "Animación",
-    "year": "2020",
-    "description": "Intro de Logotipo de Exposición de dibujo ",
-    "fullDescription": "Un reel cinematográfico de animación digital que combina simulaciones de movimiento.",
-    "imageUrl": "https://img.youtube.com/vi/3XD8dzEYTKk/hqdefault.jpg",
-    "videoUrl": "https://youtu.be/3XD8dzEYTKk",
-    "tags": [
-      "After Effects",
-      "Premier"
-    ],
-    "featured": false,
-    "client": "Jovas Media Reel",
-    "createdAt": "2024-03-15",
-    "specs": []
   }
 ];
 
@@ -523,7 +528,7 @@ export const initialProfile: UserProfile = {
   "experienceYears": "10",
   "projectsCompletedCount": "120+",
   "email": "jovas.motion@design.com",
-  "avatarUrl": "/images/avatar-default.jpg",
+  "avatarUrl": "/images/extracted-05.jpg",
   "socialLinks": {
     "instagram": "https://instagram.com",
     "artstation": "https://artstation.com",
@@ -560,13 +565,13 @@ export const initialProfile: UserProfile = {
 };
 
 export const initialBrandAssets: BrandAssets = {
-  "logoUrl": "",
+  "logoUrl": "/images/extracted-06.jpg",
   "brandText": "JOVAS",
   "brandSubtext": "Motion Design",
   "heroText": "ENCENDIENDO EL MOVIMIENTO A TRAVÉS DEL DISEÑO",
   "heroSubtext": "JOVAS Diseñador de Movimiento. Creando experiencias digitales viscerales donde la energía del fuego creativo se encuentra con la precisión del movimiento técnico.",
   "heroBgUrl": "",
-  "metallicIconUrl": "/images/metallic-icon-default.jpg"
+  "metallicIconUrl": "/images/extracted-07.jpg"
 };
 
 export const initialMessages: ContactMessage[] = [];
@@ -580,30 +585,62 @@ export const initialStats: Stats = {
 
 export const initialPhotos: PhotoItem[] = [
   {
+    "title": "TRONCO VALLE",
+    "category": "NATURALEZA",
+    "imageUrl": "/images/extracted-08.jpg",
+    "cameraSpecs": "NIKON D7200 • 85mm f/1.4 • ISO 400",
+    "id": "photo-1785742670160",
+    "createdAt": "2026-08-03"
+  },
+  {
+    "title": "URBANO",
+    "category": "URBANO",
+    "imageUrl": "/images/extracted-09.jpg",
+    "cameraSpecs": "Sony A65 • 85mm f/1.4 • ISO 400",
+    "id": "photo-1785742557912",
+    "createdAt": "2026-08-03"
+  },
+  {
+    "title": "Tronco Textura",
+    "category": "Naturaleza",
+    "imageUrl": "/images/extracted-10.jpg",
+    "cameraSpecs": "NIKON D7200• 85mm f/1.4 • ISO 400",
+    "id": "photo-1785742535000",
+    "createdAt": "2026-08-03"
+  },
+  {
+    "title": "Cuervo",
+    "category": "Animales ",
+    "imageUrl": "/images/extracted-11.jpg",
+    "cameraSpecs": "NIKON D7200 • 85mm f/1.4 • ISO 400",
+    "id": "photo-1785742480385",
+    "createdAt": "2026-08-03"
+  },
+  {
     "id": "photo-1",
     "title": "Iguana al Sol ",
     "category": "Animales",
-    "imageUrl": "/images/default-photo-iguana.jpg",
+    "imageUrl": "/images/extracted-12.jpg",
     "description": "Iguana al sol ",
     "cameraSpecs": "Sony A65 • 85mm f/1.4 • ISO 400",
     "createdAt": "2024-02-10"
   },
   {
     "id": "photo-2",
-    "title": "Arquitectura Brutalista & Sombras",
+    "title": "Arquitectura ",
     "category": "Arquitectura",
-    "imageUrl": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80",
-    "description": "Estudio de geometría estructural y contraste solar en concreto.",
-    "cameraSpecs": "Fujifilm X-T4 • 35mm f/2.0 • ISO 100",
+    "imageUrl": "/images/extracted-13.jpg",
+    "description": "IGLESIA SUSHITOTO",
+    "cameraSpecs": "NIKON D7200 • 35mm f/2.0 • ISO 100",
     "createdAt": "2024-02-05"
   },
   {
     "id": "photo-3",
-    "title": "Texturas Volumétricas & Niebla",
-    "category": "Conceptual",
-    "imageUrl": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1200&q=80",
-    "description": "Atmósfera cinematográfica con haces de luz atravesando humo en penumbra.",
-    "cameraSpecs": "Canon EOS R5 • 50mm f/1.2 • ISO 200",
+    "title": "Lampara Suchitoto",
+    "category": "Arquitectura",
+    "imageUrl": "/images/extracted-14.jpg",
+    "description": "Lampara Suchitoto",
+    "cameraSpecs": "NIKON D7200 • 50mm f/1.2 • ISO 200",
     "createdAt": "2024-01-28"
   }
 ];
