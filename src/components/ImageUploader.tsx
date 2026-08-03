@@ -66,6 +66,48 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
   const presetsToUse = presetImages || defaultPresets;
 
+  const compressAndProcessImage = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const rawResult = e.target?.result as string;
+        if (!rawResult) {
+          resolve('');
+          return;
+        }
+        const img = new Image();
+        img.onload = () => {
+          const maxDim = 1600;
+          let width = img.width;
+          let height = img.height;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            const compressedUrl = canvas.toDataURL('image/jpeg', 0.82);
+            resolve(compressedUrl);
+            return;
+          }
+          resolve(rawResult);
+        };
+        img.onerror = () => resolve(rawResult);
+        img.src = rawResult;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleFileProcess = (file: File) => {
     const isImage = file.type.startsWith('image/');
     const isVid = file.type.startsWith('video/');
@@ -75,19 +117,23 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       return;
     }
 
-    // Heavy file warning
-    if (file.size > 8 * 1024 * 1024) {
-      const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
-      alert(`⚠️ El archivo seleccionado pesa ${sizeMb} MB.\n\nLos navegadores limitan el almacenamiento local a ~5MB. Para videos HD/4K de gran tamaño, te recomendamos subirlos a tu Google Drive, YouTube o Vimeo y pegar el enlace. La app lo convertirá automáticamente en un reproductor HD fluido.`);
-    }
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      if (e.target?.result) {
-        onChange(e.target.result as string);
+    if (isImage) {
+      compressAndProcessImage(file).then((compressedUrl) => {
+        onChange(compressedUrl);
+      });
+    } else {
+      if (file.size > 8 * 1024 * 1024) {
+        const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
+        alert(`⚠️ El video seleccionado pesa ${sizeMb} MB.\n\nLos navegadores y la base de datos limitan el tamaño. Te recomendamos subirlos a tu Google Drive, YouTube o Vimeo y pegar el enlace.`);
       }
-    };
-    reader.readAsDataURL(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          onChange(e.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

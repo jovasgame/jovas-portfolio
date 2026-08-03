@@ -608,6 +608,15 @@ export const initialStats: Stats = {
 
 export const initialPhotos: PhotoItem[] = [
   {
+    id: 'photo-iguana',
+    title: 'Iguana al Sol',
+    category: 'Animales',
+    imageUrl: 'https://images.unsplash.com/photo-1500463959177-e0869687df26?auto=format&fit=crop&w=1200&q=80',
+    description: 'Iguana al sol',
+    cameraSpecs: 'Sony A65 • 85mm f/1.4 • ISO 400',
+    createdAt: '2024-02-10'
+  },
+  {
     id: 'photo-1',
     title: 'Retrato Urbano & Luces Neón',
     category: 'Retrato',
