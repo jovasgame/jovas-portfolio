@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { parseGoogleDriveUrl, convertGoogleDriveToDirectUrl, parseMediaUrl } from '../utils/mediaUtils';
 import { MediaViewer } from './MediaViewer';
+import { compressImageFile } from '../utils/imageCompression';
 
 export { parseGoogleDriveUrl, convertGoogleDriveToDirectUrl };
 
@@ -66,46 +67,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
   const presetsToUse = presetImages || defaultPresets;
 
+  // Compresión compartida (src/utils/imageCompression.ts): máx 1400px y
+  // escalera de calidad hasta quedar bajo ~0.81 MB — límite de fila de D1.
   const compressAndProcessImage = (file: File): Promise<string> => {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const rawResult = e.target?.result as string;
-        if (!rawResult) {
-          resolve('');
-          return;
-        }
-        const img = new Image();
-        img.onload = () => {
-          const maxDim = 1600;
-          let width = img.width;
-          let height = img.height;
-          if (width > maxDim || height > maxDim) {
-            if (width > height) {
-              height = Math.round((height * maxDim) / width);
-              width = maxDim;
-            } else {
-              width = Math.round((width * maxDim) / height);
-              height = maxDim;
-            }
-          }
-          const canvas = document.createElement('canvas');
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          if (ctx) {
-            ctx.drawImage(img, 0, 0, width, height);
-            const compressedUrl = canvas.toDataURL('image/jpeg', 0.82);
-            resolve(compressedUrl);
-            return;
-          }
-          resolve(rawResult);
-        };
-        img.onerror = () => resolve(rawResult);
-        img.src = rawResult;
-      };
-      reader.readAsDataURL(file);
-    });
+    return compressImageFile(file);
   };
 
   const handleFileProcess = (file: File) => {

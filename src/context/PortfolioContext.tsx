@@ -4,6 +4,11 @@ import { initialProjects, initialPhotos, initialProfile, initialBrandAssets, ini
 import { hashPassword } from '../utils/security';
 import { parseGoogleDriveUrl, getCategoryFallbackImage } from '../utils/mediaUtils';
 import { idbStorage } from '../utils/idbStorage';
+import {
+  sanitizeMediaListForSync,
+  sanitizeProfileForSync,
+  sanitizeBrandAssetsForSync
+} from '../utils/imageCompression';
 
 export type CloudSyncStatus = 'idle' | 'syncing' | 'synced' | 'error' | 'unbound';
 
@@ -25,6 +30,7 @@ interface PortfolioContextType {
   setIsLoginModalOpen: (open: boolean) => void;
   cloudSyncStatus: CloudSyncStatus;
   cloudSyncError?: string;
+  syncWarnings: string[];
   addProject: (p: Omit<Project, 'id' | 'createdAt'>) => void;
   updateProject: (id: string, p: Partial<Project>) => void;
   deleteProject: (id: string) => void;
@@ -267,6 +273,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
   const [cloudSyncStatus, setCloudSyncStatus] = useState<CloudSyncStatus>('idle');
   const [cloudSyncError, setCloudSyncError] = useState<string | undefined>(undefined);
+  const [syncWarnings, setSyncWarnings] = useState<string[]>([]);
 
   // Bloquea escrituras a la nube hasta que termine la carga inicial (GET).
   // Sin esto, un CRUD disparado antes de recibir la nube podría sobrescribir
@@ -408,10 +415,28 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setCloudSyncError(undefined);
     markLocalChange();
 
-    const projectsToSync = customProjects || projects;
-    const photosToSync = customPhotos || photos;
-    const profileToSync = customProfile || profile;
-    const brandAssetsToSync = customBrandAssets || brandAssets;
+    // --- Compresión pre-sync: D1 rechaza filas > ~1 MB (SQLITE_TOOBIG).
+    // Todo data URL de imagen que exceda el límite se re-comprime aquí; la
+    // versión comprimida se persiste en estado + IndexedDB para que la
+    // compresión ocurra una sola vez por imagen.
+    const warnings: string[] = [];
+    const projSan = await sanitizeMediaListForSync(customProjects || projects);
+    const photoSan = await sanitizeMediaListForSync(customPhotos || photos);
+    const profSan = await sanitizeProfileForSync(customProfile || profile, warnings);
+    const brandSan = await sanitizeBrandAssetsForSync(customBrandAssets || brandAssets, warnings);
+    warnings.push(...projSan.warnings, ...photoSan.warnings);
+
+    if (projSan.changed) setProjects(projSan.items);
+    if (photoSan.changed) setPhotos(photoSan.items);
+    if (profSan.changed) setProfile(profSan.value);
+    if (brandSan.changed) setBrandAssets(brandSan.value);
+    setSyncWarnings(warnings);
+    for (const w of warnings) console.warn('Sync aviso:', w);
+
+    const projectsToSync = projSan.items;
+    const photosToSync = photoSan.items;
+    const profileToSync = profSan.value;
+    const brandAssetsToSync = brandSan.value;
     const statsToSync = customStats || stats;
 
     const payload = {
@@ -478,6 +503,11 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       }
 
       if (data && data.success) {
+        if (Array.isArray(data.skippedOversized) && data.skippedOversized.length > 0) {
+          const msg = `El servidor omitió ${data.skippedOversized.length} fila(s) que exceden 1 MB: ${data.skippedOversized.join(', ')}. Reduce el peso de sus imágenes o usa URLs externas.`;
+          console.warn('Sync aviso:', msg);
+          setSyncWarnings(prev => [...prev, msg]);
+        }
         setCloudSyncStatus('synced');
         return true;
       }
@@ -711,6 +741,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         setIsLoginModalOpen,
         cloudSyncStatus,
         cloudSyncError,
+        syncWarnings,
         addProject,
         updateProject,
         deleteProject,

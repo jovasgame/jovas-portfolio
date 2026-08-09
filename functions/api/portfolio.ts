@@ -193,11 +193,22 @@ export const onRequestPost = async (context: { env: Env; request: Request }) => 
           )
           .bind(id, JSON.stringify(data), now);
 
+      // Defensa SQLITE_TOOBIG: D1 limita cada statement a ~1 MB. Filas que
+      // lo excedan se omiten (y se reportan) en vez de tumbar toda la sync;
+      // su id se conserva en la lista para que el DELETE no las borre.
+      const ROW_MAX_BYTES = 950_000;
+      const skippedOversized: string[] = [];
+
       // Proyectos: upsert por id + borrado de ids ausentes (sincronía autoritativa)
       const projectIds: string[] = [];
       for (const p of projects) {
         if (!p || !p.id) continue;
         projectIds.push(String(p.id));
+        const serialized = JSON.stringify(p);
+        if (serialized.length > ROW_MAX_BYTES) {
+          skippedOversized.push(String(p.id));
+          continue;
+        }
         stmts.push(upsert('portfolio_projects', 'id', String(p.id), p));
       }
       if (projectIds.length > 0) {
@@ -216,6 +227,10 @@ export const onRequestPost = async (context: { env: Env; request: Request }) => 
       for (const ph of photos) {
         if (!ph || !ph.id) continue;
         photoIds.push(String(ph.id));
+        if (JSON.stringify(ph).length > ROW_MAX_BYTES) {
+          skippedOversized.push(String(ph.id));
+          continue;
+        }
         stmts.push(upsert('portfolio_photos', 'id', String(ph.id), ph));
       }
       if (photoIds.length > 0) {
@@ -232,6 +247,10 @@ export const onRequestPost = async (context: { env: Env; request: Request }) => 
       // Ajustes (perfil, marca, stats)
       for (const key of ['profile', 'brandAssets', 'stats'] as const) {
         if (body?.[key] && typeof body[key] === 'object') {
+          if (JSON.stringify(body[key]).length > ROW_MAX_BYTES) {
+            skippedOversized.push(key);
+            continue;
+          }
           stmts.push(upsert('portfolio_settings', 'key', key, body[key]));
         }
       }
@@ -244,6 +263,7 @@ export const onRequestPost = async (context: { env: Env; request: Request }) => 
         db: 'd1',
         status: 'saved',
         counts: { projects: projectIds.length, photos: photoIds.length },
+        skippedOversized: skippedOversized.length ? skippedOversized : undefined,
         timestamp: now
       });
     } catch (e: any) {
