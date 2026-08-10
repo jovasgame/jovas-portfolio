@@ -202,8 +202,9 @@ function Smooth3DSlideshow(props: Smooth3DSlideshowProps) {
   const transitionCss = `transform ${dur}s ${ease}, opacity ${dur}s ${ease}`;
 
   const effectiveRadius =
-    (Math.max(0, Math.min(20, radius)) / 20) *
-    (Math.min(cardWidth, cardHeight) / 2);
+    ((Math.max(0, Math.min(20, radius)) / 20) *
+      (Math.min(cardWidth, cardHeight) / 2)) *
+    0.5;
   const dim = 1 - Math.max(0, Math.min(100, opacity)) / 100;
 
   const rootStyle: CSSProperties = {
@@ -498,7 +499,7 @@ export const CoverflowGallery: React.FC = () => {
             activeIndex={activeIndex}
             onActiveChange={setActiveIndex}
             onProjectClick={setSelectedProjectForModal}
-            radius={8}
+            radius={4}
             tilt={12}
             sideTilt={8}
             gap={8}
