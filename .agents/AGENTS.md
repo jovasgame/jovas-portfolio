@@ -19,3 +19,8 @@
 
 3. **Mantenimiento del Dashboard:**
    - Asegúrate de que las acciones de creación (`addProject`), actualización (`updateProject`) y eliminación (`deleteProject`) notifiquen en vivo el estado de sincronización (`cloudSyncStatus`).
+
+## Skills Disponibles para el Agente
+- **`jovas-portfolio-expert`**: `file:///.agents/skills/jovas-portfolio-expert/SKILL.md` (Manual máster del proyecto, arquitectura full-stack, optimizaciones y guía de desarrollo).
+- **`portfolio-sync`**: `file:///.agents/skills/portfolio-sync/SKILL.md` (Protocolo estricto de sincronización D1 y Git Push).
+

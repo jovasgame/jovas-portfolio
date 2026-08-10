@@ -9,12 +9,17 @@ import { CoverflowGallery } from './components/CoverflowGallery';
 import { PhotoGallerySection } from './components/PhotoGallerySection';
 import { AboutSection } from './components/AboutSection';
 import { ContactSection } from './components/ContactSection';
-import { ContactPage } from './components/ContactPage';
 import { Footer } from './components/Footer';
 import { ProjectModal } from './components/ProjectModal';
 import { AdminLoginModal } from './components/AdminLoginModal';
-import { AdminDashboard } from './components/AdminDashboard';
 import Aurora from './components/Aurora';
+
+const AdminDashboard = React.lazy(() =>
+  import('./components/AdminDashboard').then((m) => ({ default: m.AdminDashboard }))
+);
+const ContactPage = React.lazy(() =>
+  import('./components/ContactPage').then((m) => ({ default: m.ContactPage }))
+);
 
 const MainPortfolioContent: React.FC = () => {
   const { isAdminLoggedIn } = usePortfolio();
@@ -22,11 +27,31 @@ const MainPortfolioContent: React.FC = () => {
   const [showContactPage, setShowContactPage] = useState(false);
 
   if (isAdminLoggedIn && showDashboard) {
-    return <AdminDashboard onCloseDashboard={() => setShowDashboard(false)} />;
+    return (
+      <React.Suspense
+        fallback={
+          <div className="min-h-screen bg-[#0a090c] flex items-center justify-center text-[#feba39] font-medium">
+            Cargando Panel de Administración...
+          </div>
+        }
+      >
+        <AdminDashboard onCloseDashboard={() => setShowDashboard(false)} />
+      </React.Suspense>
+    );
   }
 
   if (showContactPage) {
-    return <ContactPage onBack={() => setShowContactPage(false)} />;
+    return (
+      <React.Suspense
+        fallback={
+          <div className="min-h-screen bg-[#0a090c] flex items-center justify-center text-[#feba39] font-medium">
+            Cargando Página de Contacto...
+          </div>
+        }
+      >
+        <ContactPage onBack={() => setShowContactPage(false)} />
+      </React.Suspense>
+    );
   }
 
   return (
