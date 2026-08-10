@@ -28,6 +28,8 @@ export const ProjectThumbnail: React.FC<ProjectThumbnailProps> = ({
         src={getCategoryFallbackImage(project.category)}
         alt={project.title || 'Portada de proyecto'}
         className={className}
+        loading="lazy"
+        decoding="async"
       />
     );
   }
@@ -50,6 +52,8 @@ export const ProjectThumbnail: React.FC<ProjectThumbnailProps> = ({
       src={thumbSrc}
       alt={project.title || 'Portada de proyecto'}
       className={className}
+      loading="lazy"
+      decoding="async"
       onError={() => setHasError(true)}
     />
   );

@@ -299,29 +299,6 @@ export const HeroSlider: React.FC = () => {
 
         </div>
       </div>
-
-      {/* Hero Title Banner ("Entendiendo el Movimiento") MOVED DOWN HERE */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-10 mt-12 mb-4">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 glass-panel p-8 sm:p-10 rounded-3xl border border-white/15 shadow-2xl relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-[#feba39]/10 rounded-full blur-3xl pointer-events-none"></div>
-          
-          <div className="relative z-10 space-y-3">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#ff5540]/15 border border-[#ff5540]/30 text-[#ff5540] text-xs font-mono font-bold tracking-widest uppercase">
-              <Flame className="w-3.5 h-3.5 text-[#feba39]" />
-              Reel Showcase & Filosofía
-            </div>
-            <h1 className="font-syne font-black text-3xl sm:text-5xl lg:text-6xl text-white tracking-tight leading-none drop-shadow-md">
-              {brandAssets.heroText}
-            </h1>
-          </div>
-
-          <div className="md:max-w-md relative z-10">
-            <p className="text-sm text-[#e7e1e5]/80 leading-relaxed font-sans">
-              {brandAssets.heroSubtext}
-            </p>
-          </div>
-        </div>
-      </div>
     </section>
   );
 };

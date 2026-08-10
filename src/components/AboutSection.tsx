@@ -31,7 +31,7 @@ export const AboutSection: React.FC = () => {
               enableMagnetism={true}
               clickEffect={true}
               className="w-full flex flex-col justify-between"
-              style={{ borderRadius: "24px", overflow: "hidden" }}
+              style={{ borderRadius: "12px", overflow: "hidden" }}
             >
               <div className="relative w-full h-full min-h-[420px] sm:min-h-[500px] flex flex-col justify-end">
                 <img
