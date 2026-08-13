@@ -109,6 +109,7 @@ export interface HasImageFields {
   imageUrl?: string;
   thumbnailUrl?: string;
   videoUrl?: string;
+  galleryUrls?: string[];
 }
 
 const compressMediaFields = async <T extends HasImageFields>(
@@ -118,12 +119,45 @@ const compressMediaFields = async <T extends HasImageFields>(
   const out = { ...item };
   const label = (item as any).title || (item as any).id || 'elemento';
 
-  if (isDataUrl(out.imageUrl) && out.imageUrl!.length > MAX_DATAURL_CHARS) {
-    out.imageUrl = await ensureImageUnderLimit(out.imageUrl!);
+  // Count base64 images in this item to allocate per-image budget so total row fits under D1 limit (~850 KB)
+  let base64Count = 0;
+  if (isDataUrl(out.imageUrl)) base64Count++;
+  if (isDataUrl(out.thumbnailUrl)) base64Count++;
+  if (Array.isArray(out.galleryUrls)) {
+    for (const g of out.galleryUrls) {
+      if (isDataUrl(g)) base64Count++;
+    }
   }
-  if (isDataUrl(out.thumbnailUrl) && out.thumbnailUrl!.length > MAX_DATAURL_CHARS) {
-    out.thumbnailUrl = await ensureImageUnderLimit(out.thumbnailUrl!);
+
+  // Budget per base64 image (minimum 120 KB per image if many images, max MAX_DATAURL_CHARS)
+  const targetMaxChars = base64Count > 1
+    ? Math.max(120_000, Math.floor(MAX_DATAURL_CHARS / base64Count))
+    : MAX_DATAURL_CHARS;
+
+  if (isDataUrl(out.imageUrl) && out.imageUrl!.length > targetMaxChars) {
+    out.imageUrl = await ensureImageUnderLimit(out.imageUrl!, targetMaxChars);
   }
+  if (isDataUrl(out.thumbnailUrl) && out.thumbnailUrl!.length > targetMaxChars) {
+    out.thumbnailUrl = await ensureImageUnderLimit(out.thumbnailUrl!, targetMaxChars);
+  }
+
+  if (Array.isArray(out.galleryUrls) && out.galleryUrls.length > 0) {
+    const newGallery: string[] = [];
+    let galleryChanged = false;
+    for (const gUrl of out.galleryUrls) {
+      if (isDataUrl(gUrl) && gUrl.length > targetMaxChars) {
+        const compressed = await ensureImageUnderLimit(gUrl, targetMaxChars);
+        newGallery.push(compressed);
+        galleryChanged = true;
+      } else {
+        newGallery.push(gUrl);
+      }
+    }
+    if (galleryChanged) {
+      out.galleryUrls = newGallery;
+    }
+  }
+
   // Los videos como base64 casi siempre exceden el límite de D1: se omiten
   // de la nube (se conservan localmente) y se avisa para usar URL externa.
   if (out.videoUrl && out.videoUrl.startsWith('data:') && out.videoUrl.length > MAX_DATAURL_CHARS) {
@@ -149,7 +183,12 @@ export const sanitizeMediaListForSync = async <T extends HasImageFields>(
   const items: T[] = [];
   for (const item of list || []) {
     const out = await compressMediaFields(item, warnings);
-    if (out !== item && (out.imageUrl !== item.imageUrl || out.thumbnailUrl !== item.thumbnailUrl || out.videoUrl !== item.videoUrl)) {
+    if (
+      out.imageUrl !== item.imageUrl ||
+      out.thumbnailUrl !== item.thumbnailUrl ||
+      out.videoUrl !== item.videoUrl ||
+      JSON.stringify(out.galleryUrls) !== JSON.stringify(item.galleryUrls)
+    ) {
       changed = true;
     }
     items.push(out);
