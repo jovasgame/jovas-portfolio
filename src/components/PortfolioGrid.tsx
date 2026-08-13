@@ -24,6 +24,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   toggleFeatured,
   setSelectedProjectForModal,
 }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Gallery images array for 3D & multi-image slider
