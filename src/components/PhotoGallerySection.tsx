@@ -64,23 +64,23 @@ export const PhotoGallerySection: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-12">
         
-        {/* Editorial Section Header */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 border-b border-white/10 pb-10">
-          <div className="space-y-4 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-[#feba39] text-xs font-mono tracking-wider uppercase shadow-inner">
-              <Camera className="w-3.5 h-3.5 text-[#ff5540]" />
-              Nuestras Historias & Galería Visual
-            </div>
-            <h2 className="font-syne font-black text-4xl sm:text-6xl text-white uppercase tracking-tight leading-tight">
-              Galería <span className="bg-gradient-to-r from-[#ff5540] via-[#feba39] to-white bg-clip-text text-transparent">Fotográfica</span>
-            </h2>
-            <p className="text-[#a89f9e] text-sm sm:text-base leading-relaxed font-sans">
-              Momentos capturados, encuadres cinemáticos y composiciones de luz curated por José Luis Vásquez. Explora la experiencia interactiva Accordion Gallery o amplía en resolución original.
-            </p>
+        {/* Editorial Centered Section Header */}
+        <div className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-6 border-b border-white/10 pb-10">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-[#feba39] text-xs font-mono tracking-wider uppercase shadow-inner">
+            <Camera className="w-3.5 h-3.5 text-[#ff5540]" />
+            Nuestras Historias & Galería Visual
           </div>
 
-          {/* Category Filter Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 lg:pb-0 scroll-smooth">
+          <h2 className="font-syne font-black text-4xl sm:text-6xl text-white uppercase tracking-tight leading-tight">
+            Galería <span className="bg-gradient-to-r from-[#ff5540] via-[#feba39] to-white bg-clip-text text-transparent">Fotográfica</span>
+          </h2>
+
+          <p className="text-[#a89f9e] text-sm sm:text-base leading-relaxed font-sans max-w-2xl">
+            Momentos capturados, encuadres cinemáticos y composiciones de luz curated por José Luis Vásquez. Explora la experiencia interactiva Accordion Gallery o amplía en resolución original.
+          </p>
+
+          {/* Centered Category Filter Pills */}
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 pt-2 w-full">
             {categories.map((cat) => (
               <button
                 key={cat}
