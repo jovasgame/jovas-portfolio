@@ -57,6 +57,10 @@ export const ModelShowcaseSection: React.FC = () => {
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/10 pb-8">
           <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#feba39]/10 border border-[#feba39]/30 text-[#feba39] text-xs font-mono font-bold uppercase tracking-widest">
+              <Box className="w-4 h-4 text-[#ff5540]" />
+              Visor Interactivo 3D
+            </div>
             <h2 className="font-syne font-black text-3xl sm:text-5xl text-white tracking-tight uppercase">
               REAL TIME <span className="bg-gradient-to-r from-[#ff5540] to-[#feba39] bg-clip-text text-transparent">3D</span>
             </h2>
