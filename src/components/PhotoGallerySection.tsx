@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
-import { Camera, Maximize2, X, ChevronLeft, ChevronRight, ExternalLink, Sparkles, Layers } from 'lucide-react';
+import { Camera, Maximize2, X, ChevronLeft, ChevronRight, ExternalLink, Layers } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export const PhotoGallerySection: React.FC = () => {
@@ -102,7 +102,7 @@ export const PhotoGallerySection: React.FC = () => {
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: index * 0.05 }}
                 onClick={() => setSelectedPhotoIndex(index)}
-                className="break-inside-avoid w-full group relative rounded-[2rem] overflow-hidden bg-[#15131a] border border-white/10 hover:border-[#feba39]/60 transition-all duration-500 cursor-pointer shadow-xl hover:shadow-2xl hover:shadow-[#ff5540]/10"
+                className="break-inside-avoid w-full group relative rounded-[0.8rem] overflow-hidden bg-[#15131a] border border-white/10 hover:border-[#feba39]/60 transition-all duration-500 cursor-pointer shadow-xl hover:shadow-2xl hover:shadow-[#ff5540]/10"
               >
                 {/* Photo Image (Full Natural Aspect Ratio Display) */}
                 <div className="w-full relative overflow-hidden bg-black/40">
@@ -114,39 +114,34 @@ export const PhotoGallerySection: React.FC = () => {
                   />
 
                   {/* Gradient Overlay for Vignette */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/80 opacity-60 group-hover:opacity-40 transition-opacity duration-300 pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/40 opacity-60 group-hover:opacity-30 transition-opacity duration-300 pointer-events-none" />
 
                   {/* Quick Expand Icon Top Right */}
-                  <div className="absolute top-4 right-4 z-10 p-2.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white/80 group-hover:text-white group-hover:bg-[#ff5540] group-hover:border-[#ff5540] transition-all duration-300 scale-90 group-hover:scale-100 shadow-lg">
+                  <div className="absolute top-3 right-3 z-10 p-2.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white/80 group-hover:text-white group-hover:bg-[#ff5540] group-hover:border-[#ff5540] transition-all duration-300 scale-90 group-hover:scale-100 shadow-lg">
                     <Maximize2 className="w-4 h-4" />
                   </div>
 
                   {/* Category Pill Top Left */}
-                  <div className="absolute top-4 left-4 z-10">
+                  <div className="absolute top-3 left-3 z-10">
                     <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[10px] font-mono text-[#feba39] uppercase font-bold tracking-wider">
                       {photo.category}
                     </span>
                   </div>
-                </div>
 
-                {/* Photo Info at the Foot of the Card */}
-                <div className="p-5 bg-[#15131a] border-t border-white/5 space-y-2.5 relative z-10">
-                  <h3 className="font-syne font-bold text-lg text-white group-hover:text-[#feba39] transition-colors leading-snug">
-                    {photo.title}
-                  </h3>
-
-                  {photo.description && (
-                    <p className="text-xs text-[#a89f9e] line-clamp-2 leading-relaxed">
-                      {photo.description}
-                    </p>
-                  )}
-
-                  {photo.cameraSpecs && (
-                    <div className="pt-1 flex items-center gap-1.5 text-[11px] font-mono text-[#a89f9e]">
-                      <Camera className="w-3.5 h-3.5 text-[#ff5540] shrink-0" />
-                      <span className="truncate">{photo.cameraSpecs}</span>
+                  {/* Photo Info as a Soft Shadow at the Bottom of the Image (fades on hover to reveal full preview) */}
+                  <div className="absolute inset-x-0 bottom-0 z-10 pointer-events-none">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent group-hover:from-black/55 group-hover:via-black/20 transition-all duration-500" />
+                    <div className="relative px-4 pb-3.5 pt-10 space-y-0.5">
+                      <h3 className="font-syne font-bold text-sm text-white group-hover:text-[#feba39] transition-colors leading-snug truncate drop-shadow-md">
+                        {photo.title}
+                      </h3>
+                      {photo.description && (
+                        <p className="text-[11px] text-white/70 line-clamp-1 leading-relaxed drop-shadow-md">
+                          {photo.description}
+                        </p>
+                      )}
                     </div>
-                  )}
+                  </div>
                 </div>
               </motion.div>
             ))}
