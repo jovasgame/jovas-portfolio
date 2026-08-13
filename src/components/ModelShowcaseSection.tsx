@@ -14,6 +14,14 @@ export interface Model3DItem {
 
 const STATIC_3D_MODELS: Model3DItem[] = [
   {
+    id: 'topo-model',
+    name: 'Modelo Topográfico (TOPO)',
+    category: 'Escultura / Terreno 3D',
+    url: '/models/TOPO.glb',
+    description: 'Malla 3D física de elevación e inspección topográfica procesada con sombreados PBR en tiempo real.',
+    environmentPreset: 'studio'
+  },
+  {
     id: 'toy-car',
     name: 'Cyber Vehicle 3D',
     category: 'Vehículo / Hard-Surface',
@@ -28,14 +36,6 @@ const STATIC_3D_MODELS: Model3DItem[] = [
     url: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/main/2.0/DamagedHelmet/glTF-Binary/DamagedHelmet.glb',
     description: 'Texturizado PBR desgastado en Substance Painter renderizado en tiempo real con Shaders GLSL.',
     environmentPreset: 'warehouse'
-  },
-  {
-    id: 'duck-model',
-    name: 'Mascota 3D Poly',
-    category: 'Orgánico / Props',
-    url: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/main/2.0/Duck/glTF-Binary/Duck.glb',
-    description: 'Muestra de malla optimizada para bajo consumo de memoria y respuesta táctil fluida.',
-    environmentPreset: 'sunset'
   }
 ];
 
