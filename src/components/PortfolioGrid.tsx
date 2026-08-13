@@ -24,8 +24,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   toggleFeatured,
   setSelectedProjectForModal,
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Gallery images array for 3D & multi-image slider
+  const galleryImages = (project.galleryUrls && project.galleryUrls.length > 0)
+    ? Array.from(new Set([project.imageUrl, ...project.galleryUrls].filter(Boolean)))
+    : (project.imageUrl ? [project.imageUrl] : []);
+
+  const hasMultiImages = galleryImages.length > 1;
 
   // Determine media type for hover preview
   const videoUrl = project.videoUrl?.trim() || '';
@@ -45,6 +51,18 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
   // Poster / thumbnail image
   const posterSrc = getDirectThumbnailUrl(project.imageUrl || project.videoUrl, project.category);
+
+  // Handle auto-advance mini slider on hover for multi-image projects
+  useEffect(() => {
+    if (!isHovered || !hasMultiImages || isVideoOrAnimation) {
+      setCurrentImageIndex(0);
+      return;
+    }
+    const interval = setInterval(() => {
+      setCurrentImageIndex(prev => (prev + 1) % galleryImages.length);
+    }, 1400);
+    return () => clearInterval(interval);
+  }, [isHovered, hasMultiImages, isVideoOrAnimation, galleryImages.length]);
 
   // Handle <video> tag play/pause with sound on hover
   useEffect(() => {
@@ -82,13 +100,42 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       className="group relative rounded-2xl overflow-hidden glass-card border border-[#b18780]/20 flex flex-col justify-between h-[420px] transition-all duration-500 hover:-translate-y-2 cursor-pointer"
       onClick={() => setSelectedProjectForModal(project)}
     >
-      {/* Image / Video Hover Preview */}
+      {/* Image / Video / Multi-Image Hover Preview */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        {/* Base Poster Image (Visible when NOT hovered) */}
+        {/* Base Poster Image (Visible when NOT hovered or when single image) */}
         <ProjectThumbnail
           project={project}
           className="w-full h-full object-cover object-center group-hover:scale-105 transition-all duration-700 filter brightness-90 contrast-105 group-hover:brightness-100 group-hover:contrast-100"
         />
+
+        {/* MULTI-IMAGE MINI SLIDER OVERLAY ON HOVER */}
+        {isHovered && hasMultiImages && !isVideoOrAnimation && (
+          <div className="absolute inset-0 z-10 overflow-hidden bg-black transition-opacity duration-500 opacity-100">
+            <img
+              src={galleryImages[currentImageIndex]}
+              alt={`${project.title} - Imagen ${currentImageIndex + 1}`}
+              className="w-full h-full object-cover object-center scale-105 transition-all duration-700"
+            />
+            {/* Dots Indicator */}
+            <div className="absolute bottom-20 left-0 right-0 z-20 flex justify-center items-center gap-1.5 pointer-events-none">
+              {galleryImages.map((_, idx) => (
+                <span
+                  key={idx}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    idx === currentImageIndex
+                      ? 'w-5 bg-[#feba39] shadow-[0_0_8px_#feba39]'
+                      : 'w-1.5 bg-white/40'
+                  }`}
+                />
+              ))}
+            </div>
+            {/* Slide Counter Badge */}
+            <div className="absolute top-4 right-4 z-20 flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md border border-[#feba39]/50 text-[10px] font-mono text-[#feba39] font-bold shadow-lg">
+              <Sparkles className="w-3 h-3 text-[#ff5540]" />
+              <span>GALERÍA 3D: {currentImageIndex + 1}/{galleryImages.length}</span>
+            </div>
+          </div>
+        )}
 
         {/* Video Preview on Hover */}
         {isHovered && isVideoOrAnimation && hasVideoPreview && (

@@ -2,6 +2,58 @@ import { Project, PhotoItem, UserProfile, BrandAssets, ContactMessage, Stats } f
 
 export const initialProjects: Project[] = [
   {
+    "title": "Modelado Mech Cyberpunk 3D",
+    "category": "Modelado 3D",
+    "year": "2024",
+    "description": "Escultura y modelado 3D hard-surface con texturizado PBR y renderizado fotorrealista.",
+    "fullDescription": "Proyecto conceptual de robótica avanzada. Incluye modelado orgánico y mecánico en Blender & ZBrush, desenvuelto UV, texturizado 8K en Substance Painter y composición final.",
+    "imageUrl": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
+    "galleryUrls": [
+      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "tags": [
+      "Blender",
+      "Modelado 3D",
+      "ZBrush",
+      "Octane Render"
+    ],
+    "featured": true,
+    "specs": [
+      { "label": "Motor Render", "value": "Octane / Redshift" },
+      { "label": "Polígonos", "value": "2.4M Tris" },
+      { "label": "Texturas", "value": "8K PBR Maps" }
+    ],
+    "id": "proj-3d-cybermech-01",
+    "createdAt": "2026-08-13"
+  },
+  {
+    "title": "Santuario Neón 3D",
+    "category": "Modelado 3D",
+    "year": "2025",
+    "description": "Entorno tridimensional futurista con shaders lumínicos y simulación de fluidos.",
+    "fullDescription": "Diseño de entorno 3D espacial utilizando Cinema 4D y Redshift. Iluminación volumétrica, niebla atmosférica y shaders especulares avanzados.",
+    "imageUrl": "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1200&q=80",
+    "galleryUrls": [
+      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "tags": [
+      "Cinema 4D",
+      "Redshift",
+      "3D Environment"
+    ],
+    "featured": true,
+    "specs": [
+      { "label": "Software", "value": "Cinema 4D S26" },
+      { "label": "Resolución", "value": "4K Ultra HD" }
+    ],
+    "id": "proj-3d-sanctuary-02",
+    "createdAt": "2026-08-13"
+  },
+  {
     "title": "Robot Atardecer ",
     "category": "Arte Conceptual",
     "year": "2022",

@@ -1,27 +1,67 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
-import { X, Sparkles, CheckCircle, Flame, Calendar, Tag, User } from 'lucide-react';
+import { X, Sparkles, CheckCircle, ChevronLeft, ChevronRight, Image as ImageIcon, Film } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MediaViewer } from './MediaViewer';
 
 export const ProjectModal: React.FC = () => {
   const { selectedProjectForModal, setSelectedProjectForModal } = usePortfolio();
+  const [activeMediaIndex, setActiveMediaIndex] = useState(0);
 
-  // Close on Escape key
+  const project = selectedProjectForModal;
+
+  // Build complete media list (videoUrl + galleryUrls or imageUrl)
+  const rawGallery = (project?.galleryUrls && project.galleryUrls.length > 0)
+    ? Array.from(new Set([project.imageUrl, ...project.galleryUrls].filter(Boolean)))
+    : (project?.imageUrl ? [project.imageUrl] : []);
+
+  const videoUrl = project?.videoUrl?.trim();
+  const mediaList: { url: string; isVideo: boolean }[] = [];
+
+  if (videoUrl) {
+    mediaList.push({ url: videoUrl, isVideo: true });
+  }
+  rawGallery.forEach((imgUrl) => {
+    if (imgUrl !== videoUrl) {
+      mediaList.push({ url: imgUrl, isVideo: false });
+    }
+  });
+
+  // Reset index when project changes
   useEffect(() => {
+    setActiveMediaIndex(0);
+  }, [project?.id]);
+
+  // Keyboard Navigation (Escape, Left Arrow, Right Arrow)
+  useEffect(() => {
+    if (!selectedProjectForModal) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setSelectedProjectForModal(null);
+      } else if (e.key === 'ArrowLeft' && mediaList.length > 1) {
+        setActiveMediaIndex(prev => (prev === 0 ? mediaList.length - 1 : prev - 1));
+      } else if (e.key === 'ArrowRight' && mediaList.length > 1) {
+        setActiveMediaIndex(prev => (prev === mediaList.length - 1 ? 0 : prev + 1));
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [setSelectedProjectForModal]);
+  }, [selectedProjectForModal, mediaList.length, setSelectedProjectForModal]);
 
-  if (!selectedProjectForModal) return null;
+  if (!project) return null;
 
-  const project = selectedProjectForModal;
-  const isVideoProject = Boolean(project.videoUrl?.trim()) || project.category === 'Animación';
+  const currentMedia = mediaList[activeMediaIndex] || { url: project.imageUrl, isVideo: false };
+  const hasMultipleMedia = mediaList.length > 1;
+
+  const handlePrevSlide = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setActiveMediaIndex(prev => (prev === 0 ? mediaList.length - 1 : prev - 1));
+  };
+
+  const handleNextSlide = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setActiveMediaIndex(prev => (prev === mediaList.length - 1 ? 0 : prev + 1));
+  };
 
   return (
     <AnimatePresence>
@@ -50,6 +90,12 @@ export const ProjectModal: React.FC = () => {
               <span className="text-[11px] font-mono text-[#a89f9e]">
                 Año: {project.year}
               </span>
+              {hasMultipleMedia && (
+                <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#feba39]/15 text-[#feba39] border border-[#feba39]/30 text-[10px] font-mono font-bold">
+                  <ImageIcon className="w-3 h-3" />
+                  Galería 3D ({activeMediaIndex + 1}/{mediaList.length})
+                </span>
+              )}
             </div>
 
             <button
@@ -64,20 +110,92 @@ export const ProjectModal: React.FC = () => {
           {/* Large Screen-Filling Cinema Player & Details */}
           <div className="p-3 sm:p-6 space-y-4 overflow-y-auto max-h-[calc(96vh-55px)] flex flex-col justify-between">
             
-            {/* Dominant 16:9 Large Video Frame */}
+            {/* Dominant 16:9 Large Video/Image Frame with Navigation Arrows */}
             <div className="relative rounded-xl sm:rounded-2xl overflow-hidden bg-black aspect-video w-full max-h-[68vh] shadow-2xl flex items-center justify-center border border-white/10 group">
-              <MediaViewer
-                src={project.videoUrl || project.imageUrl}
-                alt={project.title}
-                poster={project.imageUrl}
-                forceVideo={isVideoProject}
-                className="w-full h-full object-contain"
-                controls={true}
-                autoPlay={true}
-                loop={true}
-                muted={false}
-              />
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeMediaIndex}
+                  initial={{ opacity: 0.6, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0.6, scale: 0.98 }}
+                  transition={{ duration: 0.2 }}
+                  className="w-full h-full flex items-center justify-center"
+                >
+                  <MediaViewer
+                    src={currentMedia.url}
+                    alt={`${project.title} - Recurso ${activeMediaIndex + 1}`}
+                    poster={project.imageUrl}
+                    forceVideo={currentMedia.isVideo}
+                    className="w-full h-full object-contain"
+                    controls={true}
+                    autoPlay={true}
+                    loop={true}
+                    muted={false}
+                  />
+                </motion.div>
+              </AnimatePresence>
+
+              {/* LEFT & RIGHT NAVIGATION ARROWS */}
+              {hasMultipleMedia && (
+                <>
+                  <button
+                    onClick={handlePrevSlide}
+                    className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 p-2.5 sm:p-3.5 rounded-full bg-black/75 hover:bg-[#ff5540] text-white border border-white/20 hover:border-[#ff5540] backdrop-blur-md transition-all duration-200 cursor-pointer shadow-2xl z-30 group-hover:scale-110"
+                    title="Imagen anterior (Flecha Izquierda)"
+                  >
+                    <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+                  </button>
+
+                  <button
+                    onClick={handleNextSlide}
+                    className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 p-2.5 sm:p-3.5 rounded-full bg-black/75 hover:bg-[#ff5540] text-white border border-white/20 hover:border-[#ff5540] backdrop-blur-md transition-all duration-200 cursor-pointer shadow-2xl z-30 group-hover:scale-110"
+                    title="Imagen siguiente (Flecha Derecha)"
+                  >
+                    <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+                  </button>
+
+                  {/* Top Slide Counter Badge */}
+                  <div className="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-[#feba39]/50 text-[11px] font-mono text-[#feba39] font-bold shadow-xl pointer-events-none">
+                    {currentMedia.isVideo ? '🎥 VÍDEO' : `🖼️ IMAGEN ${activeMediaIndex + 1} DE ${mediaList.length}`}
+                  </div>
+                </>
+              )}
             </div>
+
+            {/* THUMBNAIL GALLERY BAR FOR FAST NAVIGATION */}
+            {hasMultipleMedia && (
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar pt-1">
+                {mediaList.map((item, idx) => {
+                  const isActive = idx === activeMediaIndex;
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => setActiveMediaIndex(idx)}
+                      className={`relative w-20 h-14 rounded-xl overflow-hidden shrink-0 border-2 transition-all cursor-pointer ${
+                        isActive
+                          ? 'border-[#feba39] scale-105 shadow-[0_0_12px_rgba(254,186,57,0.5)]'
+                          : 'border-white/10 opacity-60 hover:opacity-100 hover:border-white/30'
+                      }`}
+                    >
+                      {item.isVideo ? (
+                        <div className="w-full h-full bg-black/80 flex items-center justify-center text-[#ff7563]">
+                          <Film className="w-5 h-5" />
+                        </div>
+                      ) : (
+                        <img
+                          src={item.url}
+                          alt={`Miniatura ${idx + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                      <div className="absolute bottom-0.5 right-0.5 px-1 rounded bg-black/80 text-[9px] font-mono text-white">
+                        {idx + 1}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
 
             {/* Subtle YouTube-Style Info Bar below video */}
             <div className="space-y-3 pt-1">
@@ -136,3 +254,4 @@ export const ProjectModal: React.FC = () => {
     </AnimatePresence>
   );
 };
+

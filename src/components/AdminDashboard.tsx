@@ -156,6 +156,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
   const [tagsInput, setTagsInput] = useState('');
   const [client, setClient] = useState('');
   const [featured, setFeatured] = useState(false);
+  const [galleryUrls, setGalleryUrls] = useState<string[]>([]);
 
   // Specifications
   const [specs, setSpecs] = useState<ProjectSpec[]>([]);
@@ -354,6 +355,11 @@ export const initialPhotos: PhotoItem[] = ${JSON.stringify(photos, null, 2)};
     setVideoUrl(p.videoUrl || '');
     setThumbnailUrl(p.thumbnailUrl || '');
     setMediaUrl(p.videoUrl || p.imageUrl || '');
+    setGalleryUrls(
+      p.galleryUrls && p.galleryUrls.length > 0
+        ? [...p.galleryUrls]
+        : p.imageUrl ? [p.imageUrl] : []
+    );
     setTagsInput(p.tags.join(', '));
     setClient(p.client || '');
     setFeatured(p.featured);
@@ -393,6 +399,13 @@ export const initialPhotos: PhotoItem[] = ${JSON.stringify(photos, null, 2)};
       }
     }
 
+    // Process galleryUrls
+    const cleanedGallery = galleryUrls.map(u => u.trim()).filter(Boolean);
+    if (finalImageUrl && !cleanedGallery.includes(finalImageUrl)) {
+      cleanedGallery.unshift(finalImageUrl);
+    }
+    const finalGalleryUrls = cleanedGallery.length > 0 ? Array.from(new Set(cleanedGallery)) : undefined;
+
     if (isCreatingNew) {
       addProject({
         title,
@@ -401,6 +414,7 @@ export const initialPhotos: PhotoItem[] = ${JSON.stringify(photos, null, 2)};
         description,
         fullDescription: fullDescription || description,
         imageUrl: finalImageUrl,
+        galleryUrls: finalGalleryUrls,
         videoUrl: finalVideoUrl || undefined,
         thumbnailUrl: thumbnailUrl || undefined,
         tags: tagsArray,
@@ -417,6 +431,7 @@ export const initialPhotos: PhotoItem[] = ${JSON.stringify(photos, null, 2)};
         description,
         fullDescription: fullDescription || description,
         imageUrl: finalImageUrl,
+        galleryUrls: finalGalleryUrls,
         videoUrl: finalVideoUrl || undefined,
         thumbnailUrl: thumbnailUrl || undefined,
         tags: tagsArray,
@@ -1581,6 +1596,77 @@ export const initialPhotos: PhotoItem[] = ${JSON.stringify(photos, null, 2)};
                     label="Subir o Seleccionar Miniatura para Sección de Vídeos"
                     helperText="Esta imagen se mostrará en la sección de vídeos (estilo YouTube) antes de pasar el ratón."
                   />
+                </div>
+
+                {/* MULTI-IMAGE GALLERY MANAGER (3+ Images for 3D & General Slider) */}
+                <div className="p-4 rounded-2xl bg-black/40 border border-[#feba39]/30 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <label className="text-xs font-mono font-bold uppercase text-[#feba39] flex items-center gap-1.5">
+                        <ImageIcon className="w-4 h-4 text-[#ff5540]" />
+                        Galería de Imágenes 3D / Adicionales (Carrusel / Slider)
+                      </label>
+                      <p className="text-[11px] text-[#a89f9e]">
+                        Sube mínimo 3 imágenes para activar el mini slider en la vista previa y las flechas de navegación en el proyecto.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setGalleryUrls(prev => [...prev, ''])}
+                      className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] font-bold text-xs flex items-center gap-1 cursor-pointer shadow-md"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      Añadir Imagen #{galleryUrls.length + 1}
+                    </button>
+                  </div>
+
+                  <div className="space-y-3 pt-2">
+                    {galleryUrls.map((urlVal, index) => (
+                      <div key={index} className="relative bg-[#191524] p-3 rounded-xl border border-white/10 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[11px] font-mono text-[#feba39] font-bold">
+                            Imagen #{index + 1} {index === 0 ? '(Portada Principal)' : ''}
+                          </span>
+                          {galleryUrls.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => setGalleryUrls(prev => prev.filter((_, i) => i !== index))}
+                              className="p-1 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-300 text-[10px] font-mono flex items-center gap-1 cursor-pointer"
+                              title="Eliminar esta imagen de la galería"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                              Quitar
+                            </button>
+                          )}
+                        </div>
+
+                        <ImageUploader
+                          value={urlVal}
+                          onChange={(newUrl) => {
+                            setGalleryUrls(prev => {
+                              const updated = [...prev];
+                              updated[index] = newUrl;
+                              return updated;
+                            });
+                            if (index === 0 && newUrl) {
+                              setImageUrl(newUrl);
+                              if (!mediaUrl) setMediaUrl(newUrl);
+                            }
+                          }}
+                          allowVideo={false}
+                          label={`Subir o Seleccionar Imagen #${index + 1}`}
+                          helperText="Selecciona una imagen desde tu equipo o pega una URL."
+                        />
+                      </div>
+                    ))}
+
+                    {galleryUrls.length < 3 && (
+                      <p className="text-[10px] font-mono text-[#ff7563] italic">
+                        💡 Sugerencia: Agrega al menos {3 - galleryUrls.length} imagen(es) más para completar las 3 imágenes mínimas requeridas para el slider.
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <div>

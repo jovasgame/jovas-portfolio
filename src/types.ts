@@ -13,6 +13,7 @@ export interface Project {
   description: string;
   fullDescription?: string;
   imageUrl: string;
+  galleryUrls?: string[];
   videoUrl?: string;
   thumbnailUrl?: string;
   tags: string[];
