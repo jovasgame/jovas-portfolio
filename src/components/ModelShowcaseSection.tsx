@@ -137,21 +137,6 @@ export const ModelShowcaseSection: React.FC = () => {
                 </button>
               );
             })}
-
-            {/* Direct Model Upload Instructions Card */}
-            <div className="p-4 rounded-2xl bg-[#ff5540]/10 border border-[#ff5540]/30 space-y-2 mt-4">
-              <h4 className="font-syne font-bold text-xs text-white flex items-center gap-1.5">
-                <Code className="w-4 h-4 text-[#feba39]" />
-                ¿Cómo agregar tus propios modelos 3D?
-              </h4>
-              <p className="text-[11px] text-[#a89f9e] leading-relaxed font-sans">
-                Para añadir tus propios archivos 3D (<strong>.glb</strong>, <strong>.gltf</strong>, <strong>.fbx</strong> o <strong>.obj</strong>) sin usar base de datos:
-              </p>
-              <ol className="text-[10px] font-mono text-[#feba39] space-y-1 list-decimal pl-4">
-                <li>Copia tu archivo a la carpeta <strong>public/models/</strong>.</li>
-                <li>Añade la ruta <code className="text-white">"/models/mi-modelo.glb"</code> en <code className="text-white">STATIC_3D_MODELS</code>.</li>
-              </ol>
-            </div>
           </div>
 
           {/* Interactive 3D Model Viewport (Right) */}
@@ -165,12 +150,13 @@ export const ModelShowcaseSection: React.FC = () => {
               </span>
             </div>
 
-            {/* Three.js Model Canvas */}
+            {/* Three.js Model Canvas (Auto-centered) */}
             <ModelViewer
               key={selectedModel.id}
               url={selectedModel.url}
               height="100%"
               width="100%"
+              autoFrame={true}
               autoRotate={autoRotate}
               autoRotateSpeed={0.4}
               environmentPreset={environmentPreset}
