@@ -57,12 +57,8 @@ export const ModelShowcaseSection: React.FC = () => {
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/10 pb-8">
           <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#feba39]/10 border border-[#feba39]/30 text-[#feba39] text-xs font-mono font-bold uppercase tracking-widest">
-              <Box className="w-4 h-4 text-[#ff5540]" />
-              Visor Interactivo 3D WebGL (Sin Base de Datos)
-            </div>
             <h2 className="font-syne font-black text-3xl sm:text-5xl text-white tracking-tight uppercase">
-              Laboratorio <span className="bg-gradient-to-r from-[#ff5540] to-[#feba39] bg-clip-text text-transparent">3D Real-Time</span>
+              REAL TIME <span className="bg-gradient-to-r from-[#ff5540] to-[#feba39] bg-clip-text text-transparent">3D</span>
             </h2>
             <p className="text-[#a89f9e] text-xs sm:text-sm max-w-2xl font-sans leading-relaxed">
               Inspecciona modelos 3D interactivos con rotación manual, zoom dinámico, iluminación de estudio y captura de capturas en alta resolución en tiempo real.
@@ -125,11 +121,8 @@ export const ModelShowcaseSection: React.FC = () => {
                       : 'bg-[#121017]/80 border-white/10 hover:border-white/20 hover:bg-[#181524]/60'
                   }`}
                 >
-                  <div className="flex items-center justify-between gap-2 mb-1">
+                  <div className="mb-1">
                     <span className="font-syne font-bold text-sm text-white">{item.name}</span>
-                    <span className="px-2 py-0.5 rounded-full bg-white/5 text-[9px] font-mono text-[#feba39] border border-white/10 shrink-0">
-                      {item.category}
-                    </span>
                   </div>
                   <p className="text-xs text-[#a89f9e] line-clamp-2 leading-relaxed">
                     {item.description}
@@ -172,9 +165,6 @@ export const ModelShowcaseSection: React.FC = () => {
             <div className="absolute bottom-4 left-4 right-4 z-20 pointer-events-none flex items-center justify-between text-[11px] font-mono text-[#a89f9e]">
               <span className="bg-black/75 px-3 py-1 rounded-full backdrop-blur-md border border-white/10">
                 🖱️ Arrastra para rotar 360° • Rueda del ratón para zoom
-              </span>
-              <span className="bg-black/75 px-3 py-1 rounded-full backdrop-blur-md border border-white/10 hidden sm:inline-block">
-                Motor: Three.js / React Three Fiber
               </span>
             </div>
           </div>
