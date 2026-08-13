@@ -22,12 +22,12 @@ const STATIC_3D_MODELS: Model3DItem[] = [
     environmentPreset: 'studio'
   },
   {
-    id: 'toy-car',
-    name: 'Cyber Vehicle 3D',
-    category: 'Vehículo / Hard-Surface',
-    url: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/main/2.0/ToyCar/glTF-Binary/ToyCar.glb',
-    description: 'Modelo 3D interactivo con sombras en tiempo real, mapas PBR y reflejos de luz física.',
-    environmentPreset: 'city'
+    id: 'robot-model',
+    name: 'Robot Mech 3D',
+    category: 'Hard-Surface / Robot',
+    url: '/models/ROBOT.glb',
+    description: 'Modelo 3D detallado de robot mecha articulado con mapas de textura PBR de alta resolución.',
+    environmentPreset: 'warehouse'
   },
   {
     id: 'damaged-helmet',

@@ -156,10 +156,29 @@ const ModelInner = ({
     const g = inner.current;
     g.updateWorldMatrix(true, true);
 
-    const box = new THREE.Box3().setFromObject(g);
+    const box = new THREE.Box3();
+    let hasMesh = false;
+
+    g.traverse((o: any) => {
+      if (o.isMesh && o.geometry) {
+        hasMesh = true;
+        o.geometry.computeBoundingBox();
+        const b = o.geometry.boundingBox.clone();
+        b.applyMatrix4(o.matrixWorld);
+        box.union(b);
+      }
+    });
+
+    if (!hasMesh) {
+      box.setFromObject(g);
+    }
+
+    const center = new THREE.Vector3();
+    box.getCenter(center);
     const sphere = box.getBoundingSphere(new THREE.Sphere());
     const s = sphere.radius > 0 ? 1 / (sphere.radius * 2) : 1;
-    g.position.set(-sphere.center.x, -sphere.center.y, -sphere.center.z);
+
+    g.position.set(-center.x * s, -center.y * s, -center.z * s);
     g.scale.setScalar(s);
 
     g.traverse((o: any) => {
@@ -173,15 +192,16 @@ const ModelInner = ({
       }
     });
 
-    g.getWorldPosition(pivotW.current);
-    pivot.copy(pivotW.current);
+    pivotW.current.set(xOff, yOff, 0);
+    pivot.set(0, 0, 0);
+    outer.current.position.set(xOff, yOff, 0);
     outer.current.rotation.set(initPitch, initYaw, 0);
 
     if (autoFrame && (camera as any).isPerspectiveCamera) {
       const persp = camera as THREE.PerspectiveCamera;
       const fitR = sphere.radius * s;
       const d = (fitR * 1.2) / Math.sin((persp.fov * Math.PI) / 180 / 2);
-      persp.position.set(pivotW.current.x, pivotW.current.y, pivotW.current.z + d);
+      persp.position.set(0, 0, d * 1.6);
       persp.near = Math.max(0.01, d / 10);
       persp.far = d * 10;
       persp.updateProjectionMatrix();
@@ -350,10 +370,7 @@ const ModelInner = ({
     cHov.current.x += (tHov.current.x - cHov.current.x) * HOVER_EASE;
     cHov.current.y += (tHov.current.y - cHov.current.y) * HOVER_EASE;
 
-    const ndc = pivotW.current.clone().project(camera);
-    ndc.x += xOff + cPar.current.x;
-    ndc.y += yOff + cPar.current.y;
-    outer.current.position.copy(ndc.unproject(camera));
+    outer.current.position.set(xOff + cPar.current.x, yOff + cPar.current.y, 0);
 
     outer.current.rotation.x += cHov.current.x - phx;
     outer.current.rotation.y += cHov.current.y - phy;
