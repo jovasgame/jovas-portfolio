@@ -30,12 +30,12 @@ const STATIC_3D_MODELS: Model3DItem[] = [
     environmentPreset: 'warehouse'
   },
   {
-    id: 'damaged-helmet',
-    name: 'Casco Sci-Fi PBR',
-    category: 'Personajes & Utilería',
-    url: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/main/2.0/DamagedHelmet/glTF-Binary/DamagedHelmet.glb',
-    description: 'Texturizado PBR desgastado en Substance Painter renderizado en tiempo real con Shaders GLSL.',
-    environmentPreset: 'warehouse'
+    id: 'martillo-model',
+    name: 'Martillo Místico 3D',
+    category: 'Utilería / Props PBR',
+    url: '/models/Martillo.glb',
+    description: 'Modelo 3D de martillo detallado con materiales PBR, mapas de relieve y sombreado en tiempo real.',
+    environmentPreset: 'sunset'
   }
 ];
 
