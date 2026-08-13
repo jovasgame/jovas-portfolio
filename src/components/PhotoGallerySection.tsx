@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
-import { Camera, Maximize2, X, ChevronLeft, ChevronRight, ExternalLink, Layers } from 'lucide-react';
+import { Camera, Maximize2, X, ChevronLeft, ChevronRight, ExternalLink, Layers, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import AccordionGallery, { AccordionGalleryItem } from './AccordionGallery';
 
 export const PhotoGallerySection: React.FC = () => {
   const { photos } = usePortfolio();
@@ -16,6 +17,16 @@ export const PhotoGallerySection: React.FC = () => {
     : photos.filter(p => p.category === activeFilter);
 
   const selectedPhoto = selectedPhotoIndex !== null ? filteredPhotos[selectedPhotoIndex] : null;
+
+  // Transform photos into AccordionGallery items
+  const accordionItems: AccordionGalleryItem[] = filteredPhotos.map((photo) => ({
+    id: photo.id,
+    image: photo.imageUrl,
+    label: photo.title,
+    category: photo.category,
+    specs: photo.cameraSpecs || photo.description || photo.category,
+    alt: photo.title
+  }));
 
   // Keyboard navigation for Lightbox Preview
   useEffect(() => {
@@ -64,7 +75,7 @@ export const PhotoGallerySection: React.FC = () => {
               Galería <span className="bg-gradient-to-r from-[#ff5540] via-[#feba39] to-white bg-clip-text text-transparent">Fotográfica</span>
             </h2>
             <p className="text-[#a89f9e] text-sm sm:text-base leading-relaxed font-sans">
-              Momentos capturados, encuadres cinemáticos y composiciones de luz curated por José Luis Vásquez. Explora la colección adaptable en su resolución nativa.
+              Momentos capturados, encuadres cinemáticos y composiciones de luz curated por José Luis Vásquez. Explora la experiencia interactiva Accordion Gallery o amplía en resolución original.
             </p>
           </div>
 
@@ -86,65 +97,48 @@ export const PhotoGallerySection: React.FC = () => {
           </div>
         </div>
 
-        {/* Dynamic Responsive Masonry Grid (Adapts to Image Dimensions) */}
+        {/* AccordionGallery Interactive Component */}
         {filteredPhotos.length === 0 ? (
           <div className="py-20 text-center text-[#a89f9e] font-mono text-sm bg-white/5 rounded-3xl border border-white/10 backdrop-blur-md flex flex-col items-center justify-center space-y-3">
             <Layers className="w-8 h-8 text-[#ff5540]/60" />
             <span>No hay fotografías disponibles en esta categoría.</span>
           </div>
         ) : (
-          <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
-            {filteredPhotos.map((photo, index) => (
-              <motion.div
-                key={photo.id}
-                initial={{ opacity: 0, y: 25 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5, delay: index * 0.05 }}
-                onClick={() => setSelectedPhotoIndex(index)}
-                className="break-inside-avoid w-full group relative rounded-[0.8rem] overflow-hidden bg-[#15131a] border border-white/10 hover:border-[#feba39]/60 transition-all duration-500 cursor-pointer shadow-xl hover:shadow-2xl hover:shadow-[#ff5540]/10"
-              >
-                {/* Photo Image (Full Natural Aspect Ratio Display) */}
-                <div className="w-full relative overflow-hidden bg-black/40">
-                  <img
-                    src={photo.imageUrl}
-                    alt={photo.title}
-                    loading="lazy"
-                    className="w-full h-auto object-cover filter brightness-95 group-hover:brightness-105 group-hover:scale-[1.03] transition-transform duration-700 ease-out block"
-                  />
+          <div className="w-full relative">
+            <AccordionGallery
+              items={accordionItems}
+              defaultIndex={Math.min(2, Math.max(0, Math.floor((accordionItems.length - 1) / 2)))}
+              accentColor="#feba39"
+              overlayColor="#060010"
+              textColor="#ffffff"
+              height={500}
+              gap={12}
+              radius={20}
+              expandRatio={0.52}
+              orientation="horizontal"
+              duration={0.6}
+              ease="power3.out"
+              parallax={0.5}
+              tilt={8}
+              stagger={0.06}
+              trigger="hover"
+              showLabels={true}
+              grayscale={true}
+              onItemClick={(_item, index) => {
+                setSelectedPhotoIndex(index);
+              }}
+            />
 
-                  {/* Gradient Overlay for Vignette */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/40 opacity-60 group-hover:opacity-30 transition-opacity duration-300 pointer-events-none" />
-
-                  {/* Quick Expand Icon Top Right */}
-                  <div className="absolute top-3 right-3 z-10 p-2.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white/80 group-hover:text-white group-hover:bg-[#ff5540] group-hover:border-[#ff5540] transition-all duration-300 scale-90 group-hover:scale-100 shadow-lg">
-                    <Maximize2 className="w-4 h-4" />
-                  </div>
-
-                  {/* Category Pill Top Left */}
-                  <div className="absolute top-3 left-3 z-10">
-                    <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[10px] font-mono text-[#feba39] uppercase font-bold tracking-wider">
-                      {photo.category}
-                    </span>
-                  </div>
-
-                  {/* Photo Info as a Soft Shadow at the Bottom of the Image (fades on hover to reveal full preview) */}
-                  <div className="absolute inset-x-0 bottom-0 z-10 pointer-events-none">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent group-hover:from-black/55 group-hover:via-black/20 transition-all duration-500" />
-                    <div className="relative px-4 pb-3.5 pt-10 space-y-0.5">
-                      <h3 className="font-syne font-bold text-sm text-white group-hover:text-[#feba39] transition-colors leading-snug truncate drop-shadow-md">
-                        {photo.title}
-                      </h3>
-                      {photo.description && (
-                        <p className="text-[11px] text-white/70 line-clamp-1 leading-relaxed drop-shadow-md">
-                          {photo.description}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+            {/* Helper Hint */}
+            <div className="mt-4 flex items-center justify-between text-xs font-mono text-[#a89f9e]">
+              <span className="flex items-center gap-1.5 text-[#feba39]">
+                <Sparkles className="w-3.5 h-3.5 text-[#ff5540]" />
+                Pasa el ratón para desplegar paneles • Haz clic para ampliar en resolución original
+              </span>
+              <span className="hidden sm:inline-block">
+                {filteredPhotos.length} {filteredPhotos.length === 1 ? 'fotografía' : 'fotografías'} en exhibición
+              </span>
+            </div>
           </div>
         )}
       </div>
