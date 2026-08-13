@@ -236,14 +236,54 @@ export const AccordionGallery: React.FC<AccordionGalleryProps> = ({
     >
       {items.map((item, i) => {
         const isActive = i === active;
-        const Tag = item.link ? 'a' : 'div';
+        const panelInner = (
+          <>
+            <span className="ag-panel__frame">
+              <span className="ag-panel__media" ref={(el) => { mediaRefs.current[i] = el; }}>
+                <img src={item.image} alt={item.alt || item.label || ''} draggable="false" />
+              </span>
+              <span className="ag-panel__overlay" aria-hidden="true" />
+            </span>
+            {showLabels && (
+              <span className="ag-panel__label" aria-hidden="true">
+                <span className="ag-panel__bar" ref={(el) => { barRefs.current[i] = el; }} />
+                <span className="ag-panel__text" ref={(el) => { textRefs.current[i] = el; }}>
+                  <span>{item.label}</span>
+                  {item.specs && <span className="ag-panel__specs">{item.specs}</span>}
+                </span>
+              </span>
+            )}
+          </>
+        );
+
+        if (item.link) {
+          return (
+            <a
+              key={i}
+              ref={(el) => { panelRefs.current[i] = el; }}
+              className={`ag-panel${isActive ? ' ag-panel--active' : ''}`}
+              style={{ borderRadius: `${radius}px` }}
+              href={item.link}
+              onClick={e => handleClick(i, e)}
+              onMouseEnter={() => handleEnter(i)}
+              onFocus={() => setActive(i)}
+              onKeyDown={e => handleKeyDown(i, e)}
+              role="listitem"
+              tabIndex={0}
+              aria-current={isActive ? 'true' : undefined}
+              aria-label={item.label || item.alt || `Galería ${i + 1}`}
+            >
+              {panelInner}
+            </a>
+          );
+        }
+
         return (
-          <Tag
+          <div
             key={i}
-            ref={(el: HTMLElement | null) => (panelRefs.current[i] = el)}
+            ref={(el) => { panelRefs.current[i] = el; }}
             className={`ag-panel${isActive ? ' ag-panel--active' : ''}`}
             style={{ borderRadius: `${radius}px` }}
-            href={item.link || undefined}
             onClick={e => handleClick(i, e)}
             onMouseEnter={() => handleEnter(i)}
             onFocus={() => setActive(i)}
@@ -253,22 +293,8 @@ export const AccordionGallery: React.FC<AccordionGalleryProps> = ({
             aria-current={isActive ? 'true' : undefined}
             aria-label={item.label || item.alt || `Galería ${i + 1}`}
           >
-            <span className="ag-panel__frame">
-              <span className="ag-panel__media" ref={(el: HTMLElement | null) => (mediaRefs.current[i] = el)}>
-                <img src={item.image} alt={item.alt || item.label || ''} draggable="false" />
-              </span>
-              <span className="ag-panel__overlay" aria-hidden="true" />
-            </span>
-            {showLabels && (
-              <span className="ag-panel__label" aria-hidden="true">
-                <span className="ag-panel__bar" ref={(el: HTMLElement | null) => (barRefs.current[i] = el)} />
-                <span className="ag-panel__text" ref={(el: HTMLElement | null) => (textRefs.current[i] = el)}>
-                  <span>{item.label}</span>
-                  {item.specs && <span className="ag-panel__specs">{item.specs}</span>}
-                </span>
-              </span>
-            )}
-          </Tag>
+            {panelInner}
+          </div>
         );
       })}
     </div>
