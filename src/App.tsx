@@ -6,6 +6,7 @@ import { PortfolioGrid } from './components/PortfolioGrid';
 import { VideoSection } from './components/VideoSection';
 import { WorkflowSection } from './components/WorkflowSection';
 import { CoverflowGallery } from './components/CoverflowGallery';
+import { ModelShowcaseSection } from './components/ModelShowcaseSection';
 import { PhotoGallerySection } from './components/PhotoGallerySection';
 import { AboutSection } from './components/AboutSection';
 import { ContactSection } from './components/ContactSection';
@@ -88,6 +89,9 @@ const MainPortfolioContent: React.FC = () => {
 
         {/* 4. 3D Coverflow Gallery Previsualizer */}
         <CoverflowGallery />
+
+        {/* 4.5 Visor 3D WebGL Real-Time (ModelViewer) */}
+        <ModelShowcaseSection />
 
         {/* 5. Galería de Fotografía */}
         <PhotoGallerySection />
