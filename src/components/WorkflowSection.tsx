@@ -19,9 +19,9 @@ export const WorkflowSection: React.FC = () => {
     },
     {
       number: '03',
-      title: 'Texturizado PBR & Render GPU',
-      description: 'Creación de materiales fidedignos con mapas de rugosidad, emisión y volumétrica iluminada por motores GPU Redshift / Octane.',
-      tools: ['Substance Painter', 'Redshift', 'Octane']
+      title: 'Texturizado PBR & Render en Blender',
+      description: 'Creación de materiales fidedignos con sombreadores de nodos PBR, mapas de rugosidad, emisión y volumetría realista procesados en Blender Cycles & EEVEE.',
+      tools: ['Blender 3D', 'Cycles Engine', 'EEVEE']
     },
     {
       number: '04',
