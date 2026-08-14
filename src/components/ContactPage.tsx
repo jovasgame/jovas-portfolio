@@ -14,7 +14,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [projectType, setProjectType] = useState('Animación');
-  const [budget, setBudget] = useState('$2,000 - $5,000');
+  const [budget, setBudget] = useState('');
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
@@ -26,7 +26,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
       name,
       email,
       projectType,
-      budget,
+      budget: budget.trim() || 'No especificado',
       message
     });
 
@@ -34,7 +34,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
   };
 
   const whatsappMessageUrl = `https://wa.me/50372554916?text=${encodeURIComponent(
-    `Hola Jovas, mi nombre es ${name || 'Cliente'} (${email}). Me interesa un proyecto de ${projectType} con un presupuesto de ${budget}. Detalles: ${message}`
+    `Hola Jovas, mi nombre es ${name || 'Cliente'} (${email}). Me interesa un proyecto de ${projectType}${budget.trim() ? ` con un presupuesto estimado de ${budget.trim()}` : ''}. Detalles: ${message}`
   )}`;
 
   return (
@@ -187,17 +187,17 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
 
             {/* Budget */}
             <div className="space-y-2">
-              <label className="text-xs font-mono text-[#a89f9e] uppercase block">Presupuesto Estimado</label>
-              <select
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-mono text-[#a89f9e] uppercase block">Presupuesto Estimado</label>
+                <span className="text-[10px] font-mono text-[#feba39]/80 uppercase font-bold">(Opcional)</span>
+              </div>
+              <input
+                type="text"
                 value={budget}
                 onChange={(e) => setBudget(e.target.value)}
-                className="w-full px-4 py-3.5 rounded-xl bg-black/50 border border-white/10 text-white focus:outline-none focus:border-[#ff5540] transition-colors text-base sm:text-sm cursor-pointer"
-              >
-                <option value="< $2,000">&lt; $2,000 USD</option>
-                <option value="$2,000 - $5,000">$2,000 - $5,000 USD</option>
-                <option value="$5,000 - $10,000">$5,000 - $10,000 USD</option>
-                <option value="$10,000+">$10,000+ USD</option>
-              </select>
+                placeholder="Coloca aquí tu presupuesto estimado"
+                className="w-full px-4 py-3.5 rounded-xl bg-black/50 border border-white/10 text-white placeholder-white/25 focus:outline-none focus:border-[#ff5540] transition-colors text-base sm:text-sm"
+              />
             </div>
 
             {/* Message Details */}
