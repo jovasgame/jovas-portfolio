@@ -285,7 +285,7 @@ export const PortfolioGrid: React.FC = () => {
   return (
     <section id="portfolio-grid" className="py-20 relative bg-[#141316]/75 backdrop-blur-sm overflow-hidden w-full max-w-full">
       {/* Background Decor */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
         
         {/* Section Title Header Centered */}
         <motion.div
@@ -333,8 +333,8 @@ export const PortfolioGrid: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Dynamic Project Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        {/* Dynamic Project Grid (1 Col Mobile, 2 Col Small, 3 Col Tablet/11", 4 Col PC) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
           {filteredProjects.map((project, index) => (
             <ProjectCard
               key={project.id}
