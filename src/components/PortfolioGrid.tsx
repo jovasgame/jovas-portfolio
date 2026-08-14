@@ -287,26 +287,26 @@ export const PortfolioGrid: React.FC = () => {
       {/* Background Decor */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Section Title Header with Motion Scroll Loading */}
+        {/* Section Title Header Centered */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12"
+          className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-6 mb-12"
         >
-          <div>
-            <div className="flex items-center gap-2 text-xs font-mono text-[#feba39] tracking-widest uppercase mb-2">
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#feba39]/10 border border-[#feba39]/30 text-xs font-mono text-[#feba39] font-bold tracking-widest uppercase">
               <Flame className="w-4 h-4 text-[#ff5540]" />
               Catálogo de Obras y Proyectos
             </div>
-            <h2 className="font-syne font-black text-3xl sm:text-5xl text-white tracking-tight">
+            <h2 className="font-syne font-black text-3xl sm:text-5xl text-white tracking-tight uppercase">
               PORTAFOLIO CREADO CON FUEGO
             </h2>
           </div>
 
-          {/* Category Filter Pills */}
-          <div className="flex items-center gap-2 max-w-full pb-2 overflow-x-auto no-scrollbar sm:flex-wrap">
+          {/* Category Filter Pills Centered */}
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 w-full">
             {categories.map((cat) => {
               const active = selectedCategory === cat.value;
               return (
@@ -319,10 +319,10 @@ export const PortfolioGrid: React.FC = () => {
                       if (el) el.scrollIntoView({ behavior: 'smooth' });
                     }
                   }}
-                  className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold tracking-wider transition-all duration-300 whitespace-nowrap shrink-0 cursor-pointer ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold tracking-wider transition-all duration-300 whitespace-nowrap cursor-pointer ${
                     active
                       ? 'bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] shadow-lg shadow-[#ff5540]/25 scale-105'
-                      : 'bg-[#232026] text-[#a89f9e] hover:text-white hover:bg-[#2e2a33] border border-white/5'
+                      : 'bg-[#232026] text-[#a89f9e] hover:text-white hover:bg-[#2e2a33] border border-white/10'
                   }`}
                 >
                   {cat.icon}
