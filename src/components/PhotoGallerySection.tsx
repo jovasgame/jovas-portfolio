@@ -109,21 +109,21 @@ export const PhotoGallerySection: React.FC = () => {
               items={accordionItems}
               defaultIndex={Math.min(2, Math.max(0, Math.floor((accordionItems.length - 1) / 2)))}
               accentColor="#feba39"
-              overlayColor="#060010"
+              overlayColor="rgba(0,0,0,0.15)"
               textColor="#ffffff"
-              height={500}
+              height={520}
               gap={12}
               radius={20}
               expandRatio={0.52}
               orientation="horizontal"
               duration={0.6}
               ease="power3.out"
-              parallax={0.5}
-              tilt={8}
+              parallax={0.3}
+              tilt={4}
               stagger={0.06}
               trigger="hover"
               showLabels={true}
-              grayscale={true}
+              grayscale={false}
               onItemClick={(_item, index) => {
                 setSelectedPhotoIndex(index);
               }}

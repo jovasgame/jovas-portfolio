@@ -61,7 +61,7 @@ export const AccordionGallery: React.FC<AccordionGalleryProps> = ({
   stagger = 0.06,
   trigger = 'hover',
   showLabels = true,
-  grayscale = true,
+  grayscale = false,
   className = '',
   onItemClick
 }) => {
@@ -124,7 +124,7 @@ export const AccordionGallery: React.FC<AccordionGalleryProps> = ({
               x: vertical ? 0 : isActive ? 0 : shift,
               y: vertical ? (isActive ? 0 : shift) : 0,
               '--ag-gray': gray,
-              '--ag-dim': isActive ? 0 : 0.35,
+              '--ag-dim': 0,
               duration: dur,
               ease
             },

@@ -58,8 +58,8 @@
 }
 
 .ag-panel__media {
-  --ag-gray: 1;
-  --ag-dim: 0.35;
+  --ag-gray: 0;
+  --ag-dim: 0;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -88,8 +88,8 @@
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(180deg, transparent 35%, color-mix(in srgb, var(--ag-overlay) 88%, transparent) 100%),
-    color-mix(in srgb, var(--ag-overlay) calc(var(--ag-dim, 0.35) * 100%), transparent);
+    linear-gradient(180deg, transparent 40%, color-mix(in srgb, var(--ag-overlay) 85%, transparent) 100%),
+    color-mix(in srgb, var(--ag-overlay) calc(var(--ag-dim, 0) * 100%), transparent);
 }
 
 .ag-panel__label {
