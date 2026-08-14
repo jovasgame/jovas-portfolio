@@ -162,8 +162,8 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
     x: sx,
     y: sy,
     boxShadow: hover
-      ? "0 14px 35px rgba(255, 85, 64, 0.35), 0 0 20px rgba(254, 186, 57, 0.3)"
-      : "0 6px 18px rgba(0, 0, 0, 0.25)",
+      ? "0 6px 20px rgba(255, 85, 64, 0.25), 0 0 12px rgba(254, 186, 57, 0.2)"
+      : "0 3px 10px rgba(0, 0, 0, 0.2)",
     opacity: disabled ? 0.6 : 1,
     ...font,
     ...style,

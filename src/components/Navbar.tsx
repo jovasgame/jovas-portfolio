@@ -72,9 +72,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenDashboardTab }) => {
   );
 
   return (
-    <header className={`fixed top-0 left-0 right-0 w-full max-w-full z-40 transition-all duration-300 overflow-hidden ${
+    <header className={`fixed top-0 left-0 right-0 w-full max-w-full z-40 transition-all duration-300 ${
       scrolled 
-        ? 'bg-[#141316]/85 backdrop-blur-md border-b border-[#b18780]/20 py-2.5 sm:py-3 shadow-2xl shadow-black/50' 
+        ? 'bg-[#141316]/85 backdrop-blur-md border-b border-[#b18780]/20 py-2.5 sm:py-3 shadow-md shadow-black/30' 
         : 'bg-transparent py-3 sm:py-5'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between w-full min-w-0">
