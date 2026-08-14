@@ -134,7 +134,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenContactPag
                   Canales de Mensajería
                 </div>
                 <h3 className="font-syne font-black text-2xl sm:text-3xl text-white">
-                  CORREO & FORMULARIO
+                  CORREO Y FORMULARIO
                 </h3>
                 <p className="text-xs text-[#a89f9e]">
                   Elige el método de contacto de tu preferencia:

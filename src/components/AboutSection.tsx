@@ -92,7 +92,7 @@ export const AboutSection: React.FC = () => {
               <div className="space-y-6">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ff5540]/10 border border-[#ff5540]/30 text-[#ff5540] text-xs font-mono font-bold tracking-widest uppercase">
                   <User className="w-3.5 h-3.5" />
-                  Biografía & Manifiesto Creativo
+                  Biografía y Manifiesto Creativo
                 </div>
 
                 <h2 className="font-syne font-black text-3xl sm:text-5xl text-white tracking-tight">

@@ -235,7 +235,7 @@ export const VideoSection: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-xs font-mono text-[#ff5540] tracking-widest uppercase mb-2">
               <Film className="w-4 h-4 text-[#feba39] animate-pulse" />
-              Sección Exclusiva de Vídeo & Render 3D
+              Sección Exclusiva de Vídeo y Render 3D
             </div>
             <h2 className="font-syne font-black text-3xl sm:text-5xl text-white tracking-tight flex items-center gap-3">
               REEL DE ANIMACIÓN

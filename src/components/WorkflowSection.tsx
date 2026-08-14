@@ -7,26 +7,26 @@ export const WorkflowSection: React.FC = () => {
   const steps = [
     {
       number: '01',
-      title: 'Conceptualización & Moodboard',
+      title: 'Conceptualización y Moodboard',
       description: 'Análisis de la visión del cliente, creación de paletas de color ígneas y dirección estilística antes de tocar el software.',
       tools: ['Photoshop', 'PureRef', 'Figma']
     },
     {
       number: '02',
-      title: 'Topología 3D & Rigging',
+      title: 'Topología 3D y Rigging',
       description: 'Modelado Hard Surface y esculturas orgánicas con flujo de polígonos limpio para optimizar dinamismo y velocidad.',
       tools: ['Cinema 4D', 'ZBrush', 'Blender']
     },
     {
       number: '03',
-      title: 'Texturizado PBR & Render en Blender',
-      description: 'Creación de materiales fidedignos con sombreadores de nodos PBR, mapas de rugosidad, emisión y volumetría realista procesados en Blender Cycles & EEVEE.',
+      title: 'Texturizado PBR y Render en Blender',
+      description: 'Creación de materiales fidedignos con sombreadores de nodos PBR, mapas de rugosidad, emisión y volumetría realista procesados en Blender Cycles y EEVEE.',
       tools: ['Blender 3D', 'Cycles Engine', 'EEVEE']
     },
     {
       number: '04',
-      title: 'Animación & Compositing Final',
-      description: 'Ritmo cinematográfico a 60 FPS, simulación de partículas fluidas y corrección de color profesional para máxima impacto visual.',
+      title: 'Animación y Compositing Final',
+      description: 'Ritmo cinematográfico a 60 FPS, simulación de partículas fluidas y corrección de color profesional para máximo impacto visual.',
       tools: ['After Effects', 'Houdini', 'Nuke']
     }
   ];
@@ -48,7 +48,7 @@ export const WorkflowSection: React.FC = () => {
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#feba39]/10 border border-[#feba39]/30 text-[#feba39] text-xs font-mono font-bold tracking-widest uppercase">
             <Cpu className="w-3.5 h-3.5" />
-            Precisión Técnica & Flujo de Trabajo
+            Precisión Técnica y Flujo de Trabajo
           </div>
 
           <h2 className="font-syne font-black text-3xl sm:text-5xl text-white tracking-tight">

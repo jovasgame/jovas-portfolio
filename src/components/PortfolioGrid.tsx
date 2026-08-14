@@ -298,7 +298,7 @@ export const PortfolioGrid: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-xs font-mono text-[#feba39] tracking-widest uppercase mb-2">
               <Flame className="w-4 h-4 text-[#ff5540]" />
-              Catálogo de Obras & Proyectos
+              Catálogo de Obras y Proyectos
             </div>
             <h2 className="font-syne font-black text-3xl sm:text-5xl text-white tracking-tight">
               PORTAFOLIO CREADO CON FUEGO

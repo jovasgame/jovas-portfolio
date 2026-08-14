@@ -80,7 +80,7 @@ export const ModelShowcaseSection: React.FC = () => {
               }`}
             >
               <RotateCw className={`w-3.5 h-3.5 ${autoRotate ? 'animate-spin' : ''}`} />
-              <span>{autoRotate ? 'Auto-Rotación: SI' : 'Auto-Rotación: NO'}</span>
+              <span>{autoRotate ? 'Auto-Rotación: SÍ' : 'Auto-Rotación: NO'}</span>
             </button>
 
             <div className="flex items-center gap-1.5 bg-black/60 p-1.5 rounded-xl border border-white/10">

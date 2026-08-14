@@ -96,7 +96,7 @@ const MainPortfolioContent: React.FC = () => {
         {/* 5. Galería de Fotografía */}
         <PhotoGallerySection />
 
-        {/* 6. About José Luis Vasquez (Biography) */}
+        {/* 6. About José Luis Vásquez (Biography) */}
         <AboutSection />
 
         {/* 6. Contact & Quote Generator */}

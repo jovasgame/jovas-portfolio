@@ -165,8 +165,11 @@ const mergeProjectsPreservingUserEdits = (savedProjects?: Project[]): Project[] 
 const sanitizePhotoList = (photoList?: PhotoItem[] | null): PhotoItem[] => {
   const sampleTitles = new Set([
     'Retrato Urbano & Luces Neón',
+    'Retrato Urbano y Luces Neón',
     'Arquitectura Brutalista & Sombras',
+    'Arquitectura Brutalista y Sombras',
     'Texturas Volumétricas & Niebla',
+    'Texturas Volumétricas y Niebla',
     'Composición Minimalista Ígnea'
   ]);
 

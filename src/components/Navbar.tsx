@@ -219,7 +219,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenDashboardTab }) => {
               }}
               className="text-left text-sm text-[#e7e1e5] hover:text-[#feba39]"
             >
-              Sobre Mi
+              Sobre Mí
             </button>
             <button
               onClick={() => {

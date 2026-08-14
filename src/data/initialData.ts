@@ -6,7 +6,7 @@ export const initialProjects: Project[] = [
     "category": "Modelado 3D",
     "year": "2024",
     "description": "Escultura y modelado 3D hard-surface con texturizado PBR y renderizado fotorrealista.",
-    "fullDescription": "Proyecto conceptual de robótica avanzada. Incluye modelado orgánico y mecánico en Blender & ZBrush, desenvuelto UV, texturizado 8K en Substance Painter y composición final.",
+    "fullDescription": "Proyecto conceptual de robótica avanzada. Incluye modelado orgánico y mecánico en Blender y ZBrush, desenvuelto UV, texturizado 8K en Substance Painter y composición final.",
     "imageUrl": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
     "galleryUrls": [
       "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
@@ -82,8 +82,8 @@ export const initialProjects: Project[] = [
     "title": "ESPADA MAESTRA ",
     "category": "Arte Conceptual",
     "year": "2022",
-    "description": "CONCEPT ESPADA MAESTRA ILUSTRACION Y 3D",
-    "fullDescription": "CONCEPT ESPADA MAESTRA ILUSTRACION Y 3D",
+    "description": "CONCEPT ESPADA MAESTRA ILUSTRACIÓN Y 3D",
+    "fullDescription": "CONCEPT ESPADA MAESTRA ILUSTRACIÓN Y 3D",
     "imageUrl": "/images/extracted-02.jpg",
     "tags": [
       "3D Render",
@@ -211,8 +211,8 @@ export const initialProjects: Project[] = [
     "title": "INTRO NOVA ANIMACION 2D",
     "category": "Animación",
     "year": "2024",
-    "description": "Animacion 2D semana de Diseñador Nova Intro ",
-    "fullDescription": "Animacion 2D semana de Diseñador Nova Intro ",
+    "description": "Animación 2D semana de Diseñador Nova Intro ",
+    "fullDescription": "Animación 2D semana de Diseñador Nova Intro ",
     "imageUrl": "https://img.youtube.com/vi/SmyxU4nmOBc/hqdefault.jpg",
     "videoUrl": "https://youtu.be/SmyxU4nmOBc",
     "tags": [
@@ -237,8 +237,8 @@ export const initialProjects: Project[] = [
     "title": "Semana del diseñador 2024 Spot Publicitario",
     "category": "Animación",
     "year": "2024",
-    "description": "Animacion 2D , Spot Publicitario.",
-    "fullDescription": "Animacion 2D , Spot Publicitario.",
+    "description": "Animación 2D, Spot Publicitario.",
+    "fullDescription": "Animación 2D, Spot Publicitario.",
     "imageUrl": "https://img.youtube.com/vi/cM_E9CT0Ufk/hqdefault.jpg",
     "videoUrl": "https://youtu.be/cM_E9CT0Ufk",
     "tags": [
@@ -262,8 +262,8 @@ export const initialProjects: Project[] = [
     "title": "Spot Publicitario Variedades Genesis 2",
     "category": "Animación",
     "year": "2018",
-    "description": "Animación Spot Variedades Genesis ",
-    "fullDescription": "Animación Spot Variedades Genesis ",
+    "description": "Animación Spot Variedades Génesis ",
+    "fullDescription": "Animación Spot Variedades Génesis ",
     "imageUrl": "https://img.youtube.com/vi/Sh0nwFVPkOc/hqdefault.jpg",
     "videoUrl": "https://youtu.be/Sh0nwFVPkOc",
     "tags": [
@@ -288,8 +288,8 @@ export const initialProjects: Project[] = [
     "title": "Personaje Aesartes Animación Digital",
     "category": "Animación",
     "year": "2023",
-    "description": "Personaje Aesartes Animacion Digital ,MotionGraphics Aesartes",
-    "fullDescription": "Personaje Aesartes Animacion Digital ,MotionGraphics Aesartes",
+    "description": "Personaje Aesartes Animación Digital, Motion Graphics Aesartes",
+    "fullDescription": "Personaje Aesartes Animación Digital, Motion Graphics Aesartes",
     "imageUrl": "https://img.youtube.com/vi/_AiKkHojrUk/hqdefault.jpg",
     "videoUrl": "https://youtu.be/_AiKkHojrUk",
     "tags": [
@@ -314,8 +314,8 @@ export const initialProjects: Project[] = [
     "title": "Logo Intelmax 3D",
     "category": "Animación",
     "year": "2024",
-    "description": "Animación ,3D Intelmax",
-    "fullDescription": "Animación ,3D Intelmax",
+    "description": "Animación 3D Intelmax",
+    "fullDescription": "Animación 3D Intelmax",
     "imageUrl": "https://img.youtube.com/vi/tySFc7k24CQ/hqdefault.jpg",
     "videoUrl": "https://youtu.be/tySFc7k24CQ",
     "tags": [
@@ -413,11 +413,11 @@ export const initialProjects: Project[] = [
     "createdAt": "2026-08-03"
   },
   {
-    "title": "Publicidad Variedades Genesis 2018",
+    "title": "Publicidad Variedades Génesis 2018",
     "category": "Animación",
     "year": "2018",
-    "description": "Post Publicitario Variedades Genesis ",
-    "fullDescription": "Post Publicitario Variedades Genesis ",
+    "description": "Post Publicitario Variedades Génesis ",
+    "fullDescription": "Post Publicitario Variedades Génesis ",
     "imageUrl": "https://img.youtube.com/vi/5MwOg8fr9K4/hqdefault.jpg",
     "videoUrl": "https://youtu.be/5MwOg8fr9K4",
     "tags": [
@@ -491,7 +491,7 @@ export const initialProjects: Project[] = [
     "createdAt": "2026-08-03"
   },
   {
-    "title": "ILUSTRACION CONCEPTUAL",
+    "title": "ILUSTRACIÓN CONCEPTUAL",
     "category": "Ilustración",
     "year": "2022",
     "description": "RECUERDO DE HERRAMIENTAS EN MI VIDA ",
@@ -519,8 +519,8 @@ export const initialProjects: Project[] = [
     "title": "Vader Vectorial",
     "category": "Ilustración",
     "year": "2022",
-    "description": "Ilustración vectorial ,Dark Vader ",
-    "fullDescription": "Ilustración vectorial ,Dark Vader ",
+    "description": "Ilustración vectorial, Dark Vader ",
+    "fullDescription": "Ilustración vectorial, Dark Vader ",
     "imageUrl": "/images/extracted-04.jpg",
     "tags": [
       "Ilustrador",
@@ -550,7 +550,7 @@ export const initialProjects: Project[] = [
     "videoUrl": "https://youtu.be/HTlHxLoZ7iM",
     "tags": [
       "Motion Graphics",
-      "Affter Effect"
+      "After Effects"
     ],
     "featured": false,
     "specs": [
@@ -569,11 +569,11 @@ export const initialProjects: Project[] = [
 ];
 
 export const initialProfile: UserProfile = {
-  "name": "José Luis Vasquez",
-  "title": "Diseñador de Movimiento & Artista 3D",
+  "name": "José Luis Vásquez",
+  "title": "Diseñador de Movimiento y Artista 3D",
   "tagline": "Encendiendo el movimiento a través del diseño técnico y el fuego creativo.",
   "bioParagraphs": [
-    "Mi nombre es José Luis Vasquez, y no solo diseño, sino que soluciono problemas con creatividad y propósito. Soy un diseñador impulsado por una sed insaciable de aprender y una curiosidad que me lleva a dominar mi oficio cada día más.",
+    "Mi nombre es José Luis Vásquez, y no solo diseño, sino que soluciono problemas con creatividad y propósito. Soy un diseñador impulsado por una sed insaciable de aprender y una curiosidad que me lleva a dominar mi oficio cada día más.",
     "Veo cada proyecto como una oportunidad para crecer, y cada desafío no es un obstáculo, sino un escalón hacia algo más grande. Para mí, los errores son maestros que me permiten levantarme con una visión más clara y un conjunto de habilidades más pulido.",
     "Más que crear imágenes, mi meta es evolucionar con cada trabajo que hago. Busco ser un profesional completo, alguien que se transforma y aprende con cada trazo, cada idea y cada desafío."
   ],
@@ -688,10 +688,10 @@ export const initialPhotos: PhotoItem[] = [
   },
   {
     "id": "photo-3",
-    "title": "Lampara Suchitoto",
+    "title": "Lámpara Suchitoto",
     "category": "Arquitectura",
     "imageUrl": "/images/extracted-14.jpg",
-    "description": "Lampara Suchitoto",
+    "description": "Lámpara Suchitoto",
     "cameraSpecs": "NIKON D7200 • 50mm f/1.2 • ISO 200",
     "createdAt": "2024-01-28"
   }

@@ -68,7 +68,7 @@ export const PhotoGallerySection: React.FC = () => {
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-6 border-b border-white/10 pb-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-[#feba39] text-xs font-mono tracking-wider uppercase shadow-inner">
             <Camera className="w-3.5 h-3.5 text-[#ff5540]" />
-            Nuestras Historias & Galería Visual
+            Nuestras Historias y Galería Visual
           </div>
 
           <h2 className="font-syne font-black text-4xl sm:text-6xl text-white uppercase tracking-tight leading-tight">
