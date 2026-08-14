@@ -162,11 +162,36 @@ const mergeProjectsPreservingUserEdits = (savedProjects?: Project[]): Project[] 
   return sanitized;
 };
 
-const mergePhotosPreservingUserEdits = (savedPhotos?: PhotoItem[]): PhotoItem[] => {
-  if (!savedPhotos || !Array.isArray(savedPhotos)) {
-    return initialPhotos;
+const sanitizePhotoList = (photoList?: PhotoItem[] | null): PhotoItem[] => {
+  const sampleTitles = new Set([
+    'Retrato Urbano & Luces Neón',
+    'Arquitectura Brutalista & Sombras',
+    'Texturas Volumétricas & Niebla',
+    'Composición Minimalista Ígnea'
+  ]);
+
+  const map = new Map<string, PhotoItem>();
+
+  // Always seed with initialPhotos (TRONCO VALLE, URBANO, Tronco Textura, Cuervo, Iguana al Sol, Arquitectura IGLESIA SUSHITOTO, Lampara Suchitoto)
+  initialPhotos.forEach(p => map.set(p.id, p));
+
+  // If user or DB provides photoList, overlay user-added items while discarding old sample items
+  if (Array.isArray(photoList)) {
+    photoList.forEach(p => {
+      if (!p || !p.id) return;
+      if (sampleTitles.has(p.title?.trim() || '')) return;
+      if (p.id === 'photo-1' || p.id === 'photo-2' || p.id === 'photo-3' || p.id === 'photo-4') {
+        if (p.imageUrl?.includes('unsplash.com')) return;
+      }
+      map.set(p.id, p);
+    });
   }
-  return savedPhotos;
+
+  return Array.from(map.values());
+};
+
+const mergePhotosPreservingUserEdits = (savedPhotos?: PhotoItem[]): PhotoItem[] => {
+  return sanitizePhotoList(savedPhotos);
 };
 
 const clearLegacyLocalStorage = () => {
@@ -301,7 +326,8 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       }
 
       if (idbPhotos && Array.isArray(idbPhotos)) {
-        setPhotos(idbPhotos);
+        const cleanedP = sanitizePhotoList(idbPhotos);
+        setPhotos(cleanedP);
       }
 
       if (idbProfile) setProfile(sanitizeProfile(idbProfile));
@@ -344,8 +370,9 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             idbStorage.setItem('projects', cloudCleaned);
           }
           if (Array.isArray(data.photos)) {
-            setPhotos(data.photos);
-            idbStorage.setItem('photos', data.photos);
+            const cloudPhotosCleaned = sanitizePhotoList(data.photos);
+            setPhotos(cloudPhotosCleaned);
+            idbStorage.setItem('photos', cloudPhotosCleaned);
           }
           if (data.profile) {
             const p = sanitizeProfile(data.profile);
