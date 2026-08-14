@@ -12,8 +12,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenContactPag
   const { profile } = usePortfolio();
   const [copiedEmail, setCopiedEmail] = useState<string | null>(null);
 
-  const primaryEmail = "jovas.motion@design.com";
-  const secondaryEmail = "jovasgame@gmail.com";
+  const primaryEmail = "jose.vasquez942122@gmail.com";
   const whatsappNumber = "+503 7255 4916";
   const whatsappLink = "https://wa.me/50372554916";
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(whatsappLink)}&color=ffffff&bgcolor=141316`;
@@ -168,35 +167,6 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenContactPag
                     <a
                       href={`mailto:${primaryEmail}`}
                       className="px-3 py-1.5 rounded-lg bg-[#ff5540]/20 hover:bg-[#ff5540] text-[#ff7563] hover:text-[#2c1800] text-xs font-bold transition-all"
-                    >
-                      Escribir
-                    </a>
-                  </div>
-                </div>
-
-                {/* Email Icon Button 2 */}
-                <div className="p-4 rounded-2xl bg-[#1a181e] border border-white/10 hover:border-[#feba39]/40 transition-colors flex items-center justify-between gap-3 group">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-10 h-10 rounded-xl bg-[#feba39]/20 text-[#feba39] flex items-center justify-center shrink-0">
-                      <Mail className="w-5 h-5" />
-                    </div>
-                    <div className="min-w-0">
-                      <span className="text-[10px] font-mono text-[#a89f9e] uppercase block">Correo Secundario</span>
-                      <span className="text-xs sm:text-sm font-bold text-white truncate block">{secondaryEmail}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 shrink-0">
-                    <button
-                      onClick={() => copyToClipboard(secondaryEmail)}
-                      className="p-2 rounded-lg bg-white/5 hover:bg-white/15 text-[#a89f9e] hover:text-white transition-colors cursor-pointer text-xs flex items-center gap-1 font-mono"
-                      title="Copiar Correo"
-                    >
-                      {copiedEmail === secondaryEmail ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                    </button>
-                    <a
-                      href={`mailto:${secondaryEmail}`}
-                      className="px-3 py-1.5 rounded-lg bg-[#feba39]/20 hover:bg-[#feba39] text-[#feba39] hover:text-[#2c1800] text-xs font-bold transition-all"
                     >
                       Escribir
                     </a>
