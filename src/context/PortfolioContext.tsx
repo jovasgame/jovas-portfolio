@@ -91,9 +91,14 @@ const sanitizeProfile = (prof?: Partial<UserProfile> | null): UserProfile => {
   if (!avatar || avatar.includes('lh3.googleusercontent.com/aida-public')) {
     avatar = initialProfile.avatarUrl || '';
   }
+  let email = prof.email ? prof.email.trim() : '';
+  if (!email || email === 'jovas.motion@design.com') {
+    email = initialProfile.email || 'jose.vasquez942122@gmail.com';
+  }
   return {
     ...initialProfile,
     ...prof,
+    email: email,
     avatarUrl: avatar
   };
 };
