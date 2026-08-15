@@ -22,7 +22,7 @@ const ContactPage = React.lazy(() =>
   import('./components/ContactPage').then((m) => ({ default: m.ContactPage }))
 );
 
-import { trackPageView } from './utils/analyticsTracker';
+import { trackPageView, initGlobalClickTracker } from './utils/analyticsTracker';
 
 const MainPortfolioContent: React.FC = () => {
   const { isAdminLoggedIn } = usePortfolio();
@@ -31,6 +31,7 @@ const MainPortfolioContent: React.FC = () => {
 
   React.useEffect(() => {
     trackPageView();
+    initGlobalClickTracker();
   }, []);
 
   if (isAdminLoggedIn && showDashboard) {

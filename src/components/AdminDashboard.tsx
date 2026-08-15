@@ -82,6 +82,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
   
   // Real Analytics State
   const [realAnalytics, setRealAnalytics] = useState<AnalyticsData>(() => getStoredAnalytics());
+
+  // Auto-refresh real-time analytics live every 2 seconds when stats tab is active
+  React.useEffect(() => {
+    if (activeTab !== 'stats') return;
+    const timer = setInterval(() => {
+      setRealAnalytics(getStoredAnalytics());
+    }, 2000);
+    return () => clearInterval(timer);
+  }, [activeTab]);
   
   // Search & Filter in Dashboard
   const [searchTerm, setSearchTerm] = useState('');
@@ -776,9 +785,15 @@ export const initialPhotos: PhotoItem[] = ${JSON.stringify(photos, null, 2)};
               {/* Header Bar */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#191524]/90 p-6 rounded-3xl border border-white/10 backdrop-blur-xl">
                 <div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#feba39]/10 border border-[#feba39]/30 text-[#feba39] text-xs font-mono font-bold uppercase tracking-wider mb-2">
-                    <Activity className="w-3.5 h-3.5 text-[#ff5540]" />
-                    Analíticas y Rendimiento en Tiempo Real
+                  <div className="flex items-center gap-2 flex-wrap mb-2">
+                    <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#feba39]/10 border border-[#feba39]/30 text-[#feba39] text-xs font-mono font-bold uppercase tracking-wider">
+                      <Activity className="w-3.5 h-3.5 text-[#ff5540]" />
+                      Analíticas y Rendimiento en Tiempo Real
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                      EN VIVO (ACTUALIZADO CADA 2S)
+                    </span>
                   </div>
                   <h2 className="font-syne font-black text-2xl text-white">
                     Métricas de Visitas y Tráfico Real
@@ -797,7 +812,7 @@ export const initialPhotos: PhotoItem[] = ${JSON.stringify(photos, null, 2)};
                     className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/15 text-white text-xs font-bold border border-white/10 transition-all cursor-pointer"
                   >
                     <RefreshCw className="w-3.5 h-3.5 text-[#feba39]" />
-                    <span>Actualizar Datos</span>
+                    <span>Actualizar</span>
                   </button>
 
                   <button
@@ -814,93 +829,111 @@ export const initialPhotos: PhotoItem[] = ${JSON.stringify(photos, null, 2)};
                     className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#ff5540]/20 hover:bg-[#ff5540]/30 text-[#ff7563] text-xs font-bold border border-[#ff5540]/40 transition-all cursor-pointer"
                   >
                     <Download className="w-3.5 h-3.5" />
-                    <span>Exportar Reporte</span>
+                    <span>Exportar JSON</span>
                   </button>
                 </div>
               </div>
 
-              {/* Real-time KPI Cards Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Real-time KPI Cards Grid (5 Cards) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
                 
                 {/* Metric 1: Total Pageviews */}
-                <div className="p-6 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl relative overflow-hidden group">
-                  <div className="flex items-center justify-between mb-4">
+                <div className="p-5 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl relative overflow-hidden group">
+                  <div className="flex items-center justify-between mb-3">
                     <span className="text-xs font-mono text-[#a89f9e] uppercase tracking-wider">
-                      Vistas de Página (Pageviews)
+                      Pageviews
                     </span>
-                    <div className="p-2.5 rounded-2xl bg-[#feba39]/10 text-[#feba39]">
-                      <Eye className="w-5 h-5" />
+                    <div className="p-2 rounded-xl bg-[#feba39]/10 text-[#feba39]">
+                      <Eye className="w-4 h-4" />
                     </div>
                   </div>
-                  <div className="font-syne font-black text-4xl text-white mb-2">
+                  <div className="font-syne font-black text-3xl text-white mb-1">
                     {realAnalytics.totalPageViews}
                   </div>
-                  <span className="text-[11px] text-[#feba39] flex items-center gap-1 font-mono">
-                    <TrendingUp className="w-3.5 h-3.5" /> Vistas totales registradas
+                  <span className="text-[10px] text-[#feba39] flex items-center gap-1 font-mono">
+                    <TrendingUp className="w-3 h-3" /> Vistas de página
                   </span>
                 </div>
 
                 {/* Metric 2: Unique Visitors */}
-                <div className="p-6 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl relative overflow-hidden group">
-                  <div className="flex items-center justify-between mb-4">
+                <div className="p-5 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl relative overflow-hidden group">
+                  <div className="flex items-center justify-between mb-3">
                     <span className="text-xs font-mono text-[#a89f9e] uppercase tracking-wider">
-                      Visitantes Únicos Reales
+                      Visitantes Únicos
                     </span>
-                    <div className="p-2.5 rounded-2xl bg-[#ff5540]/10 text-[#ff5540]">
-                      <User className="w-5 h-5" />
+                    <div className="p-2 rounded-xl bg-[#ff5540]/10 text-[#ff5540]">
+                      <User className="w-4 h-4" />
                     </div>
                   </div>
-                  <div className="font-syne font-black text-4xl text-white mb-2">
+                  <div className="font-syne font-black text-3xl text-white mb-1">
                     {realAnalytics.uniqueVisitors}
                   </div>
-                  <span className="text-[11px] text-emerald-400 flex items-center gap-1 font-mono">
-                    <ShieldCheck className="w-3.5 h-3.5" /> Dispositivos únicos
+                  <span className="text-[10px] text-emerald-400 flex items-center gap-1 font-mono">
+                    <ShieldCheck className="w-3 h-3" /> Dispositivos únicos
                   </span>
                 </div>
 
-                {/* Metric 3: Total Project Inspections */}
-                <div className="p-6 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl relative overflow-hidden group">
-                  <div className="flex items-center justify-between mb-4">
+                {/* Metric 3: Total Site Clicks Counter */}
+                <div className="p-5 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl relative overflow-hidden group">
+                  <div className="flex items-center justify-between mb-3">
                     <span className="text-xs font-mono text-[#a89f9e] uppercase tracking-wider">
-                      Proyectos Inspeccionados
+                      Clics en el Sitio
                     </span>
-                    <div className="p-2.5 rounded-2xl bg-purple-500/10 text-purple-400">
-                      <FolderKanban className="w-5 h-5" />
+                    <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400">
+                      <Zap className="w-4 h-4" />
                     </div>
                   </div>
-                  <div className="font-syne font-black text-4xl text-white mb-2">
+                  <div className="font-syne font-black text-3xl text-white mb-1">
+                    {realAnalytics.totalSiteClicks || 0}
+                  </div>
+                  <span className="text-[10px] text-cyan-300 font-mono flex items-center gap-1">
+                    <Activity className="w-3 h-3 text-cyan-400" /> Clics totales
+                  </span>
+                </div>
+
+                {/* Metric 4: Total Project Inspections */}
+                <div className="p-5 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl relative overflow-hidden group">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-mono text-[#a89f9e] uppercase tracking-wider">
+                      Proyectos Vistos
+                    </span>
+                    <div className="p-2 rounded-xl bg-purple-500/10 text-purple-400">
+                      <FolderKanban className="w-4 h-4" />
+                    </div>
+                  </div>
+                  <div className="font-syne font-black text-3xl text-white mb-1">
                     {realAnalytics.totalProjectViews}
                   </div>
-                  <span className="text-[11px] text-purple-300 font-mono">
-                    En modal & previsualizador
+                  <span className="text-[10px] text-purple-300 font-mono">
+                    En modal & galeras
                   </span>
                 </div>
 
-                {/* Metric 4: Quote & Contact Clicks */}
-                <div className="p-6 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl relative overflow-hidden group">
-                  <div className="flex items-center justify-between mb-4">
+                {/* Metric 5: Quote & Contact Clicks */}
+                <div className="p-5 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl relative overflow-hidden group">
+                  <div className="flex items-center justify-between mb-3">
                     <span className="text-xs font-mono text-[#a89f9e] uppercase tracking-wider">
-                      Clics WhatsApp / Cotizaciones
+                      Leads Cotización
                     </span>
-                    <div className="p-2.5 rounded-2xl bg-emerald-500/10 text-emerald-400">
-                      <MessageSquare className="w-5 h-5" />
+                    <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
+                      <MessageSquare className="w-4 h-4" />
                     </div>
                   </div>
-                  <div className="font-syne font-black text-4xl text-white mb-2">
+                  <div className="font-syne font-black text-3xl text-white mb-1">
                     {realAnalytics.totalContactClicks}
                   </div>
-                  <span className="text-[11px] text-emerald-400 font-mono flex items-center gap-1">
-                    <Zap className="w-3.5 h-3.5" /> Conversión directa
+                  <span className="text-[10px] text-emerald-400 font-mono flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3" /> Conversión directa
                   </span>
                 </div>
 
               </div>
 
-              {/* Detailed Breakdown Section: Top Projects & Devices */}
+              {/* Detailed Breakdown Section: Top Projects, Country Analytics & Devices */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
                 {/* Left Column: Top Viewed Projects Ranking */}
-                <div className="lg:col-span-7 p-6 sm:p-8 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl space-y-6">
+                <div className="lg:col-span-6 p-6 sm:p-8 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl space-y-6">
                   <div className="flex items-center justify-between border-b border-white/10 pb-4">
                     <div>
                       <h3 className="font-syne font-bold text-lg text-white">
@@ -954,76 +987,80 @@ export const initialPhotos: PhotoItem[] = ${JSON.stringify(photos, null, 2)};
                   </div>
                 </div>
 
-                {/* Right Column: Device Breakdown & Cloud Status */}
-                <div className="lg:col-span-5 p-6 sm:p-8 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl space-y-6 flex flex-col justify-between">
+                {/* Center Column: Country Visitor Geography Analytics */}
+                <div className="lg:col-span-6 p-6 sm:p-8 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl space-y-6 flex flex-col justify-between">
                   <div>
-                    <h3 className="font-syne font-bold text-lg text-white mb-1">
-                      Desglose por Dispositivo
-                    </h3>
-                    <p className="text-xs text-[#a89f9e] font-mono mb-6">
-                      Tipos de navegadores y pantallas detectadas
-                    </p>
+                    <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
+                      <div>
+                        <h3 className="font-syne font-bold text-lg text-white">
+                          Países de Origen de las Visitas
+                        </h3>
+                        <p className="text-xs text-[#a89f9e] font-mono">
+                          Geolocalización por dirección IP
+                        </p>
+                      </div>
+                      <span className="px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 text-xs font-mono border border-cyan-500/30 font-bold flex items-center gap-1.5">
+                        <Globe className="w-3.5 h-3.5 text-cyan-400" /> Geografía
+                      </span>
+                    </div>
 
                     <div className="space-y-4">
-                      {/* Desktop */}
-                      <div className="space-y-1.5">
-                        <div className="flex justify-between text-xs font-mono">
-                          <span className="text-white font-bold">💻 Ordenadores (Desktop)</span>
-                          <span className="text-[#feba39]">{realAnalytics.deviceBreakdown.desktop || 0} visitas</span>
-                        </div>
-                        <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-[#ff5540] to-[#feba39]"
-                            style={{
-                              width: `${realAnalytics.totalPageViews > 0 ? ((realAnalytics.deviceBreakdown.desktop || 0) / realAnalytics.totalPageViews) * 100 : 0}%`
-                            }}
-                          />
-                        </div>
-                      </div>
+                      {(() => {
+                        const countries = Object.entries(realAnalytics.countryBreakdown || {})
+                          .map(([code, item]) => ({ code, ...item }))
+                          .sort((a, b) => b.count - a.count);
+                        const totalGeoVisits = countries.reduce((acc, c) => acc + c.count, 0) || 1;
 
-                      {/* Mobile */}
-                      <div className="space-y-1.5">
-                        <div className="flex justify-between text-xs font-mono">
-                          <span className="text-white font-bold">📱 Teléfonos (Móviles)</span>
-                          <span className="text-emerald-400">{realAnalytics.deviceBreakdown.mobile || 0} visitas</span>
-                        </div>
-                        <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-emerald-500 to-teal-400"
-                            style={{
-                              width: `${realAnalytics.totalPageViews > 0 ? ((realAnalytics.deviceBreakdown.mobile || 0) / realAnalytics.totalPageViews) * 100 : 0}%`
-                            }}
-                          />
-                        </div>
-                      </div>
+                        if (countries.length === 0) {
+                          return (
+                            <div className="text-center py-6 text-xs text-[#a89f9e] font-mono">
+                              Registrando primeras visitas internacionales...
+                            </div>
+                          );
+                        }
 
-                      {/* Tablet */}
-                      <div className="space-y-1.5">
-                        <div className="flex justify-between text-xs font-mono">
-                          <span className="text-white font-bold">📱 Tablets</span>
-                          <span className="text-purple-400">{realAnalytics.deviceBreakdown.tablet || 0} visitas</span>
-                        </div>
-                        <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-purple-500 to-indigo-400"
-                            style={{
-                              width: `${realAnalytics.totalPageViews > 0 ? ((realAnalytics.deviceBreakdown.tablet || 0) / realAnalytics.totalPageViews) * 100 : 0}%`
-                            }}
-                          />
-                        </div>
-                      </div>
+                        return countries.slice(0, 5).map((c) => {
+                          const pct = Math.round((c.count / totalGeoVisits) * 100);
+                          return (
+                            <div key={c.code} className="space-y-1.5">
+                              <div className="flex justify-between text-xs font-mono">
+                                <span className="text-white font-bold flex items-center gap-2">
+                                  <span className="text-base">{c.flag}</span>
+                                  <span>{c.name}</span>
+                                </span>
+                                <span className="text-[#feba39] font-bold">{c.count} visitas ({pct}%)</span>
+                              </div>
+                              <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+                                <div
+                                  className="h-full bg-gradient-to-r from-[#ff5540] via-[#feba39] to-cyan-400"
+                                  style={{ width: `${Math.max(pct, 8)}%` }}
+                                />
+                              </div>
+                            </div>
+                          );
+                        });
+                      })()}
                     </div>
                   </div>
 
-                  {/* Cloud D1 Database Status Summary */}
-                  <div className="pt-4 border-t border-white/10 space-y-2 text-xs text-[#a89f9e] font-mono">
-                    <div className="flex justify-between">
-                      <span>Estado Base de Datos:</span>
-                      <span className="text-emerald-400 font-bold">Cloudflare D1 SQLite</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Última Actualización:</span>
-                      <span className="text-white">{new Date(realAnalytics.lastUpdated).toLocaleTimeString()}</span>
+                  {/* Device Breakdown Progress */}
+                  <div className="pt-4 border-t border-white/10 space-y-3">
+                    <span className="text-xs font-mono text-[#a89f9e] uppercase font-bold tracking-wider block">
+                      Desglose por Dispositivo
+                    </span>
+                    <div className="grid grid-cols-3 gap-2 text-center text-xs font-mono">
+                      <div className="p-2.5 rounded-xl bg-white/5 border border-white/10">
+                        <span className="text-[#feba39] font-bold block">{realAnalytics.deviceBreakdown.desktop || 0}</span>
+                        <span className="text-[10px] text-[#a89f9e]">💻 PC</span>
+                      </div>
+                      <div className="p-2.5 rounded-xl bg-white/5 border border-white/10">
+                        <span className="text-emerald-400 font-bold block">{realAnalytics.deviceBreakdown.mobile || 0}</span>
+                        <span className="text-[10px] text-[#a89f9e]">📱 Móvil</span>
+                      </div>
+                      <div className="p-2.5 rounded-xl bg-white/5 border border-white/10">
+                        <span className="text-purple-400 font-bold block">{realAnalytics.deviceBreakdown.tablet || 0}</span>
+                        <span className="text-[10px] text-[#a89f9e]">📱 Tablet</span>
+                      </div>
                     </div>
                   </div>
                 </div>
