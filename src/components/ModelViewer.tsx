@@ -501,13 +501,26 @@ export const ModelViewer: React.FC<ModelViewerProps> = ({
       <Canvas
         shadows
         frameloop="demand"
-        gl={{ preserveDrawingBuffer: true }}
+        gl={{ preserveDrawingBuffer: true, powerPreference: 'high-performance', antialias: true }}
+        dpr={[1, 2]}
         onCreated={({ gl, scene, camera }) => {
           rendererRef.current = gl;
           sceneRef.current = scene;
           cameraRef.current = camera;
           gl.toneMapping = THREE.ACESFilmicToneMapping;
           gl.outputColorSpace = THREE.SRGBColorSpace;
+
+          const canvasEl = gl.domElement;
+          if (canvasEl) {
+            canvasEl.addEventListener('webglcontextlost', (e) => {
+              e.preventDefault();
+              console.warn('WebGL context lost on mobile/browser.');
+            }, false);
+            canvasEl.addEventListener('webglcontextrestored', () => {
+              console.info('WebGL context restored.');
+              invalidate();
+            }, false);
+          }
         }}
         camera={{ fov: 50, position: [0, 0, camZ], near: 0.01, far: 100 }}
         style={{ touchAction: 'pan-y pinch-zoom', borderRadius: 'inherit' }}
