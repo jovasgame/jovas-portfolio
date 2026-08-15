@@ -24,7 +24,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenContactPag
   };
 
   return (
-    <section id="contacto" className="py-24 relative bg-[#18161b]/75 backdrop-blur-sm overflow-hidden w-full max-w-full">
+    <section id="contacto" className="py-24 relative bg-[#0a090c]/35 backdrop-blur-md overflow-hidden w-full max-w-full">
       {/* Background Accent Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] max-w-full h-[400px] bg-gradient-to-r from-[#ff5540]/10 via-[#feba39]/10 to-transparent blur-[150px] pointer-events-none" />
 
@@ -65,7 +65,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenContactPag
               enableMagnetism={true}
               clickEffect={true}
               className="p-8 sm:p-10 w-full flex flex-col justify-between items-center text-center space-y-6"
-              style={{ backgroundColor: "rgba(20, 18, 24, 0.9)" }}
+              style={{ backgroundColor: "rgba(20, 18, 24, 0.45)" }}
             >
               <div className="space-y-3 w-full">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#25D366]/15 border border-[#25D366]/30 text-[#25D366] text-xs font-mono font-bold uppercase">
@@ -126,7 +126,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenContactPag
               enableMagnetism={true}
               clickEffect={true}
               className="p-8 sm:p-10 w-full flex flex-col justify-between space-y-6"
-              style={{ backgroundColor: "rgba(20, 18, 24, 0.9)" }}
+              style={{ backgroundColor: "rgba(20, 18, 24, 0.45)" }}
             >
               <div className="space-y-3">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#feba39]/15 border border-[#feba39]/30 text-[#feba39] text-xs font-mono font-bold uppercase">

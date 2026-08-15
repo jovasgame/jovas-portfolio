@@ -8,7 +8,7 @@ export const AboutSection: React.FC = () => {
   const { profile } = usePortfolio();
 
   return (
-    <section id="sobre-mi" className="py-24 relative bg-[#141316]/75 backdrop-blur-sm overflow-hidden">
+    <section id="sobre-mi" className="py-24 relative bg-[#0a090c]/35 backdrop-blur-md overflow-hidden">
       {/* Background Accent */}
       <div className="absolute top-1/2 left-0 w-80 h-80 bg-[#feba39]/10 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -78,7 +78,7 @@ export const AboutSection: React.FC = () => {
               enableMagnetism={true}
               clickEffect={true}
               className="p-8 sm:p-10 w-full flex flex-col justify-between space-y-6"
-              style={{ backgroundColor: "rgba(26, 24, 29, 0.85)" }}
+              style={{ backgroundColor: "rgba(26, 24, 29, 0.45)" }}
             >
               <div className="space-y-6">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ff5540]/10 border border-[#ff5540]/30 text-[#ff5540] text-xs font-mono font-bold tracking-widest uppercase">

@@ -47,7 +47,7 @@ export const ModelShowcaseSection: React.FC = () => {
   );
 
   return (
-    <section id="visores-3d" className="py-24 relative overflow-hidden bg-[#0d0c10] border-t border-white/10">
+    <section id="visores-3d" className="py-24 relative overflow-hidden bg-[#0a090c]/35 backdrop-blur-md border-t border-white/10">
       {/* Background Decor Lights */}
       <div className="absolute top-1/2 left-0 w-96 h-96 bg-[#ff5540]/10 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#feba39]/10 rounded-full blur-[140px] pointer-events-none" />

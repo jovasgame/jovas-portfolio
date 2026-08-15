@@ -72,7 +72,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ project, index, onSelectProject }
       transition={{ duration: 0.5, delay: (index % 3) * 0.1 }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group flex flex-col rounded-2xl overflow-hidden bg-[#18161c] border border-white/10 hover:border-[#ff5540]/50 transition-all duration-500 shadow-xl hover:shadow-2xl hover:shadow-[#ff5540]/15 hover:-translate-y-1.5 cursor-pointer"
+      className="group flex flex-col rounded-2xl overflow-hidden bg-[#18161c]/45 backdrop-blur-md border border-white/10 hover:border-[#ff5540]/50 transition-all duration-500 shadow-xl hover:shadow-2xl hover:shadow-[#ff5540]/15 hover:-translate-y-1.5 cursor-pointer"
       onClick={() => onSelectProject(project)}
     >
       {/* 16:9 Video / Thumbnail Container */}
@@ -218,7 +218,7 @@ export const VideoSection: React.FC = () => {
   const videoProjects = projects.filter(p => p.category === 'Animación');
 
   return (
-    <section id="video-section" className="py-24 relative bg-[#0e0d10] border-t border-b border-white/10 overflow-hidden w-full max-w-full">
+    <section id="video-section" className="py-24 relative bg-[#0a090c]/35 backdrop-blur-md border-t border-b border-white/10 overflow-hidden w-full max-w-full">
       {/* Background Ambient Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] max-w-full h-[400px] bg-gradient-to-r from-[#ff5540]/10 via-[#feba39]/10 to-transparent blur-[160px] pointer-events-none" />
 

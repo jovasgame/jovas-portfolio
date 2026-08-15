@@ -32,7 +32,7 @@ export const WorkflowSection: React.FC = () => {
   ];
 
   return (
-    <section id="flujo-trabajo" className="py-24 relative bg-[#18161b]/75 backdrop-blur-sm overflow-hidden">
+    <section id="flujo-trabajo" className="py-24 relative bg-[#0a090c]/35 backdrop-blur-md overflow-hidden">
       {/* Subtle Background Elements */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-[#ff5540]/10 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -78,7 +78,7 @@ export const WorkflowSection: React.FC = () => {
                 enableMagnetism={true}
                 clickEffect={true}
                 className="p-6 h-full flex flex-col justify-between"
-                style={{ backgroundColor: "rgba(26, 24, 29, 0.85)", minHeight: "260px" }}
+                style={{ backgroundColor: "rgba(26, 24, 29, 0.45)", minHeight: "260px" }}
               >
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
