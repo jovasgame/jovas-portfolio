@@ -230,23 +230,21 @@ export const VideoSection: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12"
+          className="flex flex-col items-center text-center max-w-3xl mx-auto mb-12 space-y-3"
         >
-          <div>
-            <div className="flex items-center gap-2 text-xs font-mono text-[#ff5540] tracking-widest uppercase mb-2">
-              <Film className="w-4 h-4 text-[#feba39] animate-pulse" />
-              Sección Exclusiva de Vídeo y Render 3D
-            </div>
-            <h2 className="font-syne font-black text-3xl sm:text-5xl text-white tracking-tight flex items-center gap-3">
-              REEL DE ANIMACIÓN
-              <span className="px-3 py-1 rounded-full bg-[#ff5540]/20 text-[#ff5540] text-sm font-mono font-bold border border-[#ff5540]/40">
-                {videoProjects.length} VÍDEOS
-              </span>
-            </h2>
-            <p className="text-sm text-[#a89f9e] max-w-2xl mt-2">
-              Pasa el ratón sobre cualquier vídeo para activar la previsualización en directo con sonido.
-            </p>
+          <div className="inline-flex items-center justify-center gap-2 text-xs font-mono text-[#ff5540] tracking-widest uppercase px-4 py-1.5 rounded-full bg-[#ff5540]/10 border border-[#ff5540]/30 font-bold">
+            <Film className="w-4 h-4 text-[#feba39] animate-pulse" />
+            Sección Exclusiva de Vídeo y Render 3D
           </div>
+          <h2 className="font-syne font-black text-3xl sm:text-5xl text-white tracking-tight flex flex-wrap items-center justify-center gap-3">
+            REEL DE ANIMACIÓN
+            <span className="px-3 py-1 rounded-full bg-[#ff5540]/20 text-[#ff5540] text-sm font-mono font-bold border border-[#ff5540]/40">
+              {videoProjects.length} VÍDEOS
+            </span>
+          </h2>
+          <p className="text-sm sm:text-base text-[#a89f9e] max-w-2xl mx-auto leading-relaxed">
+            Pasa el ratón sobre cualquier vídeo para activar la previsualización en directo con sonido.
+          </p>
         </motion.div>
 
         {/* Video Grid (YouTube Aesthetic Layout: 1 Col Mobile, 2 Col Small, 3 Col Tablet/11", 4 Col PC) */}

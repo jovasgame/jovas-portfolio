@@ -55,48 +55,46 @@ export const ModelShowcaseSection: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-10">
         
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/10 pb-8">
-          <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#feba39]/10 border border-[#feba39]/30 text-[#feba39] text-xs font-mono font-bold uppercase tracking-widest">
-              <Box className="w-4 h-4 text-[#ff5540]" />
-              Visor Interactivo 3D
-            </div>
-            <h2 className="font-syne font-black text-3xl sm:text-5xl text-white tracking-tight uppercase">
-              REAL TIME <span className="bg-gradient-to-r from-[#ff5540] to-[#feba39] bg-clip-text text-transparent">3D</span>
-            </h2>
-            <p className="text-[#a89f9e] text-xs sm:text-sm max-w-2xl font-sans leading-relaxed">
-              Inspecciona modelos 3D interactivos con rotación manual, zoom dinámico, iluminación de estudio y captura de capturas en alta resolución en tiempo real.
-            </p>
+        <div className="flex flex-col items-center text-center max-w-3xl mx-auto space-y-3 mb-6">
+          <div className="inline-flex items-center justify-center gap-2 px-3.5 py-1 rounded-full bg-[#feba39]/10 border border-[#feba39]/30 text-[#feba39] text-xs font-mono font-bold uppercase tracking-widest">
+            <Box className="w-4 h-4 text-[#ff5540]" />
+            Visor Interactivo 3D
           </div>
+          <h2 className="font-syne font-black text-3xl sm:text-5xl text-white tracking-tight uppercase">
+            REAL TIME <span className="bg-gradient-to-r from-[#ff5540] to-[#feba39] bg-clip-text text-transparent">3D</span>
+          </h2>
+          <p className="text-[#a89f9e] text-xs sm:text-sm max-w-2xl mx-auto font-sans leading-relaxed">
+            Inspecciona modelos 3D interactivos con rotación manual, zoom dinámico, iluminación de estudio y captura de capturas en alta resolución en tiempo real.
+          </p>
+        </div>
 
-          {/* Controls toolbar */}
-          <div className="flex flex-wrap items-center gap-2 shrink-0">
-            <button
-              onClick={() => setAutoRotate(prev => !prev)}
-              className={`px-4 py-2 rounded-xl text-xs font-mono font-bold flex items-center gap-2 border transition-all cursor-pointer ${
-                autoRotate
-                  ? 'bg-[#ff5540]/20 border-[#ff5540] text-[#ff7563]'
-                  : 'bg-white/5 border-white/10 text-[#a89f9e] hover:text-white'
-              }`}
+        {/* Controls toolbar Centered */}
+        <div className="flex flex-wrap items-center justify-center gap-3 mb-10 pb-6 border-b border-white/10">
+          <button
+            onClick={() => setAutoRotate(prev => !prev)}
+            className={`px-4 py-2 rounded-xl text-xs font-mono font-bold flex items-center gap-2 border transition-all cursor-pointer ${
+              autoRotate
+                ? 'bg-[#ff5540]/20 border-[#ff5540] text-[#ff7563]'
+                : 'bg-white/5 border-white/10 text-[#a89f9e] hover:text-white'
+            }`}
+          >
+            <RotateCw className={`w-3.5 h-3.5 ${autoRotate ? 'animate-spin' : ''}`} />
+            <span>{autoRotate ? 'Auto-Rotación: SÍ' : 'Auto-Rotación: NO'}</span>
+          </button>
+
+          <div className="flex items-center gap-1.5 bg-black/60 p-1.5 rounded-xl border border-white/10">
+            <Sun className="w-3.5 h-3.5 text-[#feba39] ml-1.5" />
+            <select
+              value={environmentPreset}
+              onChange={(e) => setEnvironmentPreset(e.target.value as any)}
+              className="bg-transparent text-xs font-mono text-white focus:outline-none cursor-pointer pr-2"
             >
-              <RotateCw className={`w-3.5 h-3.5 ${autoRotate ? 'animate-spin' : ''}`} />
-              <span>{autoRotate ? 'Auto-Rotación: SÍ' : 'Auto-Rotación: NO'}</span>
-            </button>
-
-            <div className="flex items-center gap-1.5 bg-black/60 p-1.5 rounded-xl border border-white/10">
-              <Sun className="w-3.5 h-3.5 text-[#feba39] ml-1.5" />
-              <select
-                value={environmentPreset}
-                onChange={(e) => setEnvironmentPreset(e.target.value as any)}
-                className="bg-transparent text-xs font-mono text-white focus:outline-none cursor-pointer pr-2"
-              >
-                <option value="city" className="bg-black text-white">Luz: Ciudad</option>
-                <option value="studio" className="bg-black text-white">Luz: Estudio</option>
-                <option value="warehouse" className="bg-black text-[#feba39]">Luz: Almacén</option>
-                <option value="sunset" className="bg-black text-white">Luz: Atardecer</option>
-                <option value="forest" className="bg-black text-white">Luz: Bosque</option>
-              </select>
-            </div>
+              <option value="city" className="bg-black text-white">Luz: Ciudad</option>
+              <option value="studio" className="bg-black text-white">Luz: Estudio</option>
+              <option value="warehouse" className="bg-black text-[#feba39]">Luz: Almacén</option>
+              <option value="sunset" className="bg-black text-white">Luz: Atardecer</option>
+              <option value="forest" className="bg-black text-white">Luz: Bosque</option>
+            </select>
           </div>
         </div>
 
