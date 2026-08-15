@@ -143,7 +143,7 @@ export const HeroSlider: React.FC = () => {
                     alt={currentProject.title}
                     poster={getDirectThumbnailUrl(currentProject.imageUrl || currentProject.videoUrl)}
                     forceVideo={true}
-                    className="w-full h-full object-cover object-center filter brightness-90 contrast-105 group-hover/slider:scale-105 transition-transform duration-1000 pointer-events-none"
+                    className="w-full h-full object-cover object-center filter brightness-95 contrast-105 group-hover/slider:scale-105 transition-transform duration-1000 pointer-events-none"
                     controls={false}
                     autoPlay={true}
                     muted={true}
@@ -160,13 +160,13 @@ export const HeroSlider: React.FC = () => {
                 <img
                   src={getDirectThumbnailUrl(currentProject.imageUrl || currentProject.videoUrl)}
                   alt={currentProject.title}
-                  className="w-full h-full object-cover object-center filter brightness-90 contrast-105 group-hover/slider:scale-105 transition-transform duration-1000"
+                  className="w-full h-full object-cover object-center filter brightness-95 contrast-105 group-hover/slider:scale-105 transition-transform duration-1000"
                 />
               )}
               
-              {/* Overlay Gradients for Perfect Contrast */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0d0c0e] via-[#0d0c0e]/50 to-black/30 pointer-events-none" />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0d0c0e]/95 via-[#0d0c0e]/40 to-transparent pointer-events-none" />
+              {/* Concentrated Dark Gradient Overlay: Maintains dark contrast around bottom-left text zone, reduced by 20%+ over top/right image area */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0b0a0c]/90 via-[#0b0a0c]/35 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#0b0a0c]/85 via-[#0b0a0c]/20 to-transparent pointer-events-none" />
             </motion.div>
           </AnimatePresence>
 
@@ -224,20 +224,6 @@ export const HeroSlider: React.FC = () => {
                   <p className="text-xs sm:text-sm md:text-base text-[#e7e1e5]/85 line-clamp-2 sm:line-clamp-3 leading-relaxed max-w-2xl font-sans drop-shadow">
                     {currentProject.description}
                   </p>
-                )}
-
-                {/* Hashtag Tags */}
-                {currentProject.tags && currentProject.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-1">
-                    {currentProject.tags.map((tag, idx) => (
-                      <span
-                        key={idx}
-                        className="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-md bg-black/50 backdrop-blur-md text-[10px] sm:text-[11px] font-mono text-[#feba39] border border-white/15 shadow-sm hover:border-[#feba39]/60 transition-all"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
                 )}
               </motion.div>
             </AnimatePresence>
