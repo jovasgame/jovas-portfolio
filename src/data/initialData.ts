@@ -577,7 +577,7 @@ export const initialProfile: UserProfile = {
     "Veo cada proyecto como una oportunidad para crecer, y cada desafío no es un obstáculo, sino un escalón hacia algo más grande. Para mí, los errores son maestros que me permiten levantarme con una visión más clara y un conjunto de habilidades más pulido.",
     "Más que crear imágenes, mi meta es evolucionar con cada trabajo que hago. Busco ser un profesional completo, alguien que se transforma y aprende con cada trazo, cada idea y cada desafío."
   ],
-  "experienceYears": "10",
+  "experienceYears": "10 Años",
   "projectsCompletedCount": "120+",
   "email": "jose.vasquez942122@gmail.com",
   "avatarUrl": "/images/extracted-05.jpg",

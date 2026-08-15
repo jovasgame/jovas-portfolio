@@ -46,24 +46,15 @@ export const AboutSection: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#141316] via-[#141316]/30 to-transparent"></div>
 
                 {/* Stat Overlay Badge Pinned at the Very Foot of the Photo */}
-                <div className="relative z-10 p-4 sm:p-5 m-4 sm:m-6 mt-auto rounded-2xl bg-[#1e1c21]/90 backdrop-blur-md border border-white/10 flex items-center justify-around shadow-2xl">
+                <div className="relative z-10 p-4 sm:p-5 m-4 sm:m-6 mt-auto rounded-2xl bg-[#1e1c21]/90 backdrop-blur-md border border-white/10 flex items-center justify-center text-center shadow-2xl">
                   <div className="text-center">
-                    <span className="font-syne font-black text-2xl text-[#feba39] block">
-                      {profile.experienceYears}
+                    <span className="font-syne font-black text-2xl sm:text-3xl text-[#feba39] block">
+                      {profile.experienceYears.includes('Años') || profile.experienceYears.includes('años')
+                        ? profile.experienceYears
+                        : `${profile.experienceYears} Años`}
                     </span>
-                    <span className="text-[10px] font-mono text-[#a89f9e] uppercase">
-                      Experiencia
-                    </span>
-                  </div>
-
-                  <div className="h-8 w-[1px] bg-white/10"></div>
-
-                  <div className="text-center">
-                    <span className="font-syne font-black text-2xl text-[#ff5540] block">
-                      {profile.projectsCompletedCount}
-                    </span>
-                    <span className="text-[10px] font-mono text-[#a89f9e] uppercase">
-                      Proyectos
+                    <span className="text-[10px] sm:text-xs font-mono text-[#a89f9e] uppercase font-bold tracking-wider">
+                      De Experiencia
                     </span>
                   </div>
                 </div>
