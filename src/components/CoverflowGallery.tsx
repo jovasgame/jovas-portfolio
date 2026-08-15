@@ -218,6 +218,7 @@ function Smooth3DSlideshow(props: Smooth3DSlideshowProps) {
     alignItems: "center",
     justifyContent: "center",
     perspective: `${PERSPECTIVE}px`,
+    WebkitPerspective: `${PERSPECTIVE}px`,
     overflow: "hidden",
     outline: "none",
   };
@@ -237,6 +238,7 @@ function Smooth3DSlideshow(props: Smooth3DSlideshowProps) {
           width: cardWidth,
           height: cardHeight,
           transformStyle: "preserve-3d",
+          WebkitTransformStyle: "preserve-3d",
         }}
       >
         {list.map((slide, i) => {

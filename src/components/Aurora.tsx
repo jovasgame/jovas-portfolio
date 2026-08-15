@@ -151,12 +151,26 @@ export const Aurora: React.FC<AuroraProps> = (props) => {
     try {
       // Cap DPR to 1.25 for maximum performance on high-DPI and mobile screens
       const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
-      renderer = new Renderer({
-        dpr,
-        alpha: true,
-        premultipliedAlpha: true,
-        antialias: false
-      });
+      
+      try {
+        renderer = new Renderer({
+          dpr,
+          alpha: true,
+          premultipliedAlpha: true,
+          antialias: false,
+          webgl: 2
+        });
+      } catch (e1) {
+        renderer = new Renderer({
+          dpr,
+          alpha: true,
+          premultipliedAlpha: true,
+          antialias: false,
+          webgl: 1
+        });
+      }
+
+      if (!renderer || !renderer.gl) return;
       const gl = renderer.gl;
       gl.clearColor(0, 0, 0, 0);
       gl.enable(gl.BLEND);
