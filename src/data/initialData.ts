@@ -579,7 +579,7 @@ export const initialProfile: UserProfile = {
   ],
   "experienceYears": "10 Años",
   "projectsCompletedCount": "120+",
-  "email": "jose.vasquez942122@gmail.com",
+  "email": "jovas.motion@design.com",
   "avatarUrl": "/images/extracted-05.jpg",
   "socialLinks": {
     "instagram": "https://instagram.com",

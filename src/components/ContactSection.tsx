@@ -12,7 +12,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenContactPag
   const { profile } = usePortfolio();
   const [copiedEmail, setCopiedEmail] = useState<string | null>(null);
 
-  const primaryEmail = "jose.vasquez942122@gmail.com";
+  const primaryEmail = profile.email || "jovas.motion@design.com";
   const whatsappNumber = "+503 7255 4916";
   const whatsappLink = "https://wa.me/50372554916";
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(whatsappLink)}&color=ffffff&bgcolor=141316`;
