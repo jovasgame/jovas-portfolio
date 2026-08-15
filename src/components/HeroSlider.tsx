@@ -3,18 +3,13 @@ import { usePortfolio } from '../context/PortfolioContext';
 import { motion, AnimatePresence } from 'motion/react';
 import { MediaViewer } from './MediaViewer';
 import { getDirectThumbnailUrl } from '../utils/mediaUtils';
-import { MagneticButton } from './MagneticButton';
-import { MetallicPaint } from './MetallicPaint';
 import { 
   ChevronLeft, 
   ChevronRight, 
   Play, 
   Pause, 
-  Sparkles, 
   Eye, 
   Flame, 
-  Clock, 
-  Tag, 
   ArrowUpRight 
 } from 'lucide-react';
 
@@ -76,13 +71,13 @@ export const HeroSlider: React.FC = () => {
       <div className="absolute inset-0 z-0 opacity-15 pointer-events-none diagonal-stripes"></div>
       
       {/* Immersive Full Screen Hero Welcome Header */}
-      <div className="text-center max-w-3xl mx-auto px-4 sm:px-6 min-h-[60vh] sm:min-h-[75vh] flex flex-col items-center justify-center space-y-3 sm:space-y-4 z-10 py-6 sm:py-8 mb-10 sm:mb-28">
-        {/* Clean Glowing Logo (Without square canvas box) */}
+      <div className="text-center max-w-3xl mx-auto px-4 sm:px-6 min-h-[50vh] sm:min-h-[65vh] flex flex-col items-center justify-center space-y-3 sm:space-y-4 z-10 py-6 sm:py-8 mb-6 sm:mb-16">
+        {/* Clean Glowing Logo */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="w-28 h-28 sm:w-36 sm:h-36 lg:w-44 lg:h-44 relative flex items-center justify-center pointer-events-auto cursor-pointer group mb-4"
+          className="w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 relative flex items-center justify-center pointer-events-auto cursor-pointer group mb-3"
         >
           {/* Subtle Ambient Radial Glow */}
           <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#ff5540]/40 via-[#feba39]/30 to-transparent blur-2xl group-hover:scale-125 transition-transform duration-700 pointer-events-none" />
@@ -96,7 +91,7 @@ export const HeroSlider: React.FC = () => {
           ) : (
             <div className="w-full h-full rounded-3xl bg-gradient-to-br from-[#ff5540] to-[#feba39] p-[2px] shadow-2xl shadow-[#ff5540]/30 relative z-10 group-hover:scale-105 transition-transform duration-300">
               <div className="w-full h-full bg-[#1e1c21] rounded-[22px] flex items-center justify-center">
-                <Flame className="w-12 h-12 sm:w-16 sm:h-16 text-[#feba39] animate-pulse" />
+                <Flame className="w-10 h-10 sm:w-14 sm:h-14 text-[#feba39] animate-pulse" />
               </div>
             </div>
           )}
@@ -121,21 +116,22 @@ export const HeroSlider: React.FC = () => {
         </motion.p>
       </div>
 
-      {/* 100% FULL-WIDTH MAIN INTERACTIVE SLIDER CONTAINER (Pushed lower with smooth spacing) */}
+      {/* 100% FULL-WIDTH MAIN INTERACTIVE SLIDER CONTAINER */}
       <div 
-        className="w-full px-2 sm:px-4 lg:px-8 z-10 mt-6 sm:mt-16 pt-4 sm:pt-8"
+        className="w-full z-10 mt-2 sm:mt-6 px-0 max-w-full"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="relative rounded-[2.5rem] overflow-hidden glass-panel border border-white/20 shadow-[0_25px_70px_-15px_rgba(0,0,0,0.9)] min-h-[380px] sm:min-h-[520px] lg:min-h-[600px] flex flex-col justify-between group/slider hover:border-[#feba39]/50 transition-all duration-500 bg-black/40 backdrop-blur-md">
+        {/* Slider Frame with 50% reduced rounded corners (rounded-2xl sm:rounded-3xl) & 100% width */}
+        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden glass-panel border border-white/20 shadow-[0_25px_70px_-15px_rgba(0,0,0,0.9)] min-h-[420px] sm:min-h-[540px] lg:min-h-[640px] flex flex-col justify-between group/slider hover:border-[#feba39]/40 transition-all duration-500 bg-black/50 backdrop-blur-md w-full max-w-full">
           
-          {/* Background Slide Image & Video Overlay */}
+          {/* 1. Background Slide Image & Video Overlay with Smooth Cover Transition */}
           <AnimatePresence mode="wait">
             <motion.div
               key={currentProject.id}
-              initial={{ opacity: 0, scale: 1.08 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.96 }}
+              initial={{ opacity: 0, scale: 1.1, filter: 'blur(6px)' }}
+              animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, scale: 0.96, filter: 'blur(6px)' }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               className="absolute inset-0 z-0"
             >
@@ -154,10 +150,10 @@ export const HeroSlider: React.FC = () => {
                     loop={true}
                     onEnded={handleNext}
                   />
-                  {/* Subtle Muted Indicator Badge */}
-                  <div className="absolute top-20 left-8 z-20 hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/70 backdrop-blur-md border border-[#feba39]/30 text-[11px] font-mono text-[#feba39] shadow-xl pointer-events-none">
+                  {/* Muted Auto-play Indicator */}
+                  <div className="absolute top-6 right-6 z-20 hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-[#feba39]/30 text-[10px] font-mono text-[#feba39] shadow-xl pointer-events-none">
                     <span className="w-2 h-2 rounded-full bg-[#ff5540] animate-ping" />
-                    <span>REPRODUCCIÓN AUTOMÁTICA (SIN SONIDO)</span>
+                    <span>AUTOPLAY</span>
                   </div>
                 </div>
               ) : (
@@ -168,133 +164,110 @@ export const HeroSlider: React.FC = () => {
                 />
               )}
               
-              {/* Dark Gradients for contrast */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0d0c0e] via-[#0d0c0e]/60 to-black/30 pointer-events-none"></div>
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0d0c0e]/95 via-[#0d0c0e]/40 to-transparent pointer-events-none"></div>
+              {/* Overlay Gradients for Perfect Contrast */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0d0c0e] via-[#0d0c0e]/50 to-black/30 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#0d0c0e]/95 via-[#0d0c0e]/40 to-transparent pointer-events-none" />
             </motion.div>
           </AnimatePresence>
 
-          {/* Top Slide Meta Header */}
-          <div className="relative z-10 p-6 sm:p-8 flex items-center justify-between">
-            <div className="flex items-center gap-3 flex-wrap">
-              <span className="px-4 py-1.5 rounded-full bg-gradient-to-r from-[#ff5540] to-[#feba39] text-[#2c1800] font-black text-xs uppercase tracking-wider shadow-lg shadow-[#ff5540]/30 border border-white/20">
-                {currentProject.category}
-              </span>
-              <span className="px-3.5 py-1 rounded-full bg-black/50 backdrop-blur-xl border border-white/20 text-white/90 text-xs font-mono shadow-md hover:border-[#feba39]/50 hover:shadow-[0_0_15px_rgba(254,186,57,0.3)] transition-all">
-                Año: {currentProject.year}
-              </span>
-              {currentProject.client && (
-                <span className="hidden sm:inline-block px-3.5 py-1 rounded-full bg-black/50 backdrop-blur-xl border border-white/20 text-[#a89f9e] text-xs shadow-md hover:border-white/40 transition-all">
-                  Cliente: {currentProject.client}
-                </span>
-              )}
-            </div>
-
-            {/* Slide Index Indicator */}
-            <div className="font-mono text-sm text-white/90 bg-black/50 backdrop-blur-xl border border-white/20 px-4 py-1.5 rounded-full flex items-center gap-2 shadow-lg shadow-black/50 hover:border-[#feba39]/50 hover:shadow-[0_0_15px_rgba(254,186,57,0.3)] transition-all">
-              <span className="text-[#feba39] font-bold">0{currentIndex + 1}</span>
-              <span className="text-white/40">/</span>
-              <span className="text-white/60">0{sliderItems.length}</span>
-            </div>
+          {/* 2. Top-Left Corner: Button "Explorar Proyecto" (As requested in top-left corner) */}
+          <div className="absolute top-4 left-4 sm:top-7 sm:left-7 z-30">
+            <button
+              onClick={() => setSelectedProjectForModal(currentProject)}
+              className="bg-gradient-to-r from-[#ff5540] via-[#ff7034] to-[#feba39] hover:from-[#ff6b54] hover:to-[#ffc859] text-[#1a0f00] font-extrabold text-xs sm:text-sm px-4 sm:px-6 py-2 sm:py-2.5 rounded-full shadow-[0_4px_20px_rgba(255,85,64,0.4)] hover:shadow-[0_6px_28px_rgba(254,186,57,0.7)] hover:scale-105 active:scale-95 transition-all duration-300 flex items-center gap-2 sm:gap-2.5 cursor-pointer font-sans tracking-wide border border-white/30 backdrop-blur-sm"
+              title="Explorar Detalle del Proyecto"
+            >
+              <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#1a0f00]" />
+              <span>Explorar Proyecto</span>
+              <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#1a0f00]" />
+            </button>
           </div>
 
-          {/* Bottom Slide Content Body */}
-          <div className="relative z-10 p-6 sm:p-10 lg:p-12 flex flex-col md:flex-row md:items-end justify-between gap-8">
-            
-            {/* Title & Description Info */}
+          {/* 3. Subtle & Smaller Prev/Next Arrow Navigation Buttons (Left & Right sides) */}
+          <button
+            onClick={handlePrev}
+            className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/50 hover:bg-[#ff5540] backdrop-blur-md border border-white/20 hover:border-[#ff5540] text-white/90 hover:text-white flex items-center justify-center cursor-pointer transition-all duration-300 shadow-xl hover:scale-110 active:scale-90 group"
+            title="Proyecto Anterior"
+          >
+            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 group-hover:-translate-x-0.5 transition-transform" />
+          </button>
+
+          <button
+            onClick={handleNext}
+            className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/50 hover:bg-[#ff5540] backdrop-blur-md border border-white/20 hover:border-[#ff5540] text-white/90 hover:text-white flex items-center justify-center cursor-pointer transition-all duration-300 shadow-xl hover:scale-110 active:scale-90 group"
+            title="Siguiente Proyecto"
+          >
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-0.5 transition-transform" />
+          </button>
+
+          {/* Spacer for top area */}
+          <div className="relative z-10 h-16 sm:h-20" />
+
+          {/* 4. Main Text Info (Outstanding, Highly Responsive Title) */}
+          <div className="relative z-20 p-6 sm:p-10 lg:p-14 flex flex-col justify-end space-y-3 sm:space-y-4 max-w-4xl">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentProject.id + '-content'}
-                initial={{ opacity: 0, y: 25 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
+                exit={{ opacity: 0, y: -15 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className="max-w-2xl space-y-4"
+                className="space-y-2 sm:space-y-4"
               >
-                <h2 className="font-syne font-black text-3xl sm:text-5xl lg:text-6xl text-white tracking-tight drop-shadow-lg">
+                {/* Main Highlighted Responsive Title */}
+                <h2 className="font-syne font-black text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-white tracking-tight leading-[1.08] drop-shadow-[0_10px_35px_rgba(0,0,0,0.95)]">
                   {currentProject.title}
                 </h2>
 
-                <p className="text-sm sm:text-base text-[#e7e1e5]/90 line-clamp-2 sm:line-clamp-3 leading-relaxed max-w-xl">
-                  {currentProject.description}
-                </p>
+                {/* Project Description */}
+                {currentProject.description && (
+                  <p className="text-xs sm:text-sm md:text-base text-[#e7e1e5]/85 line-clamp-2 sm:line-clamp-3 leading-relaxed max-w-2xl font-sans drop-shadow">
+                    {currentProject.description}
+                  </p>
+                )}
 
-                {/* Tags list */}
-                <div className="flex flex-wrap gap-2 pt-2">
-                  {currentProject.tags.map((tag, idx) => (
-                    <span
-                      key={idx}
-                      className="px-3 py-1 rounded-lg bg-black/40 backdrop-blur-md text-[11px] font-mono text-[#feba39] border border-white/15 shadow-sm hover:border-[#feba39]/60 hover:shadow-[0_0_10px_rgba(254,186,57,0.3)] transition-all"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
+                {/* Hashtag Tags */}
+                {currentProject.tags && currentProject.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-1">
+                    {currentProject.tags.map((tag, idx) => (
+                      <span
+                        key={idx}
+                        className="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-md bg-black/50 backdrop-blur-md text-[10px] sm:text-[11px] font-mono text-[#feba39] border border-white/15 shadow-sm hover:border-[#feba39]/60 transition-all"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </motion.div>
             </AnimatePresence>
-
-            {/* Slide Action CTAs & Controls with Dynamic Glass & Glow Effects */}
-            <div className="flex flex-col sm:flex-row md:flex-col items-start sm:items-center md:items-end gap-4 shrink-0">
-              <MagneticButton
-                onClick={() => setSelectedProjectForModal(currentProject)}
-                paddingX={28}
-                paddingY={15}
-                radius={16}
-                magnet={10}
-                fill="linear-gradient(135deg, #ff5540 0%, #feba39 100%)"
-                textColor="#2b1800"
-                sweepColor="#121114"
-                sweepTextColor="#feba39"
-              >
-                <Eye className="w-4 h-4" />
-                <span>Explorar Proyecto</span>
-                <ArrowUpRight className="w-4 h-4" />
-              </MagneticButton>
-
-              {/* Slider Manual Controls Bar - Dynamic Glassmorphism & Hover Glow */}
-              <div className="flex items-center gap-2.5 bg-black/50 backdrop-blur-2xl p-2 rounded-2xl border border-white/20 shadow-2xl shadow-black/80">
-                <button
-                  onClick={handlePrev}
-                  className="p-3.5 rounded-xl bg-white/10 hover:bg-[#feba39] text-white hover:text-[#2b1800] border border-white/20 hover:border-[#feba39] hover:shadow-[0_0_20px_rgba(254,186,57,0.7)] hover:scale-110 active:scale-90 transition-all duration-300 cursor-pointer"
-                  title="Anterior"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
-
-                <button
-                  onClick={() => setIsPlaying(!isPlaying)}
-                  className="p-3.5 rounded-xl bg-white/10 hover:bg-[#feba39] text-[#feba39] hover:text-[#2b1800] border border-white/20 hover:border-[#feba39] hover:shadow-[0_0_20px_rgba(254,186,57,0.7)] hover:scale-110 active:scale-90 transition-all duration-300 cursor-pointer"
-                  title={isPlaying ? "Pausar Reproducción" : "Reproducción Automática"}
-                >
-                  {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 fill-current" />}
-                </button>
-
-                <button
-                  onClick={handleNext}
-                  className="p-3.5 rounded-xl bg-white/10 hover:bg-[#feba39] text-white hover:text-[#2b1800] border border-white/20 hover:border-[#feba39] hover:shadow-[0_0_20px_rgba(254,186,57,0.7)] hover:scale-110 active:scale-90 transition-all duration-300 cursor-pointer"
-                  title="Siguiente"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-
           </div>
 
-          {/* Bottom Progress Bullets with Glow */}
-          <div className="relative z-10 px-6 sm:px-10 pb-5 flex items-center justify-center gap-2.5">
-            {sliderItems.map((_, idx) => (
+          {/* 5. Bottom Pagination Selector (Dots Pill from Screenshot 2) */}
+          <div className="relative z-30 pb-5 sm:pb-7 flex items-center justify-center gap-2 sm:gap-2.5">
+            <div className="flex items-center gap-2 sm:gap-2.5 px-4 py-2 rounded-full bg-black/50 backdrop-blur-md border border-white/15 shadow-2xl">
+              {sliderItems.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentIndex(idx)}
+                  className={`h-2 sm:h-2.5 rounded-full transition-all duration-500 cursor-pointer ${
+                    currentIndex === idx
+                      ? 'w-8 sm:w-12 bg-gradient-to-r from-[#ff5540] to-[#feba39] shadow-[0_0_15px_rgba(254,186,57,0.9)] scale-105'
+                      : 'w-2.5 sm:w-3 bg-white/20 hover:bg-white/60 hover:scale-125'
+                  }`}
+                  title={`Diapositiva ${idx + 1}`}
+                />
+              ))}
+
+              {/* Subtle Auto-play Pause/Play Toggle Button */}
               <button
-                key={idx}
-                onClick={() => setCurrentIndex(idx)}
-                className={`h-2 rounded-full transition-all duration-500 cursor-pointer ${
-                  currentIndex === idx
-                    ? 'w-12 bg-gradient-to-r from-[#ff5540] to-[#feba39] shadow-[0_0_20px_rgba(254,186,57,0.9)] scale-105'
-                    : 'w-3 bg-white/20 hover:bg-white/60 hover:scale-125 hover:shadow-[0_0_10px_rgba(255,255,255,0.5)]'
-                }`}
-                title={`Ir a diapositiva ${idx + 1}`}
-              />
-            ))}
+                onClick={() => setIsPlaying(!isPlaying)}
+                className="ml-2 p-1 text-white/60 hover:text-[#feba39] transition-colors cursor-pointer"
+                title={isPlaying ? "Pausar slider" : "Reproducción automática"}
+              >
+                {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 fill-current" />}
+              </button>
+            </div>
           </div>
 
         </div>
@@ -302,3 +275,4 @@ export const HeroSlider: React.FC = () => {
     </section>
   );
 };
+
