@@ -3,6 +3,7 @@ import { usePortfolio } from '../context/PortfolioContext';
 import { motion } from 'motion/react';
 import { Mail, MessageSquare, Phone, QrCode, Sparkles, ExternalLink, Check, Copy, ArrowRight, Flame } from 'lucide-react';
 import { MagicBentoCard } from './MagicBento';
+import { trackContactClick } from '../utils/analyticsTracker';
 
 interface ContactSectionProps {
   onOpenContactPage?: () => void;
@@ -100,6 +101,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenContactPag
                   href={whatsappLink}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackContactClick()}
                   className="w-full py-4 px-6 rounded-2xl bg-[#25D366] hover:bg-[#20bd5a] text-[#083015] font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-[#25D366]/20 transition-all cursor-pointer"
                 >
                   <Phone className="w-4 h-4" />

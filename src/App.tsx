@@ -22,10 +22,16 @@ const ContactPage = React.lazy(() =>
   import('./components/ContactPage').then((m) => ({ default: m.ContactPage }))
 );
 
+import { trackPageView } from './utils/analyticsTracker';
+
 const MainPortfolioContent: React.FC = () => {
   const { isAdminLoggedIn } = usePortfolio();
   const [showDashboard, setShowDashboard] = useState(false);
   const [showContactPage, setShowContactPage] = useState(false);
+
+  React.useEffect(() => {
+    trackPageView();
+  }, []);
 
   if (isAdminLoggedIn && showDashboard) {
     return (

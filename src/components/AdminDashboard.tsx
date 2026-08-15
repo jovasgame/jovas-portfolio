@@ -46,6 +46,8 @@ import {
 import { getDirectThumbnailUrl, isGoogleDriveUrl, parseMediaUrl, parseGoogleDriveUrl, isDirectVideoUrl, getCategoryFallbackImage } from '../utils/mediaUtils';
 import { motion, AnimatePresence } from 'motion/react';
 
+import { getStoredAnalytics, AnalyticsData } from '../utils/analyticsTracker';
+
 interface AdminDashboardProps {
   onCloseDashboard: () => void;
 }
@@ -77,6 +79,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onCloseDashboard
   } = usePortfolio();
 
   const [activeTab, setActiveTab] = useState<'stats' | 'projects' | 'photos' | 'profile' | 'brand' | 'images' | 'messages'>('stats');
+  
+  // Real Analytics State
+  const [realAnalytics, setRealAnalytics] = useState<AnalyticsData>(() => getStoredAnalytics());
   
   // Search & Filter in Dashboard
   const [searchTerm, setSearchTerm] = useState('');
@@ -764,141 +769,262 @@ export const initialPhotos: PhotoItem[] = ${JSON.stringify(photos, null, 2)};
         {/* MAIN TAB CONTENT CONTAINER */}
         <main className="p-6 lg:p-8 space-y-8 flex-1">
 
-          {/* TAB 1: OVERVIEW & STATS (Matching reference design) */}
+          {/* TAB 1: OVERVIEW & REAL ANALYTICS METRICS */}
           {activeTab === 'stats' && (
-            <div className="space-y-6">
+            <div className="space-y-8">
               
-              {/* Bento Grid Row 1: Header Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {/* Header Bar */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#191524]/90 p-6 rounded-3xl border border-white/10 backdrop-blur-xl">
+                <div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#feba39]/10 border border-[#feba39]/30 text-[#feba39] text-xs font-mono font-bold uppercase tracking-wider mb-2">
+                    <Activity className="w-3.5 h-3.5 text-[#ff5540]" />
+                    Analíticas y Rendimiento en Tiempo Real
+                  </div>
+                  <h2 className="font-syne font-black text-2xl text-white">
+                    Métricas de Visitas y Tráfico Real
+                  </h2>
+                  <p className="text-xs text-[#a89f9e] font-mono mt-1">
+                    Datos recopilados en tiempo real &bull; Exclusivo para el Administrador
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 flex-wrap">
+                  <button
+                    onClick={() => {
+                      setRealAnalytics(getStoredAnalytics());
+                      showToast('🔄 ¡Métricas de analíticas actualizadas!');
+                    }}
+                    className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/15 text-white text-xs font-bold border border-white/10 transition-all cursor-pointer"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5 text-[#feba39]" />
+                    <span>Actualizar Datos</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(realAnalytics, null, 2));
+                      const downloadAnchor = document.createElement('a');
+                      downloadAnchor.setAttribute("href", dataStr);
+                      downloadAnchor.setAttribute("download", `analiticas-jovas-${new Date().toISOString().split('T')[0]}.json`);
+                      document.body.appendChild(downloadAnchor);
+                      downloadAnchor.click();
+                      downloadAnchor.remove();
+                      showToast('📊 Reporte JSON de analíticas descargado');
+                    }}
+                    className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#ff5540]/20 hover:bg-[#ff5540]/30 text-[#ff7563] text-xs font-bold border border-[#ff5540]/40 transition-all cursor-pointer"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Exportar Reporte</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Real-time KPI Cards Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 
-                {/* Metric 1 */}
+                {/* Metric 1: Total Pageviews */}
                 <div className="p-6 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl relative overflow-hidden group">
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-xs font-mono text-[#a89f9e] uppercase tracking-wider">
-                      Proyectos Publicados
+                      Vistas de Página (Pageviews)
                     </span>
-                    <FolderKanban className="w-5 h-5 text-[#ff5540]" />
+                    <div className="p-2.5 rounded-2xl bg-[#feba39]/10 text-[#feba39]">
+                      <Eye className="w-5 h-5" />
+                    </div>
                   </div>
                   <div className="font-syne font-black text-4xl text-white mb-2">
-                    {projects.length}
+                    {realAnalytics.totalPageViews}
+                  </div>
+                  <span className="text-[11px] text-[#feba39] flex items-center gap-1 font-mono">
+                    <TrendingUp className="w-3.5 h-3.5" /> Vistas totales registradas
+                  </span>
+                </div>
+
+                {/* Metric 2: Unique Visitors */}
+                <div className="p-6 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl relative overflow-hidden group">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-xs font-mono text-[#a89f9e] uppercase tracking-wider">
+                      Visitantes Únicos Reales
+                    </span>
+                    <div className="p-2.5 rounded-2xl bg-[#ff5540]/10 text-[#ff5540]">
+                      <User className="w-5 h-5" />
+                    </div>
+                  </div>
+                  <div className="font-syne font-black text-4xl text-white mb-2">
+                    {realAnalytics.uniqueVisitors}
                   </div>
                   <span className="text-[11px] text-emerald-400 flex items-center gap-1 font-mono">
-                    <TrendingUp className="w-3.5 h-3.5" /> 100% Sincronizado en Nube
+                    <ShieldCheck className="w-3.5 h-3.5" /> Dispositivos únicos
                   </span>
                 </div>
 
-                {/* Metric 2 */}
+                {/* Metric 3: Total Project Inspections */}
                 <div className="p-6 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl relative overflow-hidden group">
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-xs font-mono text-[#a89f9e] uppercase tracking-wider">
-                      Visitas Estimadas
+                      Proyectos Inspeccionados
                     </span>
-                    <Eye className="w-5 h-5 text-[#feba39]" />
+                    <div className="p-2.5 rounded-2xl bg-purple-500/10 text-purple-400">
+                      <FolderKanban className="w-5 h-5" />
+                    </div>
                   </div>
                   <div className="font-syne font-black text-4xl text-white mb-2">
-                    {stats.totalViews}
+                    {realAnalytics.totalProjectViews}
                   </div>
-                  <span className="text-[11px] text-[#feba39] font-mono">
-                    +18.4% este mes
+                  <span className="text-[11px] text-purple-300 font-mono">
+                    En modal & previsualizador
                   </span>
                 </div>
 
-                {/* Metric 3 */}
+                {/* Metric 4: Quote & Contact Clicks */}
                 <div className="p-6 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl relative overflow-hidden group">
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-xs font-mono text-[#a89f9e] uppercase tracking-wider">
-                      Mensajes & Leads
+                      Clics WhatsApp / Cotizaciones
                     </span>
-                    <MessageSquare className="w-5 h-5 text-emerald-400" />
+                    <div className="p-2.5 rounded-2xl bg-emerald-500/10 text-emerald-400">
+                      <MessageSquare className="w-5 h-5" />
+                    </div>
                   </div>
                   <div className="font-syne font-black text-4xl text-white mb-2">
-                    {messages.length}
+                    {realAnalytics.totalContactClicks}
                   </div>
-                  <span className="text-[11px] text-emerald-400 font-mono">
-                    {unreadCount} sin leer
-                  </span>
-                </div>
-
-                {/* Metric 4 */}
-                <div className="p-6 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl relative overflow-hidden group">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs font-mono text-[#a89f9e] uppercase tracking-wider">
-                      Años de Trayectoria
-                    </span>
-                    <Flame className="w-5 h-5 text-[#ff5540]" />
-                  </div>
-                  <div className="font-syne font-black text-4xl text-white mb-2">
-                    {profile.experienceYears}
-                  </div>
-                  <span className="text-[11px] font-mono text-[#a89f9e]">
-                    Motion & Arte 3D
+                  <span className="text-[11px] text-emerald-400 font-mono flex items-center gap-1">
+                    <Zap className="w-3.5 h-3.5" /> Conversión directa
                   </span>
                 </div>
 
               </div>
 
-              {/* Bento Grid Row 2: Performance Graphs & System Status (Ref Style) */}
+              {/* Detailed Breakdown Section: Top Projects & Devices */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
-                {/* Left Card: System Activity & Cloud State */}
-                <div className="lg:col-span-8 p-6 sm:p-8 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl space-y-6">
+                {/* Left Column: Top Viewed Projects Ranking */}
+                <div className="lg:col-span-7 p-6 sm:p-8 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl space-y-6">
                   <div className="flex items-center justify-between border-b border-white/10 pb-4">
                     <div>
                       <h3 className="font-syne font-bold text-lg text-white">
-                        Rendimiento del Portafolio & Actividad
+                        Proyectos Más Vistos por Visitantes
                       </h3>
                       <p className="text-xs text-[#a89f9e] font-mono">
-                        Estado operativo de entrega de medios y velocidad GPU
+                        Ranking de interés basado en aperturas de modales
                       </p>
                     </div>
-                    <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-mono border border-emerald-500/20 font-bold flex items-center gap-1.5">
-                      <ShieldCheck className="w-4 h-4" /> 99.9% Optimal
+                    <span className="px-3 py-1 rounded-full bg-[#feba39]/10 text-[#feba39] text-xs font-mono border border-[#feba39]/30 font-bold flex items-center gap-1.5">
+                      <Flame className="w-3.5 h-3.5 text-[#ff5540]" /> Top Ranking
                     </span>
                   </div>
 
-                  {/* Simulated Neon Chart Bar UI */}
-                  <div className="h-48 flex items-end justify-between gap-3 pt-6 px-2">
-                    {[65, 80, 45, 90, 75, 100, 85, 95, 70, 90, 85, 98].map((h, i) => (
-                      <div key={i} className="flex-1 flex flex-col items-center gap-2 group cursor-pointer">
-                        <div className="w-full bg-white/5 rounded-t-xl h-36 relative overflow-hidden flex items-end">
-                          <motion.div
-                            initial={{ height: 0 }}
-                            animate={{ height: `${h}%` }}
-                            transition={{ duration: 0.8, delay: i * 0.05 }}
-                            className="w-full bg-gradient-to-t from-[#ff5540] to-[#feba39] rounded-t-xl opacity-80 group-hover:opacity-100 transition-opacity"
+                  <div className="space-y-4">
+                    {projects.map(p => ({
+                      ...p,
+                      views: realAnalytics.projectViewsMap[p.id] || 0
+                    }))
+                    .sort((a, b) => b.views - a.views)
+                    .slice(0, 5)
+                    .map((proj, idx) => (
+                      <div key={proj.id} className="p-4 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between gap-4 hover:border-[#feba39]/40 transition-all">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <span className="font-mono text-sm font-bold text-[#feba39] w-6 shrink-0">
+                            #{idx + 1}
+                          </span>
+                          <img
+                            src={getDirectThumbnailUrl(proj.imageUrl || proj.videoUrl, proj.category)}
+                            alt={proj.title}
+                            className="w-12 h-10 object-cover rounded-xl shrink-0"
                           />
+                          <div className="min-w-0">
+                            <h4 className="font-syne font-bold text-sm text-white truncate">
+                              {proj.title}
+                            </h4>
+                            <span className="text-[10px] font-mono text-[#a89f9e]">
+                              {proj.category} &bull; {proj.year}
+                            </span>
+                          </div>
                         </div>
-                        <span className="text-[10px] font-mono text-[#a89f9e]">
-                          {['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][i]}
-                        </span>
+
+                        <div className="text-right shrink-0">
+                          <span className="font-syne font-black text-lg text-white block">
+                            {proj.views}
+                          </span>
+                          <span className="text-[10px] font-mono text-[#a89f9e]">vistas</span>
+                        </div>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                {/* Right Card: Quick Tools & Status */}
-                <div className="lg:col-span-4 p-6 sm:p-8 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl space-y-6 flex flex-col justify-between">
+                {/* Right Column: Device Breakdown & Cloud Status */}
+                <div className="lg:col-span-5 p-6 sm:p-8 rounded-3xl bg-[#191524]/90 backdrop-blur-xl border border-white/10 shadow-2xl space-y-6 flex flex-col justify-between">
                   <div>
                     <h3 className="font-syne font-bold text-lg text-white mb-1">
-                      Herramientas en Uso
+                      Desglose por Dispositivo
                     </h3>
                     <p className="text-xs text-[#a89f9e] font-mono mb-6">
-                      Software y motores de render 3D
+                      Tipos de navegadores y pantallas detectadas
                     </p>
 
-                    <div className="grid grid-cols-2 gap-3">
-                      {['Cinema 4D', 'Redshift', 'After Effects', 'Substance', 'ZBrush', 'Houdini'].map((tool, idx) => (
-                        <div key={idx} className="p-3 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-2.5">
-                          <Zap className="w-4 h-4 text-[#feba39]" />
-                          <span className="text-xs font-bold text-white">{tool}</span>
+                    <div className="space-y-4">
+                      {/* Desktop */}
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between text-xs font-mono">
+                          <span className="text-white font-bold">💻 Ordenadores (Desktop)</span>
+                          <span className="text-[#feba39]">{realAnalytics.deviceBreakdown.desktop || 0} visitas</span>
                         </div>
-                      ))}
+                        <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-[#ff5540] to-[#feba39]"
+                            style={{
+                              width: `${realAnalytics.totalPageViews > 0 ? ((realAnalytics.deviceBreakdown.desktop || 0) / realAnalytics.totalPageViews) * 100 : 0}%`
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Mobile */}
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between text-xs font-mono">
+                          <span className="text-white font-bold">📱 Teléfonos (Móviles)</span>
+                          <span className="text-emerald-400">{realAnalytics.deviceBreakdown.mobile || 0} visitas</span>
+                        </div>
+                        <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-emerald-500 to-teal-400"
+                            style={{
+                              width: `${realAnalytics.totalPageViews > 0 ? ((realAnalytics.deviceBreakdown.mobile || 0) / realAnalytics.totalPageViews) * 100 : 0}%`
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Tablet */}
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between text-xs font-mono">
+                          <span className="text-white font-bold">📱 Tablets</span>
+                          <span className="text-purple-400">{realAnalytics.deviceBreakdown.tablet || 0} visitas</span>
+                        </div>
+                        <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-purple-500 to-indigo-400"
+                            style={{
+                              width: `${realAnalytics.totalPageViews > 0 ? ((realAnalytics.deviceBreakdown.tablet || 0) / realAnalytics.totalPageViews) * 100 : 0}%`
+                            }}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs text-[#a89f9e] font-mono">
-                    <span>Base de Datos D1:</span>
-                    <span className="text-emerald-400 font-bold">Cloudflare Pages</span>
+                  {/* Cloud D1 Database Status Summary */}
+                  <div className="pt-4 border-t border-white/10 space-y-2 text-xs text-[#a89f9e] font-mono">
+                    <div className="flex justify-between">
+                      <span>Estado Base de Datos:</span>
+                      <span className="text-emerald-400 font-bold">Cloudflare D1 SQLite</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Última Actualización:</span>
+                      <span className="text-white">{new Date(realAnalytics.lastUpdated).toLocaleTimeString()}</span>
+                    </div>
                   </div>
                 </div>
 

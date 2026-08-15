@@ -4,6 +4,8 @@ import { X, Sparkles, CheckCircle, ChevronLeft, ChevronRight, Image as ImageIcon
 import { motion, AnimatePresence } from 'motion/react';
 import { MediaViewer } from './MediaViewer';
 
+import { trackProjectView } from '../utils/analyticsTracker';
+
 export const ProjectModal: React.FC = () => {
   const { selectedProjectForModal, setSelectedProjectForModal } = usePortfolio();
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
@@ -27,9 +29,12 @@ export const ProjectModal: React.FC = () => {
     }
   });
 
-  // Reset index when project changes
+  // Reset index & track project view when project changes
   useEffect(() => {
     setActiveMediaIndex(0);
+    if (project?.id) {
+      trackProjectView(project.id);
+    }
   }, [project?.id]);
 
   // Keyboard Navigation (Escape, Left Arrow, Right Arrow)
