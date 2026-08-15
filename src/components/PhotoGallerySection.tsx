@@ -58,7 +58,7 @@ export const PhotoGallerySection: React.FC = () => {
   };
 
   return (
-    <section id="galeria-fotografia" className="py-24 relative overflow-hidden w-full max-w-full bg-[#0a090c]/35 backdrop-blur-md border-t border-white/5">
+    <section id="galeria-fotografia" className="py-24 relative overflow-hidden w-full max-w-full bg-[#0a090c]/35 backdrop-blur-md">
       {/* Dynamic Background Atmospheric Glow */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] max-w-full h-[400px] bg-gradient-to-tr from-[#ff5540]/12 via-[#feba39]/12 to-transparent blur-[140px] pointer-events-none rounded-full" />
 

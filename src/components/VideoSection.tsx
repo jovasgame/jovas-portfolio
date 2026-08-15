@@ -218,7 +218,7 @@ export const VideoSection: React.FC = () => {
   const videoProjects = projects.filter(p => p.category === 'Animación');
 
   return (
-    <section id="video-section" className="py-24 relative bg-[#0a090c]/35 backdrop-blur-md border-t border-b border-white/10 overflow-hidden w-full max-w-full">
+    <section id="video-section" className="py-24 relative bg-[#0a090c]/35 backdrop-blur-md overflow-hidden w-full max-w-full">
       {/* Background Ambient Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] max-w-full h-[400px] bg-gradient-to-r from-[#ff5540]/10 via-[#feba39]/10 to-transparent blur-[160px] pointer-events-none" />
 
